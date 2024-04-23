@@ -1,0 +1,27 @@
+.calendar{
+    height: 80vh;
+    margin: 0.7rem;
+    border-radius: var(--card-border-radius);
+    background: var(--color-white);
+    padding: var(--card-padding);
+    overflow-y: scroll;
+}
+
+.fc-toolbar .fc-button {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    outline: none;
+}
+
+.fc-toolbar .fc-button:hover {
+    background-color: var(--color-blue);
+}
+
+.fc-toolbar .fc-button:active {
+    background-color: var(--color-blue);
+}
+
+.fc-event:hover {
+    cursor: pointer;
+}

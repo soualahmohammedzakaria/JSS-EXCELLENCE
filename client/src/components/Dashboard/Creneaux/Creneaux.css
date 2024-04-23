@@ -1,0 +1,50 @@
+.creneaux{
+    background: var(--color-white);
+    border-radius: var(--card-border-radius);
+    margin: 2% 0 2% 0;
+}
+
+.creneaux .c-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--card-padding);
+    padding-bottom: 0;
+}
+
+.creneaux .c-header .plus-link{
+    display: flex;
+    align-items: center;
+    color: var(--color-primary);
+}
+
+.creneaux .c-header .plus-link:hover{
+    color: var(--color-blue);
+}
+
+.table-creneaux{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.date-temps{
+    text-align: center;
+}
+
+.creneaux .creneau{
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: var(--card-padding);
+   border-bottom: 1px solid var(--color-light);
+   transition: all 100ms ease;
+}
+
+.creneaux .creneau:last-child{
+    border: none;
+}
+
+.creneaux .creneau:hover{
+    background: var(--color-light);
+    cursor: pointer;
+}

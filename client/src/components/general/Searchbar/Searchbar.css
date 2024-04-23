@@ -1,0 +1,30 @@
+.search-bar{
+    background: var(--color-white);
+    padding: var(--padding-2);
+    width: 100%;
+    border-radius: var(--border-radius-1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--color-gray-light);
+    left: 15%;
+    align-self: center;
+    margin: 1rem 0.5rem;
+}
+  
+.search-bar input[type="search"]{
+    color: var(--color-dark);
+    background: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: "Poppins", sans-serif;
+}
+  
+.search-bar input[type="search"]::placeholder{
+    color: var(--color-gray-dark);
+}
+  
+.search-bar input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}

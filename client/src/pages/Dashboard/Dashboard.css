@@ -1,0 +1,16 @@
+.content{
+    margin-left: 0.5%;
+    display: grid;
+    grid-template-columns: 69% 30%;
+    gap: 0.9%;
+    overflow-y: scroll;
+    height: 80vh;
+}
+
+.charts{
+    background: var(--color-white);
+    margin-top: 0.4rem;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    margin-bottom: 1%;
+}

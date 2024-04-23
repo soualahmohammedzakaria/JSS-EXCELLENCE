@@ -1,0 +1,52 @@
+nav{
+    width: 100%;
+    background: var(--color-white);
+    padding: 1rem 0;
+    height: 10vh;
+}
+  
+nav .container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 96%;
+    margin: 0 auto;
+}
+
+nav .ident{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+  
+nav .ident img.logo{
+    width: 3.5rem;
+}
+  
+nav .profile-area{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+}
+
+nav .profile-area .profile{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+nav .profile-area .profile .infos{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  
+nav .profile-area .profile-photo{
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
