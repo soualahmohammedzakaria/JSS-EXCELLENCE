@@ -1,21 +1,28 @@
-const express = require('express');
-const cors = require('cors');
+const express=require('express');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const coachRoutes = require('./routes/coachRoutes');
+const memberRoutes = require('./routes/memberRoutes');
+const expenseRoutes = require('./routes/expenseRoutes');
+const planningRoutes = require('./routes/planningRoutes');
+const achievementRoutes = require('./routes/achievementRoutes');
 
-const app = express();
+const app=express();
 const dotenv = require('dotenv');
 dotenv.config();
 const PORT=process.env.PORT || 4000;
 app.use(bodyParser.json());
 
-app.use(cors());
+
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/coach', coachRoutes);
+app.use('/member', memberRoutes);
+app.use('/expense', expenseRoutes);
+app.use('/planning', planningRoutes);
+app.use('/achievement', achievementRoutes);
 
 
 

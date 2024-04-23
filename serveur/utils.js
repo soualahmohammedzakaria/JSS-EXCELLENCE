@@ -1,7 +1,7 @@
-const QRCode = require('qrcode'); 
+//const QRCode = require('qrcode'); 
 
 // On génére un code QR à partir de données JSON
-async function generateQRCode(data) {
+/*async function generateQRCode(data) {
     try {
         const qrCodeData = JSON.stringify(data);
         const qrCodeImageUrl = await QRCode.toDataURL(qrCodeData);
@@ -18,9 +18,9 @@ async function generateQRCode(data) {
     const qrCode = `${prefix}${userId}`;
 
     
-  };*/
+  };
   
 
 module.exports = { 
     generateQRCode,
- };
+ };*/

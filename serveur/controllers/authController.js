@@ -15,14 +15,14 @@ async function loginUser(req, res) {
 
       if (isPasswordValid) {
          
-        res.json({ success: true, nom: user.nom, prenom: user.prenom, photo: user.photo, role: user.role, id: user.id_admin});
+        res.json({ success: true, message: 'Connexion réussie', nom : user.nom, prenom : user.prenom, photo : user.photo, role: user.role});
       } else {
          
-        res.json({ success: false, message: 'Mot de passe incorrect!', role:'' });
+        res.json({ success: false, message: 'Mot de passe incorrect', role:'' });
       }
     } else {
        
-      res.json({ success: false, message: 'Nom d\'utilisateur non existant!', role:'' });
+      res.json({ success: false, message: 'Nom d\'utilisateur incorrect', role:'' });
     }
   } catch (error) {
      

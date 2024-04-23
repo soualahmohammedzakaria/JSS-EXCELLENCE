@@ -1,15 +1,11 @@
 const coachModel = require('../models/coachModel');
-const utils = require('../utils');
+//const utils = require('../utils');
 const moment = require('moment');
 
 async function addCoach(req, res) {
     try {
         const { nom, prenom, email, dateNaissance, photo, telephone, sexe } = req.body;
 
-        /* Validation des données
-        if (!nom || !prenom || !email || !dateNaissance || !photo || !telephone || !sexe) {
-            return res.status(400).json({ success: false, message: 'Tous les champs sont requis' });
-        }*/
         const coach = await coachModel.getCoachByName(nom,prenom);
         if (coach) {
         res.json({ success: false, message: 'Nom du coach déjà utilisé' });
@@ -68,9 +64,6 @@ async function deleteCoach(req, res) {
   
       // Conversion de la date de naissance en objet Date
       const dateNaissanceObj = new Date(newCoachData.date_naissance);
-      if (isNaN(dateNaissanceObj.getTime())) {
-          return res.status(400).json({ success: false, message: 'Format de date de naissance invalide' });
-      }
       //Formatage de la date au format 'YYYY-MM-DD'
       const dateNaissanceFormatted = moment(dateNaissanceObj, 'DD/MM/YYYY').format('YYYY-MM-DD');
   
