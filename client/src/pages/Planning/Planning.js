@@ -8,7 +8,7 @@ import listPlugin from '@fullcalendar/list'
 import frLocale from '@fullcalendar/core/locales/fr'
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
-//import axios from 'axios';
+import axios from 'axios';
 import { useAuthContext } from '../../hooks/authContext/authContext';
 
 const Planning = () => {
@@ -21,104 +21,12 @@ const Planning = () => {
     }, []);
 
     const fetchTimeslots = async () => {
-        /*try {
-            const response = await axios.get('YOUR_BACKEND_API_ENDPOINT');
-            setTimeslots(response.data); // Assuming the response contains timeslots data in the expected format
+        try {
+            const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
+            setTimeslots(response.data.creneaux);
         } catch (error) {
-            console.error('Error fetching timeslots:', error);
-        }*/
-        setTimeslots([
-            {
-                id_creneau: 1,
-                title: 'Séance de Judo',
-                description: 'Entraînement régulier de Judo',
-                salle: 'Salle A',
-                groupe: 'Débutants',
-                start: '2024-04-20T09:00:00',
-                end: '2024-04-20T10:00:00',
-                type: 'Séance'
-            },
-            {
-                id_creneau: 2,
-                title: 'Séance de Fitness',
-                description: 'Entraînement cardio et musculaire',
-                salle: 'Salle C',
-                groupe: 'Tous niveaux',
-                start: '2024-04-21T12:00:00',
-                end: '2024-04-21T13:00:00',
-                type: 'Séance'
-            },
-            {
-                id_creneau: 3,
-                title: 'Séance de Crossfit',
-                description: 'Entraînement intensif de Crossfit',
-                salle: 'Salle D',
-                groupe: 'Avancés',
-                start: '2024-04-24T13:30:00',
-                end: '2024-04-24T14:30:00',
-                type: 'Séance'
-            },
-            {
-                id_creneau: 4,
-                title: 'Evénement Judo',
-                description: 'Compétition de Judo',
-                salle: 'Arène principale',
-                groupe: 'Tous niveaux',
-                start: '2024-04-21T15:00:00',
-                end: '2024-04-21T16:00:00',
-                type: 'Evénement'
-            },
-            {
-                id_creneau: 5,
-                title: 'Evénement Karaté',
-                description: 'Démonstration de techniques de Karaté',
-                salle: 'Arène principale',
-                groupe: 'Tous niveaux',
-                start: '2024-04-23T16:30:00',
-                end: '2024-04-23T17:30:00',
-                type: 'Evénement'
-            },
-            {
-                id_creneau: 6,
-                title: 'Evénement Fitness',
-                description: 'Marathon de Fitness',
-                salle: 'Salle de danse',
-                groupe: 'Tous niveaux',
-                start: '2024-04-23T18:00:00',
-                end: '2024-04-23T19:00:00',
-                type: 'Evénement'
-            },
-            {
-                id_creneau: 7,
-                title: 'Evénement Crossfit',
-                description: 'Défi de Crossfit en équipe',
-                salle: 'Terrain extérieur',
-                groupe: 'Avancés',
-                start: '2024-04-20T19:30:00',
-                end: '2024-04-20T20:30:00',
-                type: 'Evénement'
-            },
-            {
-                id_creneau: 8,
-                title: 'Séance de Judo',
-                description: 'Entraînement compétitif de Judo',
-                salle: 'Salle A',
-                groupe: 'Compétiteurs',
-                start: '2024-04-22T21:00:00',
-                end: '2024-04-22T22:00:00',
-                type: 'Séance'
-            },
-            {
-                id_creneau: 9,
-                title: 'Séance de Judo',
-                description: 'Entraînement compétitif de Judo',
-                salle: 'Salle B',
-                groupe: 'Enfants',
-                start: '2024-04-22T21:00:00',
-                end: '2024-04-22T22:00:00',
-                type: 'Séance'
-            }
-        ])
+            console.error('Erreur lors de l\'obtention des membres:', error);
+        }
     };
 
     const handleEventClick = (eventClickInfo) => {
@@ -183,8 +91,8 @@ const Planning = () => {
                             <span><h3>Date de debut:</h3> <p>{new Date(selectedEvent.start).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</p></span>
                             <span><h3>Date de fin:</h3> <p>{new Date(selectedEvent.end).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</p></span>
                             <span><h3>Type:</h3> <p></p>{selectedEvent.type}</span>
-                            <span><h3>Salle:</h3> <p>{selectedEvent.salle}</p></span>
-                            <span><h3>Groupe:</h3> <p>{selectedEvent.groupe}</p></span>
+                            <span><h3>Salle:</h3> <p>{selectedEvent.nom_salle}</p></span>
+                            <span><h3>Groupe:</h3> <p>{selectedEvent.nom_groupe}</p></span>
                             <span><h3>Description:</h3> <p>{selectedEvent.description}</p></span>
                         </div>
                         <div className="modal-buttons">

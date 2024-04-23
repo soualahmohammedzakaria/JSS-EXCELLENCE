@@ -16,8 +16,10 @@ const Authentification = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try{
+            console.log("Checkpoint 1");
             const response = await axios.post("http://localhost:4000/auth/login", { username, password });
-            
+            console.log("Checkpoint 2");
+            console.log(response.data.success);
             if(response.data.success){
                 updateAuthData({
                     id: response.data.id,
