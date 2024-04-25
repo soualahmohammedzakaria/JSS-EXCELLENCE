@@ -272,6 +272,10 @@ main .header{
   color: var(--color-primary);
 }
 
+.table-profiles .table-header{
+  align-items: center;
+}
+
 /* Style de la pagination */
 
 .pagination {

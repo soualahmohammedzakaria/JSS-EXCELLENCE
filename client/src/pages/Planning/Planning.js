@@ -84,7 +84,7 @@ const Planning = () => {
                                 list: 'Liste'
                             }}
                             events={timeslots}
-                            eventClick={handleEventClick} // Handle event click
+                            eventClick={handleEventClick}
                         />
                     </div>
                 </div>

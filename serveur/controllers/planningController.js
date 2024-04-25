@@ -3,6 +3,10 @@ const moment = require('moment-timezone');
 async function addCreneau(req, res) {
     try {
         const { id_groupe, numero_salle,titre, date_debut, date_fin, type, description } = req.body;
+        if(date_debut >= date_fin) {
+            res.json({ success: false, message: 'La date de début doit être inférieure à la date de fin' });
+            return;
+        }
         const creneau = await planningModel.getCreneau(titre, date_debut, date_fin);
         if (creneau) {
         res.json({ success: false, message: 'Creneau pris' });
@@ -11,8 +15,8 @@ async function addCreneau(req, res) {
         res.json({ success: true, message: 'Créneau ajouté avec succès' });
         }
     } catch (error) {
-        console.error('Erreur lors de l\'ajout du créneau :', error);
-        res.json({ success: false, message: 'Erreur lors de l\'ajout du créneau' });
+        console.error('Erreur lors de l\'ajout d\'un créneau :', error);
+        res.json({ success: false, message: 'Erreur lors de l\'ajout d\'un créneau' });
     }
 }
 
@@ -31,7 +35,11 @@ async function deleteCreneau(req, res) {
     try {
       const creneauId = req.params.id;
       const newCreneauData = req.body;
-  
+
+      if(newCreneauData.date_debut >= newCreneauData.date_fin) {
+        res.json({ success: false, message: 'La date de début doit être inférieure à la date de fin' });
+        return;
+    }
       // on verifie si le creneau est pris 
       const creneauExists = await planningModel.checkCreneau(newCreneauData.titre, newCreneauData.date_debut,newCreneauData.date_fin, creneauId);
       if (creneauExists) {
