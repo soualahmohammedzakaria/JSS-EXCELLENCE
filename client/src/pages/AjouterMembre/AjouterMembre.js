@@ -58,7 +58,7 @@ const AjouterMembre = () => {
                         <h1>Ajouter un membre</h1>
                         <button className="btn">
                             <Link to="/membres" className="link">
-                                <span className="material-icons-outlined">logout</span>
+                                <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
                     </div>

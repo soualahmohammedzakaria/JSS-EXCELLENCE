@@ -48,7 +48,7 @@ const ModifierSalle = () => {
                         <h1>Modifier une salle</h1>
                         <button className="btn">
                             <Link to="/salles" className="link">
-                                <span className="material-icons-outlined">logout</span>
+                                <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
                     </div>

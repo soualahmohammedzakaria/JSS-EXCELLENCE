@@ -51,7 +51,7 @@ const AjouterSport = () => {
                         <h1>Ajouter un sport</h1>
                         <button className="btn">
                             <Link to="/sports" className="link">
-                                <span className="material-icons-outlined">logout</span>
+                                <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
                     </div>

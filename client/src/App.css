@@ -407,4 +407,20 @@ main .header{
   word-wrap: break-word;
 }
 
+.filter-options{
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+}
 
+.filter-options .filter-option input, .filter-options .filter-option select{
+  justify-content: space-between;
+  color: var(--color-dark);
+  background: var(--color-light);
+  border-radius: var(--border-radius-1);
+  padding: 0.5rem 1rem;
+  outline: none;
+  font-family: "Poppins", sans-serif;
+}

@@ -131,7 +131,7 @@ CREATE TABLE `administrateurs` (
 
 LOCK TABLES `administrateurs` WRITE;
 /*!40000 ALTER TABLE `administrateurs` DISABLE KEYS */;
-INSERT INTO `administrateurs` VALUES (16,'ZEGHIMI','Zayd Aymen','zzaydou','a341c7080e9c303c1e885ba96e710730','Gestionnaire',''),(18,'HEMIMED','Anis','h_anis','25f9e794323b453885f5181f1b624d0b','Gestionnaire',''),(19,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(20,'SAHRAOUI','Ramy','ramy18','bc70904109e8f620e4b53c33eaf8b811','Gestionnaire',''),(21,'LEHIDANE','Mohammed','m_lehidane','f1d9b0a5ac1ae1811b80ab6fde4f4396','Administrateur',''),(28,'BOUKAKIOU','Rayan','bkrayan','25f9e794323b453885f5181f1b624d0b','Gestionnaire',''),(30,'BETTAYEB','Yazid','yazidbet','25f9e794323b453885f5181f1b624d0b','Administrateur',NULL),(32,'KOUDRI','Chemsedine','chemso17','b2220407b7e07a6abb7beac457bc679a','Gestionnaire',''),(33,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(35,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(36,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(38,'KHALED','Adriane Anis','adralo','798547eb8831c98ae7474f328e3a57c4','Administrateur',''),(39,'BETTAYEB','Yazid','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(40,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(41,'KHALED','Adriane Anis','adralow1','25f9e794323b453885f5181f1b624d0b','Administrateur',''),(42,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(43,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(44,'BETTAYEB','Yazid','yazzzid','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',''),(45,'BETTAYEB','BETTAYEB','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(47,'KHALED','Adriane Anis','adralow11111111','798547eb8831c98ae7474f328e3a57c4','Administrateur','');
+INSERT INTO `administrateurs` VALUES (1,'SOUALAH MOHAMMED','Zakaria','zaxy17','7215ee9c7d9dc229d2921a40e899ec5f','Administrateur',''),(16,'ZEGHIMI','Zayd Aymen','zzaydou','a341c7080e9c303c1e885ba96e710730','Gestionnaire',''),(18,'HEMIMED','Anis','h_anis','25f9e794323b453885f5181f1b624d0b','Gestionnaire',''),(19,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(20,'SAHRAOUI','Ramy','ramy18','bc70904109e8f620e4b53c33eaf8b811','Gestionnaire',''),(21,'LEHIDANE','Mohammed','m_lehidane','f1d9b0a5ac1ae1811b80ab6fde4f4396','Administrateur',''),(28,'BOUKAKIOU','Rayan','bkrayan','25f9e794323b453885f5181f1b624d0b','Gestionnaire',''),(30,'BETTAYEB','Yazid','yazidbet','25f9e794323b453885f5181f1b624d0b','Administrateur',NULL),(32,'KOUDRI','Chemsedine','chemso17','b2220407b7e07a6abb7beac457bc679a','Gestionnaire',''),(33,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(35,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(36,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(38,'KHALED','Adriane Anis','adralo','798547eb8831c98ae7474f328e3a57c4','Administrateur',''),(39,'BETTAYEB','Yazid','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(40,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(41,'KHALED','Adriane Anis','adralow1','25f9e794323b453885f5181f1b624d0b','Administrateur',''),(42,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(43,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(44,'BETTAYEB','Yazid','yazzzid','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',''),(45,'BETTAYEB','BETTAYEB','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(47,'KHALED','Adriane Anis','adralow11111111','798547eb8831c98ae7474f328e3a57c4','Administrateur','');
 /*!40000 ALTER TABLE `administrateurs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,7 +239,7 @@ CREATE TABLE `creneaux` (
   `titre` varchar(100) NOT NULL,
   `date_debut` datetime NOT NULL,
   `date_fin` datetime NOT NULL,
-  `type` enum('Evenement','Seance') NOT NULL,
+  `type` enum('Evénement','Séance') NOT NULL,
   `description` text,
   PRIMARY KEY (`id_creneau`,`id_groupe`,`numero_salle`),
   UNIQUE KEY `id_creneau_UNIQUE` (`id_creneau`),
@@ -247,7 +247,7 @@ CREATE TABLE `creneaux` (
   KEY `fk_creneaux_salles1_idx` (`numero_salle`),
   CONSTRAINT `fk_creneaux_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`),
   CONSTRAINT `fk_creneaux_salles1` FOREIGN KEY (`numero_salle`) REFERENCES `salles` (`numero_salle`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -256,7 +256,7 @@ CREATE TABLE `creneaux` (
 
 LOCK TABLES `creneaux` WRITE;
 /*!40000 ALTER TABLE `creneaux` DISABLE KEYS */;
-INSERT INTO `creneaux` VALUES (3,2,1,'seance judo','2024-10-15 15:30:30','2024-10-15 17:30:30','Seance','blabla'),(4,2,1,'seance karate','2024-10-15 15:30:30','2024-10-15 17:30:30','Seance','blabla');
+INSERT INTO `creneaux` VALUES (1,1,1,'test111','2024-04-24 10:30:00','2024-04-24 10:35:00','Evénement','blabla'),(21,5,2,'Combat sa9la','2024-04-24 10:40:00','2024-04-24 10:45:00','Séance','blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'),(25,2,1,'test6','2024-04-25 15:52:00','2024-04-25 15:55:00','Séance','test5'),(28,5,2,'test4','2024-04-25 15:50:00','2024-04-25 15:55:00','Evénement','blabla');
 /*!40000 ALTER TABLE `creneaux` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -326,11 +326,11 @@ DROP TABLE IF EXISTS `groupes`;
 CREATE TABLE `groupes` (
   `id_groupe` int unsigned NOT NULL AUTO_INCREMENT,
   `id_sport` int unsigned NOT NULL,
-  `nom` varchar(255) NOT NULL,
+  `nom_groupe` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   PRIMARY KEY (`id_groupe`),
   UNIQUE KEY `id_sport_UNIQUE` (`id_groupe`),
-  UNIQUE KEY `nom_UNIQUE` (`nom`),
+  UNIQUE KEY `nom_UNIQUE` (`nom_groupe`),
   KEY `fk_groupes_sports1_idx` (`id_sport`),
   CONSTRAINT `fk_groupes_sports1` FOREIGN KEY (`id_sport`) REFERENCES `sports` (`id_sport`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
@@ -342,7 +342,7 @@ CREATE TABLE `groupes` (
 
 LOCK TABLES `groupes` WRITE;
 /*!40000 ALTER TABLE `groupes` DISABLE KEYS */;
-INSERT INTO `groupes` VALUES (1,1,'kfjiv',' vfgdb'),(2,1,'gcxg','cffv'),(5,1,'jjc','cjbc');
+INSERT INTO `groupes` VALUES (1,1,'Judo U17','Judo pour les -17ans'),(2,1,'Judo U15','Judo pour les -15ans'),(5,2,'Kickboxing -80kg','-80kg');
 /*!40000 ALTER TABLE `groupes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -505,7 +505,7 @@ DROP TABLE IF EXISTS `salles`;
 CREATE TABLE `salles` (
   `numero_salle` int unsigned NOT NULL,
   `capacite` int unsigned NOT NULL,
-  `nom` varchar(45) DEFAULT NULL,
+  `nom_salle` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`numero_salle`),
   UNIQUE KEY `numero_UNIQUE` (`numero_salle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -517,7 +517,7 @@ CREATE TABLE `salles` (
 
 LOCK TABLES `salles` WRITE;
 /*!40000 ALTER TABLE `salles` DISABLE KEYS */;
-INSERT INTO `salles` VALUES (1,20,'salle judo');
+INSERT INTO `salles` VALUES (1,20,'Salle Judo'),(2,30,'Salle des sports de combat'),(3,25,'Stade de foot');
 /*!40000 ALTER TABLE `salles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -534,7 +534,7 @@ CREATE TABLE `sports` (
   PRIMARY KEY (`id_sport`),
   UNIQUE KEY `id_sport_UNIQUE` (`id_sport`),
   UNIQUE KEY `nom_UNIQUE` (`nom`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -543,7 +543,7 @@ CREATE TABLE `sports` (
 
 LOCK TABLES `sports` WRITE;
 /*!40000 ALTER TABLE `sports` DISABLE KEYS */;
-INSERT INTO `sports` VALUES (1,'judo');
+INSERT INTO `sports` VALUES (1,'Judo'),(2,'Kickboxing');
 /*!40000 ALTER TABLE `sports` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -583,4 +583,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-23 22:25:02
+-- Dump completed on 2024-04-25 20:07:59

@@ -96,7 +96,7 @@ const ModifierAdmin = () => {
                         <h1>Modifier un utilisateur</h1>
                         <button className="btn">
                             <Link to="/admins" className="link">
-                                <span className="material-icons-outlined">logout</span>
+                                <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
                     </div>

@@ -51,7 +51,7 @@ const AjouterGroupe = () => {
                         <h1>Ajouter un groupe</h1>
                         <button className="btn">
                             <Link to="/groupes" className="link">
-                                <span className="material-icons-outlined">logout</span>
+                                <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
                     </div>

@@ -227,7 +227,7 @@ const Admins = () => {
                             </div>
                             <div className="filter-options">
                                 <div className="filter-option">
-                                    <label>Nom</label>
+                                    <label>Nom: </label>
                                     <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Ascendant">Ascendant</option>
@@ -235,23 +235,23 @@ const Admins = () => {
                                     </select>
                                 </div>
                                 <div className="filter-option">
-                                    <label>Prénom</label>
-                                    <select name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
+                                    <label>Prénom: </label>
+                                    <select disabled={selectedNom !== "Pas de filtre" && selectedUsername === "Pas de filtre" ? true : false} name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Ascendant">Ascendant</option>
                                         <option value="Descendant">Descendant</option>
                                     </select>
                                 </div>
                                 <div className="filter-option">
-                                    <label>Nom d'utilisateur</label>
-                                    <select name="username" id="username" value={selectedUsername} onChange={(e) => setSelectedUsername(e.target.value)}>
+                                    <label>Nom d'utilisateur: </label>
+                                    <select disabled={selectedNom !== "Pas de filtre" ? true : false} name="username" id="username" value={selectedUsername} onChange={(e) => setSelectedUsername(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Ascendant">Ascendant</option>
                                         <option value="Descendant">Descendant</option>
                                     </select>
                                 </div>
                                 <div className="filter-option">
-                                    <label>Rôle</label>
+                                    <label>Rôle: </label>
                                     <select name="role" id="role" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Administrateur">Administrateur</option>
@@ -262,11 +262,10 @@ const Admins = () => {
                         </div>
                         <div className="modal-buttons">
                             <button onClick={handleFilter} className="btn pointed"><span className="link">Filtrer</span></button>
-                            <button onClick={() => setShowFilterModal(false)} className="btn pointed"><span className="link">Retourner</span></button>
+                            <button onClick={() => setShowFilterModal(false)} className="btn pointed"><span className="link">Retour</span></button>
                         </div>
                     </div>
                 </div>
-            
             )}
         </>
     )
