@@ -15,7 +15,7 @@ async function loginUser(req, res) {
 
       if (isPasswordValid) {
          
-        res.json({ success: true, message: 'Connexion réussie', nom : user.nom, prenom : user.prenom, photo : user.photo, role: user.role});
+        res.json({ success: true, message: 'Connexion réussie', nom : user.nom, prenom : user.prenom, photo : user.photo, role: user.role, id: user.id_admin});
       } else {
          
         res.json({ success: false, message: 'Mot de passe incorrect', role:'' });

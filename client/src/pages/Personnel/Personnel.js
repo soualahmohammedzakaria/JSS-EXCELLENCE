@@ -28,7 +28,7 @@ const Admins = () => {
         axios.get('http://localhost:4000/user/getAllUsers')
             .then(response => {
                 setAdmins(response.data.users);
-                setFilteredAdmins(response.data.users); // Initialize filteredAdmins with all admins
+                setFilteredAdmins(response.data.users);
             })
             .catch(error => {
                 console.error('Erreur de l\'obtention des utilisateurs:', error);
@@ -76,7 +76,7 @@ const Admins = () => {
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
         setCurrInd(1);
-        filterAdmins(); // Call filter function when search query changes
+        filterAdmins();
     };
 
     const handleFilterModal = () => {
@@ -84,21 +84,18 @@ const Admins = () => {
     };
 
     const filterAdmins = () => {
-        let filtered = [...admins]; // Create a copy of admins
+        let filtered = [...admins];
         
-        // Filter based on search query
         filtered = filtered.filter(admin => {
             const fullName = `${admin.nom} ${admin.prenom}`.toLowerCase();
             const username = admin.username.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
         });
 
-        // Filter based on role
         if (selectedRole !== "Pas de filtre") {
             filtered = filtered.filter(admin => admin.role === selectedRole);
         }
         
-        // Sort based on selected attribute
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
@@ -128,12 +125,12 @@ const Admins = () => {
             });
         }
         
-        setFilteredAdmins(filtered); // Update filteredAdmins state
+        setFilteredAdmins(filtered);
     };
 
     const handleFilter = () => {
         setShowFilterModal(false);
-        filterAdmins(); // Call filter function when filters change
+        filterAdmins();
     };    
 
     return (
