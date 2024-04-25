@@ -14,7 +14,8 @@ import { useAuthContext } from '../../hooks/authContext/authContext';
 const Planning = () => {
     const { authData } = useAuthContext();
     const [timeslots, setTimeslots] = useState([]);
-    const [selectedEvent, setSelectedEvent] = useState(null); // State to manage selected event
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
         fetchTimeslots();
@@ -39,8 +40,16 @@ const Planning = () => {
     };
 
     const closeModal = () => {
-        // Close modal by resetting selected event to null
         setSelectedEvent(null);
+    };
+
+    const handleDeleteConfirmation = async () => {
+        const response = await axios.delete(`http://localhost:4000/planning/deleteCreneau/${selectedEvent.id_creneau}`);
+        if(response.data.success) {
+            setShowDeleteModal(false);
+            setSelectedEvent(null);
+            fetchTimeslots();
+        }
     };
 
     return (
@@ -85,24 +94,37 @@ const Planning = () => {
                     <div className="modal-container">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h1>Information du creneau horaire</h1>
+                                <h1>Information du créneau horaire</h1>
                             </div>
-                            <span><h3>Titre:</h3> <p>{selectedEvent.title}</p></span>
-                            <span><h3>Date de debut:</h3> <p>{new Date(selectedEvent.start).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</p></span>
-                            <span><h3>Date de fin:</h3> <p>{new Date(selectedEvent.end).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</p></span>
-                            <span><h3>Type:</h3> <p></p>{selectedEvent.type}</span>
-                            <span><h3>Salle:</h3> <p>{selectedEvent.nom_salle}</p></span>
-                            <span><h3>Groupe:</h3> <p>{selectedEvent.nom_groupe}</p></span>
-                            <span><h3>Description:</h3> <p>{selectedEvent.description}</p></span>
+                            <span><h2>Titre:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.title}</p></span>
+                            <span><h2>Date de début:</h2><p style={{fontSize: "1.3rem"}}>{new Date(selectedEvent.start).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</p></span>
+                            <span><h2>Date de fin:</h2><p style={{fontSize: "1.3rem"}}>{new Date(selectedEvent.end).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}</p></span>
+                            <span><h2>Type:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.type}</p></span>
+                            <span><h2>Salle:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.nom_salle}</p></span>
+                            <span><h2>Groupe:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.nom_groupe}</p></span>
+                            <span><h2>Description:</h2><p className="modal-description" style={{fontSize: "1.3rem"}}>{selectedEvent.description}</p></span>
                         </div>
                         <div className="modal-buttons">
                             <button onClick={closeModal} className="btn pointed"><span className="link"><span className="material-icons-outlined">logout</span></span></button>
                             {authData.role === 'Administrateur' && (
                                 <>
-                                    <Link to="./modifier" state={{id: selectedEvent.id_creneau, title: selectedEvent.title, description: selectedEvent.description, salle: selectedEvent.salle, groupe: selectedEvent.groupe, start: selectedEvent.start, end: selectedEvent.end, type: selectedEvent.type}}><button className="btn pointed"><span className="link"><span className="material-icons-outlined">edit</span></span></button></Link>
-                                    <button className="btn pointed"><span className="link"><span className="material-icons-outlined">delete</span></span></button>
+                                    <Link to="./modifier" state={{id: selectedEvent.id_creneau, title: selectedEvent.title, description: selectedEvent.description, salle: selectedEvent.id_salle, groupe: selectedEvent.id_groupe, start: selectedEvent.start, end: selectedEvent.end, type: selectedEvent.type}}><button className="btn pointed"><span className="link"><span className="material-icons-outlined">edit</span></span></button></Link>
+                                    <button onClick={() => setShowDeleteModal(true)} className="btn pointed"><span className="link"><span className="material-icons-outlined">delete</span></span></button>
                                 </>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showDeleteModal && (
+                <div className="modal-overlay">
+                    <div className="modal-container">
+                        <div className="modal-content">
+                            <h2>Etes-vous sûr de vouloir supprimer ce créneau horaire?</h2>
+                        </div>
+                        <div className="modal-buttons">
+                            <button onClick={() => setShowDeleteModal(false)} className="btn pointed"><span className="link">Annuler</span></button>
+                            <button onClick={handleDeleteConfirmation} className="btn pointed"><span className="link">Confirmer</span></button>
                         </div>
                     </div>
                 </div>

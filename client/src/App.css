@@ -377,6 +377,7 @@ main .header{
   background-color: var(--color-white);
   padding: 20px;
   border-radius: 8px;
+  max-width: 90%;
   z-index: 1000; 
 }
 
@@ -396,6 +397,10 @@ main .header{
 .modal-header{
   align-items: center;
   margin-bottom: 0.5rem;
+}
+
+.modal-description{
+  word-wrap: break-word;
 }
 
 

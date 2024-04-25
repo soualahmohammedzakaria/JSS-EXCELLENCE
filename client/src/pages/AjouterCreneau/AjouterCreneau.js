@@ -5,15 +5,33 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const AjouterCreneaux = () => {
+const AjouterCreneau = () => {
     const [salles, setSalles] = useState([]);
     const [groupes, setGroupes] = useState([]);
+    const [formData, setFormData] = useState({
+        id_groupe: null,
+        numero_salle: null,
+        titre: '',
+        date_debut: '',
+        date_fin: '',
+        type: 'Séance',
+        description: ''
+    });
+    const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Fetch salles from the API
         axios.get("http://localhost:4000/salle/getNomIdSalles")
             .then(response => {
                 setSalles(response.data.salles);
+                // Set default value for numero_salle after fetching data
+                if (response.data.salles.length > 0) {
+                    setFormData(prevFormData => ({
+                        ...prevFormData,
+                        numero_salle: response.data.salles[0].numero_salle
+                    }));
+                }
             })
             .catch(error => {
                 console.error("Error fetching salles:", error);
@@ -23,23 +41,18 @@ const AjouterCreneaux = () => {
         axios.get("http://localhost:4000/groupe/getNomIdGroupes")
             .then(response => {
                 setGroupes(response.data.groupes);
+                // Set default value for id_groupe after fetching data
+                if (response.data.groupes.length > 0) {
+                    setFormData(prevFormData => ({
+                        ...prevFormData,
+                        id_groupe: response.data.groupes[0].id_groupe
+                    }));
+                }
             })
             .catch(error => {
                 console.error("Error fetching groupes:", error);
             });
     }, []);
-
-    const [formData, setFormData] = useState({
-        id_groupe: 0,
-        numero_salle: 0,
-        titre: '',
-        date_debut: '',
-        date_fin: '',
-        type: 'Séance',
-        description: ''
-    });
-    const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -77,7 +90,7 @@ const AjouterCreneaux = () => {
                     <div className="add-form-group">
                         <div className="add-container">
                             <form className="add-form" onSubmit={handleSubmit}>
-                            <div className="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">subtitles</span> 
                                     <input type="text" name="titre" placeholder="Titre" value={formData.titre} onChange={handleChange} required/>
                                 </div>
@@ -103,7 +116,7 @@ const AjouterCreneaux = () => {
                                     <span className="material-icons-outlined">meeting_room</span>
                                     <label>Salle</label>
                                     <select name="numero_salle" value={formData.numero_salle} onChange={handleChange}>
-                                        {salles && salles.map(salle => (
+                                        {salles.map(salle => (
                                             <option key={salle.numero_salle} value={salle.numero_salle}>
                                                 {salle.nom_salle}
                                             </option>
@@ -114,7 +127,7 @@ const AjouterCreneaux = () => {
                                     <span className="material-icons-outlined">group</span>
                                     <label>Groupe</label>
                                     <select name="id_groupe" value={formData.id_groupe} onChange={handleChange}>
-                                        {groupes && groupes.map(groupe => (
+                                        {groupes.map(groupe => (
                                             <option key={groupe.id_groupe} value={groupe.id_groupe}>
                                                 {groupe.nom_groupe}
                                             </option>
@@ -136,4 +149,4 @@ const AjouterCreneaux = () => {
     );
 };
 
-export default AjouterCreneaux;
+export default AjouterCreneau;
