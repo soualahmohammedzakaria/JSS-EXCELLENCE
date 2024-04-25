@@ -14,7 +14,6 @@ const AjouterMembre = () => {
         email: '',
         sexe: 'Homme',
         telephone: '',
-        age: 18,
         taille: 180,
         poids: 70,
         sang: 'O+',
@@ -100,11 +99,6 @@ const AjouterMembre = () => {
                                         <option value="Homme">Homme</option>
                                         <option value="Femme">Femme</option>                            
                                     </select>
-                                </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">face</span>
-                                    <label>Age</label>
-                                    <input min={0} type="number" name="age" value={formData.age} onChange={handleChange} required/>
                                 </div>
                                 <div class="add-input">
                                     <span class="material-icons-outlined">height</span>

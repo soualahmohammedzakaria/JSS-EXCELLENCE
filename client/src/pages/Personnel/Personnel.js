@@ -3,6 +3,7 @@ import './Personnel.css';
 import { Link } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
+import Searchbar from "../../components/general/Searchbar/Searchbar";
 import axios from 'axios';
 import PhotoStandard from '../../assets/images/photoprofilestandard.png';
 import { useAuthContext } from '../../hooks/authContext/authContext';
@@ -92,7 +93,7 @@ const Admins = () => {
             return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
         });
 
-        if (selectedRole !== "Pas de filtre") {
+        if (selectedRole !== "Tous") {
             filtered = filtered.filter(admin => admin.role === selectedRole);
         }
         
@@ -145,11 +146,7 @@ const Admins = () => {
                             <Link to="/admins/ajouter" className="link"><span className="material-icons-outlined">add</span></Link>
                         </button>
                     </div>
-                    <div className="search-bar">
-                        <span className="material-icons-sharp">search</span>
-                        <input type="search" placeholder="Rechercher" value={searchQuery} onChange={handleSearch}/>
-                        <span className="material-icons-sharp pointed" onClick={handleFilterModal}>tune</span>
-                    </div>
+                    <Searchbar handleSearch={handleSearch} handleFilterModal={handleFilterModal}/>
                     <div>
                         {adminsParPage.length === 0 ? (
                             <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de profils!</h1>
@@ -253,7 +250,7 @@ const Admins = () => {
                                 <div className="filter-option">
                                     <label>Rôle: </label>
                                     <select name="role" id="role" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-                                        <option value="Pas de filtre">Pas de filtre</option>
+                                        <option value="Tous">Tous</option>
                                         <option value="Administrateur">Administrateur</option>
                                         <option value="Gestionnaire">Gestionnaire</option>
                                     </select>

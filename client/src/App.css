@@ -411,7 +411,8 @@ main .header{
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  padding: 0 1rem;
+  gap: 1rem;
   font-size: 1.3rem;
 }
 
