@@ -1,4 +1,3 @@
-
 const userModel = require('../models/userModel');
 
 async function loginUser(req, res) {
@@ -15,7 +14,7 @@ async function loginUser(req, res) {
 
       if (isPasswordValid) {
          
-        res.json({ success: true, message: 'Connexion réussie', nom : user.nom, prenom : user.prenom, photo : user.photo, role: user.role, id: user.id_admin});
+        res.json({ success: true, message: 'Connexion rÃ©ussie', nom : user.nom, prenom : user.prenom, photo : user.photo, role: user.role, id: user.id_admin});
       } else {
          
         res.json({ success: false, message: 'Mot de passe incorrect', role:'' });
@@ -33,4 +32,3 @@ async function loginUser(req, res) {
  
 
 module.exports = { loginUser };
-                               

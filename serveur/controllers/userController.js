@@ -8,29 +8,29 @@ passwordSchema
   .has().digits()                                 // Au moins un chiffre
   .not().spaces()                                 // Pas d'espaces 
 
-  async function addUser(req, res) {
-  try {
-    const {nom, prenom, username, password, role } = req.body;
-    // Vérifier si le nom d'utilisateur a au moins 4 caractères et contient au moins une lettre
-    if (username.length < 4 || !/[a-zA-Z]/.test(username)) {
-      return res.json({ success: false, message: 'Le nom d\'utilisateur doit avoir au moins 4 caractères et contenir au moins une lettre.' });
+async function addUser(req, res) {
+    try {
+        const {nom, prenom, username, password, role } = req.body;
+        // Vérifier si le nom d'utilisateur a au moins 4 caractères et contient au moins une lettre
+        if (username.length < 4 || !/[a-zA-Z]/.test(username)) {
+          return res.json({ success: false, message: 'Le nom d\'utilisateur doit avoir au moins 4 caractères et contenir au moins une lettre.' });
+        }
+        const user = await userModel.getUserByUsername(username);
+        if (user) {
+        res.json({ success: false, message: 'Nom d\'utilisateur déjà utilisé!' });
+        } else {
+          // On verfie la robustesse du mot de passe
+            if (!passwordSchema.validate(password)) {
+              return res.json({ success: false, message: 'Essayez un mot de passe plus fort. Votre mot de passe doit être composé d\'au moins 8 caractères, avec des lettres et des chiffres, sans espaces.'});
+            }
+        await userModel.addUser(nom, prenom, username, password, role);
+        res.json({ success: true, message: 'Utilisateur ajouté avec success!' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout d\'un utilisateur:', error);
+        res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'utilisateur!' });
     }
-    const user = await userModel.getUserByUsername(username);
-    if (user) {
-      res.json({ success: false, message: 'Nom d\'utilisateur déjà utilisé!' });
-    } else {
-      // On verfie la robustesse du mot de passe
-      if (!passwordSchema.validate(password)) {
-      return res.json({ success: false, message: 'Essayez un mot de passe plus fort. Votre mot de passe doit être composé d\'au moins 8 caractères, avec des lettres et des chiffres, sans espaces.'});
     }
-    await userModel.addUser(nom, prenom, username, password, role);
-      res.json({ success: true, message: 'Utilisateur ajouté avec success!' });
-    }
-  } catch (error) {
-    console.error('Erreur lors de l\'ajout d\'un utilisateur:', error);
-    res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'utilisateur!' });
-  }
-}
 
     async function deleteUser(req, res) {
         try {
