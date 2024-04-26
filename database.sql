@@ -410,8 +410,7 @@ CREATE TABLE `membres` (
   `id_membre` int unsigned NOT NULL AUTO_INCREMENT,
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) NOT NULL,
-  `age` tinyint unsigned NOT NULL,
-  `sexe` enum('M','F') NOT NULL,
+  `sexe` enum('Homme','Femme') NOT NULL,
   `date_naissance` date NOT NULL,
   `date_inscription` date NOT NULL,
   `email` varchar(50) NOT NULL,
@@ -424,7 +423,7 @@ CREATE TABLE `membres` (
   `supprime` tinyint NOT NULL,
   PRIMARY KEY (`id_membre`),
   UNIQUE KEY `id_membre_UNIQUE` (`id_membre`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -433,7 +432,7 @@ CREATE TABLE `membres` (
 
 LOCK TABLES `membres` WRITE;
 /*!40000 ALTER TABLE `membres` DISABLE KEYS */;
-INSERT INTO `membres` VALUES (1,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,1),(2,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,0),(3,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,1),(4,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,0),(5,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,0),(6,'boukakiou','wassim',19,'M','2014-12-30','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,1),(7,'boukakiou','mohammed',19,'M','2000-03-05','2015-05-03','boukarayan@gmail.com','jhuhixxdf','0789634587','ab','/',85,179,0);
+INSERT INTO `membres` VALUES (1,'SOUALAH MOHAMMED','Zakaria','Homme','2005-09-18','2024-03-11','zakaria@gmail.com','a','0745231208','O+','/',89,182,0),(8,'SOUALAH MOHAMMED','Anis','Homme','2009-09-18','2024-05-11','zakaria@gmail.com','a','0745231208','O-','/',89,182,0),(9,'ADRIANE','Khaled','Femme','2000-09-18','2024-03-11','zakaria@gmail.com','a','0745231208','O+','/',89,182,0),(10,'SOUALAH MOHAMMED','Rayan','Homme','2003-09-18','2024-03-11','zakaria@gmail.com','a','0745231208','O+','/',89,182,0),(11,'ADRIANE','Aymen','Femme','2005-09-18','2024-03-11','zakaria@gmail.com','a','0745231208','O+','/',89,182,0),(12,'ADRIANE','Zayd','Femme','2007-09-18','2024-03-11','zakaria@gmail.com','a','0745231208','O+','/',89,182,0);
 /*!40000 ALTER TABLE `membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -583,4 +582,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-25 20:07:59
+-- Dump completed on 2024-04-26 15:30:59

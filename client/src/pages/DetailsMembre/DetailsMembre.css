@@ -1,0 +1,13 @@
+.details-membre{
+    display: grid;
+    grid-template-columns: 48% 48%;
+    background: var(--color-primary);
+    margin: 0 3%;
+    height: 80dvh;
+    overflow-y: scroll;
+}
+
+.info-personnelles{
+    background: var(--color-light);  
+    height: 50%;
+}

@@ -9,6 +9,7 @@ import Authentification from './pages/Authentification/Authentification';
 import Membres from './pages/Membres/Membres';
 import AjouterMembre from './pages/AjouterMembre/AjouterMembre';
 import ModifierMembre from './pages/ModifierMembre/ModifierMembre';
+import DetailsMembre from './pages/DetailsMembre/DetailsMembre';
 
 import Salles from './pages/Salles/Salles';
 import AjouterSalle from './pages/AjouterSalle/AjouterSalle';
@@ -41,6 +42,7 @@ function App() {
             <Route path='/membres' element={<Membres/>}></Route>
             <Route path='/membres/ajouter' element={<AjouterMembre/>}></Route>
             <Route path='/membres/modifier' element={<ModifierMembre/>}></Route>
+            <Route path='/membres/details' element={<DetailsMembre/>}></Route>
 
             <Route path='/planning' element={<Planning/>}></Route>
             <Route path='/planning/ajouter' element={<AjouterCreneaux/>}></Route>
