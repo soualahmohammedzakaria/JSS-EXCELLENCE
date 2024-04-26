@@ -1,6 +1,6 @@
 const coachModel = require('../models/coachModel');
 //const utils = require('../utils');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 async function addCoach(req, res) {
     try {
@@ -9,16 +9,9 @@ async function addCoach(req, res) {
         const coach = await coachModel.getCoachByName(nom,prenom);
         if (coach) {
         res.json({ success: false, message: 'Nom du coach déjà utilisé' });
-        } else {         
-        // Conversion de la date de naissance en objet Date
-        const dateNaissanceObj = new Date(dateNaissance);
-        //Formatage de la date au format 'YYYY-MM-DD'
-        const dateNaissanceFormatted = moment(dateNaissanceObj, 'DD/MM/YYYY').format('YYYY-MM-DD');
-
-         
-        const coachData = {nom, prenom, email,dateNaissanceFormatted, photo, telephone, sexe }
+        } else {     
+        const coachData = {nom, prenom, email,dateNaissance, photo, telephone, sexe }
         await coachModel.addCoach(coachData); 
-
         // Retourner la réussite de l'ajout du coach
         res.json({ success: true, message: 'Coach ajouté avec succès'});
      }
@@ -43,7 +36,7 @@ async function deleteCoach(req, res) {
     try {
        const coachs = await coachModel.getAllCoachs();
        coachs.forEach(coach => {
-        coach.date_naissance = new Date(coach.date_naissance).toLocaleDateString();
+        coach.date_naissance = moment(coach.date_naissance).format('YYYY-MM-DD');
        });
        res.status(200).json({ success: true, coachs });
     } catch (error) {
@@ -60,15 +53,7 @@ async function deleteCoach(req, res) {
       const coachExists = await coachModel.checkCoach(newCoachData.nom, newCoachData.prenom, coachId);
       if (coachExists) {
         return res.status(400).json({ success: false, message: 'Le nouveau nom du coach existe déjà pour un autre coach' });
-      }
-  
-      // Conversion de la date de naissance en objet Date
-      const dateNaissanceObj = new Date(newCoachData.date_naissance);
-      //Formatage de la date au format 'YYYY-MM-DD'
-      const dateNaissanceFormatted = moment(dateNaissanceObj, 'DD/MM/YYYY').format('YYYY-MM-DD');
-  
-      newCoachData.date_naissance = dateNaissanceFormatted;
-  
+      }  
       await coachModel.updateCoach(coachId, newCoachData);
       res.json({ success: true, message: 'Coach modifié avec succès' });
     } catch (error) {

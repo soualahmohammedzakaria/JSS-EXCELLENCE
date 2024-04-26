@@ -49,7 +49,7 @@ async function updateEquipment(req, res) {
         res.json({ success: true, message: 'Equipement modifié avec succès' });
       } catch (error) {
         console.error('Erreur lors de la modification de l\'equipement :', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de la modification de l\'equipement' });
+        res.json({ success: false, message: 'Erreur lors de la modification de l\'equipement' });
       }
 }
 

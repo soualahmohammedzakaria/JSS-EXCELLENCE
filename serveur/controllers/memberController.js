@@ -1,6 +1,5 @@
 const memberModel = require('../models/memberModel');
-const moment = require('moment');
-
+const moment = require('moment-timezone');
 
 // il reste des choses à faire 
 async function addMember(req, res){
@@ -11,16 +10,6 @@ async function addMember(req, res){
       if (member) {
       res.json({ success: false, message: 'Nom du membre déjà utilisé' });
       } else {
-      const dateNaissanceObjN = new Date(newMember.date_naissance);
-      //Formatage de la date au format 'YYYY-MM-DD'
-      const dateNaissanceFormattedN = moment(dateNaissanceObjN, 'DD/MM/YYYY').format('YYYY-MM-DD');
-      newMember.date_naissance=dateNaissanceFormattedN;
-      
-      const dateNaissanceObjI = new Date(newMember.date_inscription);
-      //Formatage de la date au format 'YYYY-MM-DD'
-      const dateNaissanceFormattedI = moment(dateNaissanceObjI, 'DD/MM/YYYY').format('YYYY-MM-DD');
-      newMember.date_inscription=dateNaissanceFormattedI;
-      
       const IdMember = await memberModel.addMember(newMember);
 
       // Assignation du membre aux groupes
@@ -52,8 +41,8 @@ async function deleteMember(req, res) {
     try {
       const members = await memberModel.getAllMembers(); 
       members.forEach(member => {
-      member.date_naissance = new Date(member.date_naissance).toLocaleDateString();
-      member.date_inscription = new Date(member.date_inscription).toLocaleDateString();
+      member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
+      member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
        });
       res.json({ success: true, members });
     } catch (error) {
@@ -69,28 +58,13 @@ async function deleteMember(req, res) {
       // on verifie si le nouveau nom du membre existe déjà pour d'autres membres
       const memberExists = await memberModel.checkMember(newMemberData.nom, newMemberData.prenom, memberId);
       if (memberExists) {
-        return res.status(400).json({ success: false, message: 'Le nouveau nom du membre existe déjà pour un autre member' });
+        return res.json({ success: false, message: 'Le nouveau nom du membre existe déjà pour un autre member' });
       }
-  
-      // Conversion de la date de naissance en objet Date
-      const dateNaissanceObj = new Date(newMemberData.date_naissance);
-      //Formatage de la date au format 'YYYY-MM-DD'
-      const dateNaissanceFormatted = moment(dateNaissanceObj, 'DD/MM/YYYY').format('YYYY-MM-DD');
-  
-      newMemberData.date_naissance = dateNaissanceFormatted;
-
-      // Conversion de la date d inscription en objet Date
-      const dateInscriptionObj = new Date(newMemberData.date_inscription);
-      //Formatage de la date au format 'YYYY-MM-DD'
-      const dateInscriptionFormatted = moment(dateInscriptionObj, 'DD/MM/YYYY').format('YYYY-MM-DD');
-  
-      newMemberData.date_inscription = dateInscriptionFormatted;
-  
       await memberModel.updateMember(memberId, newMemberData);
       res.json({ success: true, message: 'membre modifié avec succès' });
     } catch (error) {
       console.error('Erreur lors de la modification du membre :', error);
-      res.status(500).json({ success: false, message: 'Erreur lors de la modification du membre' });
+      res.json({ success: false, message: 'Erreur lors de la modification du membre' });
     }
   }
 
@@ -107,7 +81,7 @@ async function deleteMember(req, res) {
       }
     } catch (error) {
       console.error('Erreur lors de l\'assignation du membre aux groupes :', error);
-      res.status(500).json({ success: false, message: 'Erreur lors de l\'assignation du membre aux groupes' });
+      res.json({ success: false, message: 'Erreur lors de l\'assignation du membre aux groupes' });
     }
   }
   
@@ -120,7 +94,7 @@ async function deleteMember(req, res) {
       res.json({ success: true, message: 'Membre retiré du groupe avec succès' });
     } catch (error) {
       console.error('Erreur lors de la suppression du membre du groupe :', error);
-      res.status(500).json({ success: false, message: 'Erreur lors de la suppression du membre du groupe' });
+      res.json({ success: false, message: 'Erreur lors de la suppression du membre du groupe' });
     }
   }
   

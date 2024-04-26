@@ -10,7 +10,7 @@ passwordSchema
 
 async function addUser(req, res) {
     try {
-        const {nom, prenom, username, password, role } = req.body;
+        const {nom, prenom, username, password, role, photo } = req.body;
         // Vérifier si le nom d'utilisateur a au moins 4 caractères et contient au moins une lettre
         if (username.length < 4 || !/[a-zA-Z]/.test(username)) {
           return res.json({ success: false, message: 'Le nom d\'utilisateur doit avoir au moins 4 caractères et contenir au moins une lettre.' });
@@ -23,7 +23,7 @@ async function addUser(req, res) {
             if (!passwordSchema.validate(password)) {
               return res.json({ success: false, message: 'Essayez un mot de passe plus fort. Votre mot de passe doit être composé d\'au moins 8 caractères, avec des lettres et des chiffres, sans espaces.'});
             }
-        await userModel.addUser(nom, prenom, username, password, role);
+        await userModel.addUser(nom, prenom, username, password, role, photo);
         res.json({ success: true, message: 'Utilisateur ajouté avec success!' });
         }
     } catch (error) {

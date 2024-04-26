@@ -15,7 +15,7 @@ function getCoachByName(nom, prenom) {
  function addCoach(coachData) {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO coachs (nom, prenom, email, date_naissance, photo, telephone, sexe) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        mydb.query(query, [coachData.nom,coachData.prenom,coachData.email,coachData.dateNaissanceFormatted,coachData.photo,coachData.telephone,coachData.sexe], (error, results) => {
+        mydb.query(query, [coachData.nom,coachData.prenom,coachData.email,coachData.dateNaissance,coachData.photo,coachData.telephone,coachData.sexe], (error, results) => {
             if (error) {
                 reject(error);
             } else {
