@@ -399,7 +399,7 @@ main .header{
 }
 
 .modal-header{
-  align-items: center;
+  text-align: center;
   margin-bottom: 0.5rem;
 }
 
@@ -407,21 +407,36 @@ main .header{
   word-wrap: break-word;
 }
 
+.filters-body{
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
 .filter-options{
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  padding: 0 1rem;
+  padding: 0.5rem 2rem;
   gap: 1rem;
   font-size: 1.3rem;
 }
 
-.filter-options .filter-option input, .filter-options .filter-option select{
+.filter-options .filter-option{
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-options .filter-option input, .filter-options .filter-option select{
   color: var(--color-dark);
   background: var(--color-light);
   border-radius: var(--border-radius-1);
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1rem;
+  min-width: 60%;
+  text-align: center;
   outline: none;
   font-family: "Poppins", sans-serif;
 }

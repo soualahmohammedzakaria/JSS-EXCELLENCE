@@ -106,21 +106,21 @@ const Admins = () => {
                 }
                 return 0;
             });
-        } else if (selectedPrenom !== "Pas de filtre") {
-            filtered.sort((a, b) => {
-                if (selectedPrenom === "Ascendant") {
-                    return a.prenom.localeCompare(b.prenom);
-                } else if (selectedPrenom === "Descendant") {
-                    return b.prenom.localeCompare(a.prenom);
-                }
-                return 0;
-            });
         } else if (selectedUsername !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedUsername === "Ascendant") {
                     return a.username.localeCompare(b.username);
                 } else if (selectedUsername === "Descendant") {
                     return b.username.localeCompare(a.username);
+                }
+                return 0;
+            });
+        } else if (selectedPrenom !== "Pas de filtre") {
+            filtered.sort((a, b) => {
+                if (selectedPrenom === "Ascendant") {
+                    return a.prenom.localeCompare(b.prenom);
+                } else if (selectedPrenom === "Descendant") {
+                    return b.prenom.localeCompare(a.prenom);
                 }
                 return 0;
             });
@@ -224,7 +224,7 @@ const Admins = () => {
                             </div>
                             <div className="filter-options">
                                 <div className="filter-option">
-                                    <label>Nom: </label>
+                                    <label>Nom</label>
                                     <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Ascendant">Ascendant</option>
@@ -232,15 +232,15 @@ const Admins = () => {
                                     </select>
                                 </div>
                                 <div className="filter-option">
-                                    <label>Prénom: </label>
-                                    <select disabled={selectedNom !== "Pas de filtre" && selectedUsername === "Pas de filtre" ? true : false} name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
+                                    <label>Prénom</label>
+                                    <select disabled={selectedNom !== "Pas de filtre" || selectedUsername !== "Pas de filtre" ? true : false} name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Ascendant">Ascendant</option>
                                         <option value="Descendant">Descendant</option>
                                     </select>
                                 </div>
                                 <div className="filter-option">
-                                    <label>Nom d'utilisateur: </label>
+                                    <label>Nom d'utilisateur</label>
                                     <select disabled={selectedNom !== "Pas de filtre" ? true : false} name="username" id="username" value={selectedUsername} onChange={(e) => setSelectedUsername(e.target.value)}>
                                         <option value="Pas de filtre">Pas de filtre</option>
                                         <option value="Ascendant">Ascendant</option>
@@ -248,7 +248,7 @@ const Admins = () => {
                                     </select>
                                 </div>
                                 <div className="filter-option">
-                                    <label>Rôle: </label>
+                                    <label>Rôle</label>
                                     <select name="role" id="role" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
                                         <option value="Tous">Tous</option>
                                         <option value="Administrateur">Administrateur</option>

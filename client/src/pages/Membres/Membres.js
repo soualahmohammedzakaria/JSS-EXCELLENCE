@@ -21,6 +21,8 @@ const Membres = () => {
     const [selectedEtat, setSelectedEtat] = useState("Tous");
     const [selectedSexe, setSelectedSexe] = useState("Tous");
     const [selectedGroupeSanguin, setSelectedGroupeSanguin] = useState("Tous");
+    const [selectedSport, setSelectedSport] = useState("Tous");
+    const [selectedGroupe, setSelectedGroupe] = useState("Tous");
 
     useEffect(() => {
         fetchMembres(); 
@@ -87,25 +89,81 @@ const Membres = () => {
         setShowFilterModal(true);
     };
 
-    const filterMembres = () => {
-        /*let filtered = [...membres];
-        
-        filtered = filtered.filter(admin => {
-            const fullName = `${admin.nom} ${admin.prenom}`.toLowerCase();
-            const username = admin.username.toLowerCase();
-            return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
-        });
-
-        if (selectedRole !== "Pas de filtre") {
-            filtered = filtered.filter(admin => admin.role === selectedRole);
+    const calculerAge = (dateNaiss) => {
+        const today = new Date();
+        const anNaiss = dateNaiss.getFullYear();
+        const moisNaiss = dateNaiss.getMonth();
+        const jourNaiss = dateNaiss.getDate();
+    
+        const todayYear = today.getFullYear();
+        const todayMonth = today.getMonth();
+        const todayDay = today.getDate();
+    
+        let age = todayYear - anNaiss;
+    
+        if (todayMonth < moisNaiss || (todayMonth === moisNaiss && todayDay < jourNaiss)) {
+            age--;
         }
+    
+        return age;
+    };
+
+    const filterMembres = () => {
+        let filtered = [...membres];
+    
+        filtered = filtered.filter(membre => {
+            const fullName = `${membre.nom} ${membre.prenom}`.toLowerCase();
+            const email = membre.email.toLowerCase();
+            return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
+        });
+    
+        if (selectedSexe !== "Tous") {
+            filtered = filtered.filter(membre => membre.sexe === selectedSexe);
+        }
+    
+        if (selectedGroupeSanguin !== "Tous") {
+            filtered = filtered.filter(membre => membre.groupe_sanguin === selectedGroupeSanguin);
+        }
+    
+        if (selectedEtat !== "Tous") {
+            if (selectedEtat === "Payé") {
+                filtered = filtered.filter(membre => new Date(membre.date_inscription) > new Date());
+            } else if (selectedEtat === "Non payé") {
+                filtered = filtered.filter(membre => new Date(membre.date_inscription) < new Date());
+            }
+        }
+    
+        if (selectedCategorie !== "Tous") {
+            filtered = filtered.filter(membre => {
+                const dateNaiss = new Date(membre.date_naissance);
+                const age = calculerAge(dateNaiss);
         
+                if (selectedCategorie === "Enfants") {
+                    return age < 13;
+                } else if (selectedCategorie === "Adolescents") {
+                    return age >= 13 && age < 19;
+                } else if (selectedCategorie === "Adultes") {
+                    return age >= 19;
+                }
+                return true;
+            });
+        }
+    
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
                     return a.nom.localeCompare(b.nom);
                 } else if (selectedNom === "Descendant") {
                     return b.nom.localeCompare(a.nom);
+                }
+                return 0;
+            });
+        } else if (selectedEmail !== "Pas de filtre") {
+            filtered.sort((a, b) => {
+                if (selectedEmail === "Ascendant") {
+                    return a.email.localeCompare(b.email);
+                } else if (selectedEmail === "Descendant") {
+                    return b.email.localeCompare(a.email);
                 }
                 return 0;
             });
@@ -118,19 +176,10 @@ const Membres = () => {
                 }
                 return 0;
             });
-        } else if (selectedUsername !== "Pas de filtre") {
-            filtered.sort((a, b) => {
-                if (selectedUsername === "Ascendant") {
-                    return a.username.localeCompare(b.username);
-                } else if (selectedUsername === "Descendant") {
-                    return b.username.localeCompare(a.username);
-                }
-                return 0;
-            });
         }
-        
-        setFilteredAdmins(filtered);*/
-    };
+    
+        setFilteredMembres(filtered);
+    };    
 
     const handleFilter = () => {
         setShowFilterModal(false);
@@ -180,10 +229,10 @@ const Membres = () => {
                                             <th>{membre.date_naissance}</th>
                                             <th>{membre.sexe}</th>
                                             <th>{membre.date_inscription}</th>
-                                            <th><span className={new Date(membre.dateAbn) > new Date() ? "success" : "danger"}>{new Date(membre.dateAbn) > new Date() ? "Payé" : "Non payé"}</span></th>
+                                            <th><span className={new Date(membre.date_inscription) > new Date() ? "success" : "danger"}>{new Date(membre.date_inscription) > new Date() ? "Payé" : "Non payé"}</span></th>
                                             <th>
                                                 <Link className="link"><span className="material-icons-outlined pointed">info</span></Link>
-                                                <Link className="link" to="./modifier" state={{id: membre.id_membre, nom: membre.nom, prenom: membre.prenom, email: membre.email, dateNais: membre.dateNais, sexe: membre.sexe, telephone: membre.telephone, age: membre.age, taille: membre.taille, poids: membre.poids, sang: membre.sang, maladies: membre.maladies, dateAbn: membre.dateAbn, montantPaye: membre.montantPaye, montantRestant: membre.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id: membre.id_membre, nom: membre.nom, prenom: membre.prenom, email: membre.email, dateNais: membre.dateNais, sexe: membre.sexe, telephone: membre.telephone, age: membre.age, taille: membre.taille, poids: membre.poids, sang: membre.sang, maladies: membre.maladies, date_inscription: membre.date_inscription, montantPaye: membre.montantPaye, montantRestant: membre.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleDeleteMembre(membre.id_membre)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>
@@ -228,40 +277,94 @@ const Membres = () => {
                             <div className="modal-header">
                                 <h1>Filtrer les résultats</h1>
                             </div>
-                            {/*<div className="filter-options">
-                                <div className="filter-option">
-                                    <label>Nom: </label>
-                                    <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
-                                        <option value="Pas de filtre">Pas de filtre</option>
-                                        <option value="Ascendant">Ascendant</option>
-                                        <option value="Descendant">Descendant</option>
-                                    </select>
+                            <div className="filters-body">
+                                <div className="filter-options">
+                                    <div className="filter-option">
+                                        <label>Nom</label>
+                                        <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
+                                            <option value="Pas de filtre">Pas de filtre</option>
+                                            <option value="Ascendant">Ascendant</option>
+                                            <option value="Descendant">Descendant</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Prénom</label>
+                                        <select disabled={selectedNom !== "Pas de filtre" || selectedEmail !== "Pas de filtre" ? true : false} name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
+                                            <option value="Pas de filtre">Pas de filtre</option>
+                                            <option value="Ascendant">Ascendant</option>
+                                            <option value="Descendant">Descendant</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Email</label>
+                                        <select disabled={selectedNom !== "Pas de filtre" ? true : false} name="email" id="email" value={selectedEmail} onChange={(e) => setSelectedEmail(e.target.value)}>
+                                            <option value="Pas de filtre">Pas de filtre</option>
+                                            <option value="Ascendant">Ascendant</option>
+                                            <option value="Descendant">Descendant</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Etat</label>
+                                        <select name="etat" id="etat" value={selectedEtat} onChange={(e) => setSelectedEtat(e.target.value)}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Payé">Payé</option>
+                                            <option value="Non payé">Non payé</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Age</label>
+                                        <select name="categorie" id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Enfants">Enfants</option>
+                                            <option value="Adolscents">Adolscents</option>
+                                            <option value="Adultes">Adultes</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div className="filter-option">
-                                    <label>Prénom: </label>
-                                    <select disabled={selectedNom !== "Pas de filtre" && selectedUsername === "Pas de filtre" ? true : false} name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
-                                        <option value="Pas de filtre">Pas de filtre</option>
-                                        <option value="Ascendant">Ascendant</option>
-                                        <option value="Descendant">Descendant</option>
-                                    </select>
+                                <div className="filter-options">
+                                    <div className="filter-option">
+                                        <label>Sexe</label>
+                                        <select name="sexe" id="sexe" value={selectedSexe} onChange={(e) => setSelectedSexe(e.target.value)}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Homme">Homme</option>
+                                            <option value="Femme">Femme</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Groupe sanguin</label>
+                                        <select name="groupesanguin" id="groupesanguin" value={selectedGroupeSanguin} onChange={(e) => setSelectedGroupeSanguin(e.target.value)}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="Autre">Autre</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Sport</label>
+                                        <select name="sport" id="sport" value={selectedSport} onChange={(e) => setSelectedSport(e.target.value)}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Football">Football</option>
+                                            <option value="Basketball">Basketball</option>
+                                            <option value="Handball">Handball</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Groupe</label>
+                                        <select name="groupe" id="groupe" value={selectedGroupe} onChange={(e) => setSelectedGroupe(e.target.value)}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Groupe 1">Groupe 1</option>
+                                            <option value="Groupe 2">Groupe 2</option>
+                                            <option value="Groupe 3">Groupe 3</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div className="filter-option">
-                                    <label>Nom d'utilisateur: </label>
-                                    <select disabled={selectedNom !== "Pas de filtre" ? true : false} name="username" id="username" value={selectedUsername} onChange={(e) => setSelectedUsername(e.target.value)}>
-                                        <option value="Pas de filtre">Pas de filtre</option>
-                                        <option value="Ascendant">Ascendant</option>
-                                        <option value="Descendant">Descendant</option>
-                                    </select>
-                                </div>
-                                <div className="filter-option">
-                                    <label>Etat: </label>
-                                    <select name="etat" id="role" value={selectedEtat} onChange={(e) => setSelectedRole(e.target.value)}>
-                                        <option value="Tous">Tous</option>
-                                        <option value="Administrateur">Payé</option>
-                                        <option value="Gestionnaire">Non payé</option>
-                                    </select>
-                                </div>
-                            </div>*/}
+                            </div>
                         </div>
                         <div className="modal-buttons">
                             <button onClick={handleFilter} className="btn pointed"><span className="link">Filtrer</span></button>
