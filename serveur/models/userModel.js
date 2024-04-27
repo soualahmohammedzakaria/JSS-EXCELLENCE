@@ -27,13 +27,13 @@ async function comparePassword(plainPassword, hashedPassword) {
     return plainpasswordHashed === hashedPassword;
 }
 
-function addUser(nom, prenom, username, password, role) {
+function addUser(nom, prenom, username, password, role, photo) {
   return new Promise((resolve, reject) => {
         const hash = crypto.createHash('md5');
         hash.update(password);
         password = hash.digest('hex');
-        const query = 'INSERT INTO administrateurs (nom, prenom, username, password, role) VALUES (?, ?, ?, ?, ?)';
-        mydb.query(query, [nom, prenom, username, password, role], (error, results) => {
+        const query = 'INSERT INTO administrateurs (nom, prenom, username, password, role, photo) VALUES (?, ?, ?, ?, ?, ?)';
+        mydb.query(query, [nom, prenom, username, password, role, photo], (error, results) => {
           if (error) {
             reject(error); 
           } else {
@@ -59,7 +59,7 @@ function deleteUserById(id) {
 
 function getAllUsers() {
   return new Promise((resolve, reject) => {
-    const query = 'SELECT id_admin, nom, prenom, username, role FROM administrateurs';
+    const query = 'SELECT id_admin, nom, prenom, username, role, photo FROM administrateurs';
     mydb.query(query, (error, results) => {
       if (error) {
         reject(error);

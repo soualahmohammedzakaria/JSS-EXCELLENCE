@@ -1,13 +1,12 @@
 const express = require('express');
-const salleController = require('../controllers/salleController');
 const router = express.Router();
+const salleController = require('../controllers/salleController');
 
-
-//Router pour manipuler les salles:
-/*router.post('/abonnement', salleController.addSalle);
-router.delete('/abonnement', salleController.deleteSalle);
-router.get('/abonnement', salleController.getAllSalles);
-router.patch('/abonnement', salleController.modifySalle);*/
+ 
+router.post('/addSalle', salleController.addSalle);
+router.get('/getAllSalles', salleController.getAllSalles); 
+router.put('/updateSalle/:id', salleController.updateSalle); 
+router.delete('/deleteSalle/:id', salleController.deleteSalle); 
 router.get('/getNomIdSalles', salleController.getNomIdSalles);
 
 module.exports = router;

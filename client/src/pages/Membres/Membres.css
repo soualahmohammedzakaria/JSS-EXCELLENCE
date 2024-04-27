@@ -1,0 +1,19 @@
+.btn-reinit{
+    background: var(--color-primary);
+    border-radius: var(--border-radius-1);
+    text-align: center;
+}
+    
+.btn-reinit:hover{
+    background: var(--color-blue);
+}
+    
+.btn-reinit .link{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    padding: 0.5rem 0;
+}

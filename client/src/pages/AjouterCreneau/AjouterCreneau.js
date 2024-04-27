@@ -97,12 +97,12 @@ const AjouterCreneau = () => {
                                 <div className="add-input">
                                     <span className="material-icons-outlined">timer</span>
                                     <label>Début</label>
-                                    <input type="datetime-local" name="date_debut" placeholder="Date de début" value={formData.date_debut} onChange={handleChange} required/>
+                                    <input type="datetime-local" name="date_debut" value={formData.date_debut} onChange={handleChange} required/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">timer_off</span>
                                     <label>Fin</label>
-                                    <input type="datetime-local" name="date_fin" placeholder="Date de fin" value={formData.date_fin} onChange={handleChange} required/>
+                                    <input type="datetime-local" name="date_fin" value={formData.date_fin} onChange={handleChange} required/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">drag_indicator</span>

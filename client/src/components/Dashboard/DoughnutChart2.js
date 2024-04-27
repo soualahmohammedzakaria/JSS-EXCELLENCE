@@ -4,7 +4,7 @@ import 'chart.js/auto';
 
 const nbMembresAge = [
     {"age": "Enfants", "nb": 44},
-    {"age": "Adolescent", "nb": 30},
+    {"age": "Adolescents", "nb": 30},
     {"age": "Adultes", "nb": 24}
 ];
 

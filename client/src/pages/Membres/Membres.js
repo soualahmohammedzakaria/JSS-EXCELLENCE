@@ -6,6 +6,7 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from 'axios';
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import PhotoStandard from '../../assets/images/photoprofilestandard.png';
+import { formatDate, calculerAge } from "../../utils/datesUtils";
 
 const Membres = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -71,12 +72,10 @@ const Membres = () => {
     const handlePageChange = (ind) => {
         if (ind === 1) {
             if (currInd > 1) setCurrInd(ind);
+        } else if (ind === nbPages) {
+            if (currInd < nbPages) setCurrInd(ind);
         } else {
-            if (ind === nbPages) {
-                if (currInd < nbPages) setCurrInd(ind);
-            } else {
-                setCurrInd(ind);
-            }
+            setCurrInd(ind);
         }
     }
 
@@ -90,23 +89,16 @@ const Membres = () => {
         setShowFilterModal(true);
     };
 
-    const calculerAge = (dateNaiss) => {
-        const today = new Date();
-        const anNaiss = dateNaiss.getFullYear();
-        const moisNaiss = dateNaiss.getMonth();
-        const jourNaiss = dateNaiss.getDate();
-    
-        const todayYear = today.getFullYear();
-        const todayMonth = today.getMonth();
-        const todayDay = today.getDate();
-    
-        let age = todayYear - anNaiss;
-    
-        if (todayMonth < moisNaiss || (todayMonth === moisNaiss && todayDay < jourNaiss)) {
-            age--;
-        }
-    
-        return age;
+    const HandleClearFilters = () => {
+        setSelectedNom("Pas de filtre");
+        setSelectedPrenom("Pas de filtre");
+        setSelectedEmail("Pas de filtre");
+        setSelectedCategorie("Tous");
+        setSelectedEtat("Tous");
+        setSelectedSexe("Tous");
+        setSelectedGroupeSanguin("Tous");
+        setSelectedSport("Tous");
+        setSelectedGroupe("Tous");
     };
 
     const filterMembres = () => {
@@ -138,11 +130,11 @@ const Membres = () => {
             filtered = filtered.filter(membre => {
                 const dateNaiss = new Date(membre.date_naissance);
                 const age = calculerAge(dateNaiss);
-        
+                console.log(membre, age);
                 if (selectedCategorie === "Enfants") {
                     return age < 13;
-                } else if (selectedCategorie === "Adolescents") {
-                    return age >= 13 && age < 19;
+                } else if (selectedCategorie === "Adolescent") {
+                    return (age >= 13 && age < 19);
                 } else if (selectedCategorie === "Adultes") {
                     return age >= 19;
                 }
@@ -227,9 +219,9 @@ const Membres = () => {
                                             <th>{membre.nom} {membre.prenom}</th>
                                             <th>{membre.telephone}</th>
                                             <th>{membre.email}</th>
-                                            <th>{membre.date_naissance}</th>
+                                            <th>{formatDate(membre.date_naissance)}</th>
                                             <th>{membre.sexe}</th>
-                                            <th>{membre.date_inscription}</th>
+                                            <th>{formatDate(membre.date_inscription)}</th>
                                             <th><span className={new Date(membre.date_inscription) > new Date() ? "success" : "danger"}>{new Date(membre.date_inscription) > new Date() ? "Payé" : "Non payé"}</span></th>
                                             <th>
                                                 <Link className="link" to="./details"><span className="material-icons-outlined pointed">info</span></Link>
@@ -317,7 +309,7 @@ const Membres = () => {
                                         <select name="categorie" id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)}>
                                             <option value="Tous">Tous</option>
                                             <option value="Enfants">Enfants</option>
-                                            <option value="Adolscents">Adolscents</option>
+                                            <option value="Adolescent">Adolescent</option>
                                             <option value="Adultes">Adultes</option>
                                         </select>
                                     </div>
@@ -364,6 +356,9 @@ const Membres = () => {
                                             <option value="Groupe 3">Groupe 3</option>
                                         </select>
                                     </div>
+                                    <button onClick={HandleClearFilters} className="btn-reinit pointed">
+                                        <span className="link">Réinitialiser</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>

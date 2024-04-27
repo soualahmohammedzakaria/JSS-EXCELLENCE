@@ -1,4 +1,5 @@
 const expenseModel = require('../models/expenseModel');
+const moment = require('moment-timezone');
 
   async function addExpense(req, res) {
     try {
@@ -40,7 +41,7 @@ const expenseModel = require('../models/expenseModel');
     try {
        const depenses = await expenseModel.getAllExpenses();
        depenses.forEach(depense => {
-        depense.date = new Date(depense.date).toLocaleDateString();
+         depense.date = moment(depense.date).format('YYYY-MM-DD');
        });
        res.json({ success: true, depenses });
     } catch (error) {

@@ -10,6 +10,8 @@ const planningRoutes = require('./routes/planningRoutes');
 const achievementRoutes = require('./routes/achievementRoutes');
 const salleRoutes = require('./routes/salleRoutes');
 const groupeRoutes = require('./routes/groupeRoutes');
+const equipmentRoutes = require('./routes/equipmentRoutes');
+const sportRoutes = require('./routes/sportRoutes');
  
 const app=express();
 app.use(cors());
@@ -29,6 +31,8 @@ app.use('/planning', planningRoutes);
 app.use('/achievement', achievementRoutes);
 app.use('/salle', salleRoutes);
 app.use('/groupe', groupeRoutes);
+app.use('/equipment', equipmentRoutes);
+app.use('/sport', sportRoutes);
 
 
 

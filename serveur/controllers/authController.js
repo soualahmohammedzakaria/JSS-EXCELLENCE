@@ -1,4 +1,3 @@
-
 const userModel = require('../models/userModel');
 
 async function loginUser(req, res) {
@@ -33,4 +32,3 @@ async function loginUser(req, res) {
  
 
 module.exports = { loginUser };
-                               

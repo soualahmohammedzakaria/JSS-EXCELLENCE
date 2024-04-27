@@ -65,12 +65,10 @@ const Admins = () => {
     const handlePageChange = (ind) => {
         if (ind === 1) {
             if (currInd > 1) setCurrInd(ind);
+        } else if (ind === nbPages) {
+            if (currInd < nbPages) setCurrInd(ind);
         } else {
-            if (ind === nbPages) {
-                if (currInd < nbPages) setCurrInd(ind);
-            } else {
-                setCurrInd(ind);
-            }
+            setCurrInd(ind);
         }
     }
 
@@ -82,6 +80,13 @@ const Admins = () => {
 
     const handleFilterModal = () => {
         setShowFilterModal(true);
+    };
+
+    const HandleClearFilters = () => {
+        setSelectedNom("Pas de filtre");
+        setSelectedPrenom("Pas de filtre");
+        setSelectedUsername("Pas de filtre");
+        setSelectedRole("Pas de filtre");
     };
 
     const filterAdmins = () => {
@@ -255,6 +260,9 @@ const Admins = () => {
                                         <option value="Gestionnaire">Gestionnaire</option>
                                     </select>
                                 </div>
+                                <button onClick={HandleClearFilters} className="btn-reinit pointed">
+                                    <span className="link">Réinitialiser les filtres</span>
+                                </button>
                             </div>
                         </div>
                         <div className="modal-buttons">

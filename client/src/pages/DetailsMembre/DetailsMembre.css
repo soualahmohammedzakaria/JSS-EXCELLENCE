@@ -1,13 +1,118 @@
 .details-membre{
-    display: grid;
-    grid-template-columns: 48% 48%;
-    background: var(--color-primary);
-    margin: 0 3%;
-    height: 80dvh;
+    margin: 0 2%;
+    padding: 1% 0;
     overflow-y: scroll;
+    border-radius: var(--card-border-radius);
 }
 
-.info-personnelles{
-    background: var(--color-light);  
-    height: 50%;
+.infos-bouttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2%;
+
+}
+
+.membre-btn{
+    background: var(--color-primary);
+    border-radius: var(--border-radius-1);
+    text-align: center;
+    min-width: 80%;
+}
+    
+.membre-btn:hover{
+    background: var(--color-blue);
+}
+    
+.membre-btn .link{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    padding: 0.5rem 1rem;
+}
+
+.infos-membre{
+    display: grid;
+    grid-template-columns: 18% 40% 40%;
+    gap: 1%;
+}
+
+.infos-membre img{
+    width: 70%;
+    justify-self: center;
+    border-radius: 50%;
+}
+
+.infos-groupe{
+    background: var(--color-white); 
+    padding: 2% 5%;
+    border-radius: var(--card-border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2.5%;
+}
+
+.infos-groupe h1{
+    margin-bottom: 2%;
+}
+
+.info-membre{
+    display: flex;
+    flex-direction: row;
+    gap: 3%;
+    align-items: center;
+}
+.info-membre-val{
+    font-size: 1.2rem;
+    margin-top: 0.5%;
+}
+
+.info-membre .btn{
+    margin-top: 2%;
+}
+
+.infos-contact{
+    background: var(--color-white); 
+    padding: 2% 5%;
+    border-radius: var(--card-border-radius);
+}
+
+.infos-bouttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.infos-assiduite{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2%;
+}
+
+.membre-groupes {
+    margin-top: 1%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1%;
+}
+
+.membre-groupe {
+    flex: 0 0 auto;
+    background: var(--color-primary); 
+    color: var(--color-white);
+    padding: 1rem 2rem;
+    border-radius: var(--card-border-radius);
+    font-size: 1.2rem;
+    margin-bottom: 1%;
+}
+
+.membre-groupe:hover {
+    background: var(--color-blue);
 }

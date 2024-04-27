@@ -70,7 +70,7 @@ function addCreneau(id_groupe, numero_salle,titre, date_debut, date_fin, type, d
   function getAllCreneaux() {
     return new Promise((resolve, reject) => {
       const query = `
-      SELECT c.*, g.nom_groupe, s.nom_salle
+      SELECT c.*, g.nom_groupe , s.nom_salle 
       FROM creneaux c
       LEFT JOIN groupes g ON c.id_groupe = g.id_groupe
       LEFT JOIN salles s ON c.numero_salle = s.numero_salle;          
