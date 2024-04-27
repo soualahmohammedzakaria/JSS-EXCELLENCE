@@ -9,7 +9,7 @@ const expenseRoutes = require('./routes/expenseRoutes');
 const planningRoutes = require('./routes/planningRoutes');
 const achievementRoutes = require('./routes/achievementRoutes');
 const salleRoutes = require('./routes/salleRoutes');
-const groupeRoutes = require('./routes/groupeRoutes');
+const groupRoutes = require('./routes/groupRoutes');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const sportRoutes = require('./routes/sportRoutes');
  
@@ -30,7 +30,7 @@ app.use('/expense', expenseRoutes);
 app.use('/planning', planningRoutes);
 app.use('/achievement', achievementRoutes);
 app.use('/salle', salleRoutes);
-app.use('/groupe', groupeRoutes);
+app.use('/group', groupRoutes);
 app.use('/equipment', equipmentRoutes);
 app.use('/sport', sportRoutes);
 

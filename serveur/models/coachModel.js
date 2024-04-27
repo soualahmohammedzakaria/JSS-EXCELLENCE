@@ -19,7 +19,7 @@ function getCoachByName(nom, prenom) {
             if (error) {
                 reject(error);
             } else {
-                resolve(results);
+                resolve(results.insertId);
             }
         });
     });
@@ -38,18 +38,62 @@ function deleteCoachById(id) {
     });
   }
 
+
   function getAllCoachs() {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM coachs';
+      const query =`
+      SELECT c.*, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
+      FROM coachs c
+      LEFT JOIN groupes_a_coachs gm ON c.id_coach = gm.id_coach
+      LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
+      GROUP BY c.id_coach
+      `;
       mydb.query(query, (error, results) => {
         if (error) {
-          reject(error);
+          reject(error); // Rejeter la promesse en cas d'erreur
         } else {
-          resolve(results);
+          // Formatter les résultats pour inclure les informations des groupes
+          const CoachsWithGroups = results.map(coach => {
+            return {
+              ...coach,
+              groupes: coach.groupes ? JSON.parse(coach.groupes) : []
+            };
+          });
+  
+          resolve(CoachsWithGroups); // Résoudre la promesse avec les membres formatés
+        }
+      });
+    });
+  };
+
+  function getCoachById(coachId) {
+    return new Promise((resolve, reject) => {
+      const query =`
+      SELECT c.*, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
+      FROM coachs c
+      LEFT JOIN groupes_a_coachs gm ON c.id_coach = gm.id_coach
+      LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
+      WHERE c.id_coach = ?
+      GROUP BY c.id_coach
+      `;
+      mydb.query(query, [coachId], (error, results) => {
+        if (error) {
+          reject(error); // Rejeter la promesse en cas d'erreur
+        } else {
+          if (results.length > 0) {
+            const coach = {
+              ...results[0],
+              groupes: results[0].groupes ? JSON.parse(results[0].groupes) : []
+            };
+            resolve(coach); // Résoudre la promesse avec le membre formaté
+          } else {
+            resolve(null); // Aucun membre trouvé avec cet ID
+          }
         }
       });
     });
   }
+  
 
   function checkCoach(nom, prenom, coachId) {
     return new Promise((resolve, reject) => {
@@ -78,6 +122,34 @@ function deleteCoachById(id) {
         });     
       });
   }
+
+  const assignCoachToGroups = async (coachId, groupIds) => {
+    return new Promise((resolve, reject) => {
+      const values = groupIds.map(groupId => [coachId, groupId]);
+      const query = ` INSERT INTO groupes_a_coachs (id_coach, id_groupe) VALUES ? `;
+      mydb.query(query, [values], (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  }
+
+
+  function deleteGroupCoach(coachId, groupId) {
+    return new Promise((resolve, reject) => {
+      const query = 'DELETE FROM groupes_a_coachs WHERE id_coach = ? AND id_groupe = ? ';
+      mydb.query(query, [coachId, groupId], (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  }
   
 
 module.exports = { 
@@ -85,6 +157,9 @@ module.exports = {
     addCoach,
     deleteCoachById,
     getAllCoachs,
+    getCoachById,
     checkCoach,
-    updateCoach
+    updateCoach,
+    assignCoachToGroups,
+    deleteGroupCoach
 };
