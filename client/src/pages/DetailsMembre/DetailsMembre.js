@@ -29,6 +29,9 @@ const DetailsMembre = () => {
                                     <Link to="/membres/modifier" className="link"><span className="material-icons-outlined">edit</span><span>Modifier profil</span></Link>
                                 </button>
                                 <button className="membre-btn pointed">
+                                    <Link to="/membres/details/absences" className="link"><span className="material-icons-outlined">cancel</span><span>Accomplissements</span></Link>
+                                </button>
+                                <button className="membre-btn pointed">
                                     <Link to="/membres/details/presences" className="link"><span className="material-icons-outlined">check_circle</span><span>Voir présences</span></Link>
                                 </button>
                                 <button className="membre-btn pointed">
