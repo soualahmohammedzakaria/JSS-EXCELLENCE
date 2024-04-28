@@ -4,22 +4,26 @@ const moment = require('moment-timezone');
 
 async function addCoach(req, res) {
     try {
-        const { nom, prenom, email, dateNaissance, photo, telephone, sexe } = req.body;
+        const { nom, prenom, email, dateNaissance, photo, telephone, sexe, groupIds } = req.body;
 
         const coach = await coachModel.getCoachByName(nom,prenom);
         if (coach) {
         res.json({ success: false, message: 'Nom du coach déjà utilisé' });
         } else {     
-        const coachData = {nom, prenom, email,dateNaissance, photo, telephone, sexe }
-        await coachModel.addCoach(coachData); 
-        // Retourner la réussite de l'ajout du coach
-        res.json({ success: true, message: 'Coach ajouté avec succès'});
-     }
+        const coachData = {nom, prenom, email,dateNaissance, photo, telephone, sexe, groupIds}; 
+        const IdCoach = await coachModel.addCoach(coachData);
+        // Assignation du coach aux groupes
+        if (coachData.groupIds && coachData.groupIds.length > 0) {
+          await coachModel.assignCoachToGroups(IdCoach, coachData.groupIds);
+         }
+        res.json({ success: true, message: 'coach ajouté avec succès' });
+        }
     } catch (error) {
         console.error('Erreur lors de l\'ajout d\'un coach :', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout d\'un coach' });
+        res.json({ success: false, message: 'Erreur lors de l\'ajout d\'un coach' });
     }
 }
+
 
 async function deleteCoach(req, res) {
     try {
@@ -38,9 +42,25 @@ async function deleteCoach(req, res) {
        coachs.forEach(coach => {
         coach.date_naissance = moment(coach.date_naissance).format('YYYY-MM-DD');
        });
-       res.status(200).json({ success: true, coachs });
+       res.json({ success: true, coachs });
     } catch (error) {
-       res.status(500).json({ success: false, message: 'Erreur lors de la récupération des coachs.', error: error.message });
+       res.json({ success: false, message: 'Erreur lors de la récupération des coachs.', error: error.message });
+    }
+  }
+
+  async function getCoach(req, res) {
+    try {
+      const CoachId = req.params.id;
+      const Coach = await coachModel.getCoachById(CoachId);
+      if (Coach) {
+        Coach.date_naissance = moment(Coach.date_naissance).format('YYYY-MM-DD');
+        res.json({ success: true, Coach });
+      } else {
+        res.json({ success: false, message: 'Coach non trouvé' });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération du coach :', error);
+      res.json({ success: false, message: 'Erreur lors de la récupération du coach' });
     }
   }
 
@@ -52,16 +72,44 @@ async function deleteCoach(req, res) {
       // on verifie si le nouveau nom du coach existe déjà pour d'autres coachs
       const coachExists = await coachModel.checkCoach(newCoachData.nom, newCoachData.prenom, coachId);
       if (coachExists) {
-        return res.status(400).json({ success: false, message: 'Le nouveau nom du coach existe déjà pour un autre coach' });
+        return res.json({ success: false, message: 'Le nouveau nom du coach existe déjà pour un autre coach' });
       }  
       await coachModel.updateCoach(coachId, newCoachData);
       res.json({ success: true, message: 'Coach modifié avec succès' });
     } catch (error) {
       console.error('Erreur lors de la modification du coach :', error);
-      res.status(500).json({ success: false, message: 'Erreur lors de la modification du coach' });
+      res.json({ success: false, message: 'Erreur lors de la modification du coach' });
     }
   }
   
+  async function assignCoachToGroups(req, res) {
+    try {
+      const coachId = req.params.id;
+      const  { groupIds }  = req.body;
+      if (groupIds && groupIds.length > 0) {
+        await coachModel.assignCoachToGroups(coachId, groupIds); 
+        res.json({ success: true, message: 'Coach assigné aux groupes avec succès' });
+      }      
+      else{
+        res.json({ success: false, message: 'Veuillez sélectionner au moins un groupe' });
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'assignation du coach aux groupes :', error);
+      res.json({ success: false, message: 'Erreur lors de l\'assignation du coach aux groupes' });
+    }
+  }
+  
+  async function deleteGroupCoach(req, res) {
+    try {
+      const coachId = req.params.id;
+      const {groupId} = req.body;
+      await coachModel.deleteGroupCoach(coachId, groupId);
+      res.json({ success: true, message: 'Coach retiré du groupe avec succès' });
+    } catch (error) {
+      console.error('Erreur lors de la suppression du coach du groupe :', error);
+      res.json({ success: false, message: 'Erreur lors de la suppression du coach du groupe' });
+    }
+  }
 
 
 
@@ -69,6 +117,9 @@ module.exports = {
     addCoach,
     deleteCoach,
     getAllCoachs,
-    updateCoach
+    getCoach,
+    updateCoach,
+    assignCoachToGroups,
+    deleteGroupCoach
     
 }

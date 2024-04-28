@@ -30,7 +30,7 @@ function addMember(newMember) {
 const assignMemberToGroups = async (memberId, groupIds) => {
     return new Promise((resolve, reject) => {
       const values = groupIds.map(groupId => [memberId, groupId]);
-      const query = ` INSERT INTO groupes_a_membres (id_membre, id_groupes) VALUES ? `;
+      const query = ` INSERT INTO groupes_a_membres (id_membre, id_groupe) VALUES ? `;
       mydb.query(query, [values], (error, results) => {
         if (error) {
           reject(error);
@@ -54,10 +54,10 @@ function deleteMemberById(id) {
   });
 }
 
-function getAllMembers() {
+/*function getAllMembers() {
   return new Promise((resolve, reject) => {
     const query =`
-    SELECT m.*, JSON_ARRAYAGG(gm.id_groupes) AS groupIds
+    SELECT m.*, JSON_ARRAYAGG(gm.id_groupe) AS groupIds
     FROM membres m
     LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
     WHERE m.supprime = 0
@@ -79,7 +79,64 @@ function getAllMembers() {
       }
     });
   });
+};*/
+
+function getAllMembers() {
+  return new Promise((resolve, reject) => {
+    const query =`
+    SELECT m.*, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
+    FROM membres m
+    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
+    LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
+    WHERE m.supprime = 0
+    GROUP BY m.id_membre
+    `;
+    mydb.query(query, (error, results) => {
+      if (error) {
+        reject(error); // Rejeter la promesse en cas d'erreur
+      } else {
+        // Formatter les résultats pour inclure les informations des groupes
+        const membersWithGroups = results.map(member => {
+          return {
+            ...member,
+            groupes: member.groupes ? JSON.parse(member.groupes) : []
+          };
+        });
+
+        resolve(membersWithGroups); // Résoudre la promesse avec les membres formatés
+      }
+    });
+  });
 };
+
+function getMemberById(memberId) {
+  return new Promise((resolve, reject) => {
+    const query =`
+    SELECT m.*, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
+    FROM membres m
+    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
+    LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
+    WHERE m.id_membre = ? AND m.supprime = 0
+    GROUP BY m.id_membre
+    `;
+    mydb.query(query, [memberId], (error, results) => {
+      if (error) {
+        reject(error); // Rejeter la promesse en cas d'erreur
+      } else {
+        if (results.length > 0) {
+          const member = {
+            ...results[0],
+            groupes: results[0].groupes ? JSON.parse(results[0].groupes) : []
+          };
+          resolve(member); // Résoudre la promesse avec le membre formaté
+        } else {
+          resolve(null); // Aucun membre trouvé avec cet ID
+        }
+      }
+    });
+  });
+}
+
 
 function checkMember(nom, prenom, memberId) {
   return new Promise((resolve, reject) => {
@@ -112,7 +169,7 @@ function updateMember(memberId, newMemberData) {
 
 function deleteGroupMember(memberId, groupId) {
   return new Promise((resolve, reject) => {
-    const query = 'DELETE FROM groupes_a_membres WHERE id_membre = ? AND id_groupes = ? ';
+    const query = 'DELETE FROM groupes_a_membres WHERE id_membre = ? AND id_groupe = ? ';
     mydb.query(query, [memberId, groupId], (error, results) => {
       if (error) {
         reject(error);
@@ -133,6 +190,7 @@ module.exports = {
     assignMemberToGroups,
     deleteMemberById,
     getAllMembers,
+    getMemberById,
     checkMember,     
     updateMember,
     deleteGroupMember 

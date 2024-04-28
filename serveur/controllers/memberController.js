@@ -15,7 +15,7 @@ async function addMember(req, res){
       // Assignation du membre aux groupes
       if (newMember.groupIds && newMember.groupIds.length > 0) {
         await memberModel.assignMemberToGroups(IdMember, newMember.groupIds);
-    }
+      }
       res.json({ success: true, message: 'Membre ajouté avec succès' });
    }
     } catch (error) {
@@ -47,6 +47,23 @@ async function deleteMember(req, res) {
       res.json({ success: true, members });
     } catch (error) {
       res.json({ success: false, message: 'Erreur lors de la récupération des membres.', error: error.message });
+    }
+  }
+
+  async function getMember(req, res) {
+    try {
+      const memberId = req.params.id;
+      const member = await memberModel.getMemberById(memberId);
+      if (member) {
+        member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
+        member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
+        res.json({ success: true, member });
+      } else {
+        res.json({ success: false, message: 'Membre non trouvé' });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération du membre :', error);
+      res.json({ success: false, message: 'Erreur lors de la récupération du membre' });
     }
   }
 
@@ -107,6 +124,7 @@ async function deleteMember(req, res) {
     addMember,
     deleteMember,
     getAllMembers,
+    getMember,
     updateMember,
     assignMemberToGroups,
     deleteGroupMember

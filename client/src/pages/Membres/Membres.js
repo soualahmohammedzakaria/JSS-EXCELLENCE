@@ -15,18 +15,22 @@ const Membres = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showFilterModal, setShowFilterModal] = useState(false);
     const [membreIdToDelete, setMembreIdToDelete] = useState(null);
-    const [selectedNom, setSelectedNom] = useState("Pas de filtre");
-    const [selectedPrenom, setSelectedPrenom] = useState("Pas de filtre");
-    const [selectedEmail, setSelectedEmail] = useState("Pas de filtre");
-    const [selectedCategorie, setSelectedCategorie] = useState("Tous");
-    const [selectedEtat, setSelectedEtat] = useState("Tous");
-    const [selectedSexe, setSelectedSexe] = useState("Tous");
-    const [selectedGroupeSanguin, setSelectedGroupeSanguin] = useState("Tous");
-    const [selectedSport, setSelectedSport] = useState("Tous");
-    const [selectedGroupe, setSelectedGroupe] = useState("Tous");
+    const [selectedFilters, setSelectedFilters] = useState({
+        nom: "Pas de filtre",
+        prenom: "Pas de filtre",
+        email: "Pas de filtre",
+        categorie: "Tous",
+        etat: "Tous",
+        sexe: "Tous",
+        groupeSanguin: "Tous",
+        sport: "Tous",
+        groupe: "Tous"
+    });
+    const [sportsGroupes, setSportsGroupes] = useState([]);
 
     useEffect(() => {
         fetchMembres(); 
+        fetchSportsGroupes();
     }, []);
 
     const fetchMembres = () => {
@@ -39,6 +43,18 @@ const Membres = () => {
             })
             .catch(error => {
                 console.error('Erreur de l\'obtention des membres:', error);
+            });
+    };
+
+    const fetchSportsGroupes = () => {
+        axios.get('http://localhost:4000/sport/getAllSportsGroupes')
+            .then(response => {
+                if(response.data.success){
+                    setSportsGroupes(response.data.sportsGroupes);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de l\'obtention des groupes de sports:', error);
             });
     };
 
@@ -90,15 +106,17 @@ const Membres = () => {
     };
 
     const HandleClearFilters = () => {
-        setSelectedNom("Pas de filtre");
-        setSelectedPrenom("Pas de filtre");
-        setSelectedEmail("Pas de filtre");
-        setSelectedCategorie("Tous");
-        setSelectedEtat("Tous");
-        setSelectedSexe("Tous");
-        setSelectedGroupeSanguin("Tous");
-        setSelectedSport("Tous");
-        setSelectedGroupe("Tous");
+        setSelectedFilters({
+            nom: "Pas de filtre",
+            prenom: "Pas de filtre",
+            email: "Pas de filtre",
+            categorie: "Tous",
+            etat: "Tous",
+            sexe: "Tous",
+            groupeSanguin: "Tous",
+            sport: "Tous",
+            groupe: "Tous"
+        });
     };
 
     const filterMembres = () => {
@@ -110,61 +128,75 @@ const Membres = () => {
             return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
         });
     
-        if (selectedSexe !== "Tous") {
-            filtered = filtered.filter(membre => membre.sexe === selectedSexe);
+        // Apply selected filters
+        if (selectedFilters.sexe !== "Tous") {
+            filtered = filtered.filter(membre => membre.sexe === selectedFilters.sexe);
         }
     
-        if (selectedGroupeSanguin !== "Tous") {
-            filtered = filtered.filter(membre => membre.groupe_sanguin === selectedGroupeSanguin);
+        if (selectedFilters.groupeSanguin !== "Tous") {
+            filtered = filtered.filter(membre => membre.groupe_sanguin === selectedFilters.groupeSanguin);
         }
     
-        if (selectedEtat !== "Tous") {
-            if (selectedEtat === "Payé") {
+        if (selectedFilters.etat !== "Tous") {
+            if (selectedFilters.etat === "Payé") {
                 filtered = filtered.filter(membre => new Date(membre.date_inscription) > new Date());
-            } else if (selectedEtat === "Non payé") {
+            } else if (selectedFilters.etat === "Non payé") {
                 filtered = filtered.filter(membre => new Date(membre.date_inscription) < new Date());
             }
         }
     
-        if (selectedCategorie !== "Tous") {
+        if (selectedFilters.categorie !== "Tous") {
             filtered = filtered.filter(membre => {
                 const dateNaiss = new Date(membre.date_naissance);
                 const age = calculerAge(dateNaiss);
                 console.log(membre, age);
-                if (selectedCategorie === "Enfants") {
+                if (selectedFilters.categorie === "Enfants") {
                     return age < 13;
-                } else if (selectedCategorie === "Adolescent") {
+                } else if (selectedFilters.categorie === "Adolescent") {
                     return (age >= 13 && age < 19);
-                } else if (selectedCategorie === "Adultes") {
+                } else if (selectedFilters.categorie === "Adultes") {
                     return age >= 19;
                 }
                 return true;
             });
         }
     
-        if (selectedNom !== "Pas de filtre") {
+        if (selectedFilters.sport !== "Tous") {
+            const sport = sportsGroupes.find(sport => sport.nom === selectedFilters.sport);
+            if (sport) {
+                filtered = filtered.filter(membre => {
+                    if (selectedFilters.groupe !== "Tous") {
+                        const group = sport.groupes.find(groupe => groupe.nom_groupe === selectedFilters.groupe);
+                        return group && membre.groupes.some(m => m.id_groupe === group.id_groupe);
+                    }
+                    return sport.groupes.some(group => membre.groupes.some(m => m.id_groupe === group.id_groupe));
+                });
+            }
+        }
+    
+        if (selectedFilters.nom !== "Pas de filtre") {
             filtered.sort((a, b) => {
-                if (selectedNom === "Ascendant") {
+                if (selectedFilters.nom === "Ascendant") {
                     return a.nom.localeCompare(b.nom);
-                } else if (selectedNom === "Descendant") {
+                } else if (selectedFilters.nom === "Descendant") {
                     return b.nom.localeCompare(a.nom);
                 }
                 return 0;
             });
-        } else if (selectedEmail !== "Pas de filtre") {
+        } else if (selectedFilters.email !== "Pas de filtre") {
             filtered.sort((a, b) => {
-                if (selectedEmail === "Ascendant") {
+                if (selectedFilters.email === "Ascendant") {
                     return a.email.localeCompare(b.email);
-                } else if (selectedEmail === "Descendant") {
+                } else if (selectedFilters.email === "Descendant") {
                     return b.email.localeCompare(a.email);
                 }
                 return 0;
             });
-        } else if (selectedPrenom !== "Pas de filtre") {
+        } else if (selectedFilters.prenom !== "Pas de filtre") {
             filtered.sort((a, b) => {
-                if (selectedPrenom === "Ascendant") {
+                if (selectedFilters.prenom === "Ascendant") {
                     return a.prenom.localeCompare(b.prenom);
-                } else if (selectedPrenom === "Descendant") {
+                } else if (selectedFilters.prenom === "Descendant") {
                     return b.prenom.localeCompare(a.prenom);
                 }
                 return 0;
@@ -172,12 +204,21 @@ const Membres = () => {
         }
     
         setFilteredMembres(filtered);
-    };    
+    };      
 
     const handleFilter = () => {
         setShowFilterModal(false);
         filterMembres();
-    };    
+    };   
+    
+    const handleSportChange = (e) => {
+        const selectedSport = e.target.value;
+        setSelectedFilters(prevFilters => ({
+            ...prevFilters,
+            sport: selectedSport,
+            groupe: selectedSport === "Tous" ? "Tous" : sportsGroupes.find(sport => sport.nom === selectedSport).groupes[0].nom_groupe
+        }));
+    };
 
     return (
         <>
@@ -274,7 +315,7 @@ const Membres = () => {
                                 <div className="filter-options">
                                     <div className="filter-option">
                                         <label>Nom</label>
-                                        <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
+                                        <select name="nom" value={selectedFilters.nom} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, nom: e.target.value}))}>
                                             <option value="Pas de filtre">Pas de filtre</option>
                                             <option value="Ascendant">Ascendant</option>
                                             <option value="Descendant">Descendant</option>
@@ -282,7 +323,7 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Prénom</label>
-                                        <select disabled={selectedNom !== "Pas de filtre" || selectedEmail !== "Pas de filtre" ? true : false} name="prenom" id="prenom" value={selectedPrenom} onChange={(e) => setSelectedPrenom(e.target.value)}>
+                                        <select name="prenom" disabled={selectedFilters.nom !== "Pas de filtre" || selectedFilters.email !== "Pas de filtre" ? true : false} value={selectedFilters.prenom} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, prenom: e.target.value}))}>
                                             <option value="Pas de filtre">Pas de filtre</option>
                                             <option value="Ascendant">Ascendant</option>
                                             <option value="Descendant">Descendant</option>
@@ -290,7 +331,7 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Email</label>
-                                        <select disabled={selectedNom !== "Pas de filtre" ? true : false} name="email" id="email" value={selectedEmail} onChange={(e) => setSelectedEmail(e.target.value)}>
+                                        <select name="email" disabled={selectedFilters.nom !== "Pas de filtre" ? true : false} value={selectedFilters.email} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, email: e.target.value}))}>
                                             <option value="Pas de filtre">Pas de filtre</option>
                                             <option value="Ascendant">Ascendant</option>
                                             <option value="Descendant">Descendant</option>
@@ -298,7 +339,7 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Etat</label>
-                                        <select name="etat" id="etat" value={selectedEtat} onChange={(e) => setSelectedEtat(e.target.value)}>
+                                        <select name="etat" value={selectedFilters.etat} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, etat: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             <option value="Payé">Payé</option>
                                             <option value="Non payé">Non payé</option>
@@ -306,7 +347,7 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Age</label>
-                                        <select name="categorie" id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)}>
+                                        <select name="categorie" value={selectedFilters.categorie} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, categorie: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             <option value="Enfants">Enfants</option>
                                             <option value="Adolescent">Adolescent</option>
@@ -317,7 +358,7 @@ const Membres = () => {
                                 <div className="filter-options">
                                     <div className="filter-option">
                                         <label>Sexe</label>
-                                        <select name="sexe" id="sexe" value={selectedSexe} onChange={(e) => setSelectedSexe(e.target.value)}>
+                                        <select name="sexe" value={selectedFilters.sexe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, sexe: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             <option value="Homme">Homme</option>
                                             <option value="Femme">Femme</option>
@@ -325,7 +366,7 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Groupe sanguin</label>
-                                        <select name="groupesanguin" id="groupesanguin" value={selectedGroupeSanguin} onChange={(e) => setSelectedGroupeSanguin(e.target.value)}>
+                                        <select name="groupesanguin" value={selectedFilters.groupeSanguin} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupeSanguin: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             <option value="O+">O+</option>
                                             <option value="O-">O-</option>
@@ -340,20 +381,29 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Sport</label>
-                                        <select name="sport" id="sport" value={selectedSport} onChange={(e) => setSelectedSport(e.target.value)}>
+                                        <select name="sport" value={selectedFilters.sport} onChange={handleSportChange}>
                                             <option value="Tous">Tous</option>
-                                            <option value="Football">Football</option>
-                                            <option value="Basketball">Basketball</option>
-                                            <option value="Handball">Handball</option>
+                                            {sportsGroupes.map(sport => (
+                                                <option key={sport.id_sport} value={sport.nom}>{sport.nom}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="filter-option">
                                         <label>Groupe</label>
-                                        <select name="groupe" id="groupe" value={selectedGroupe} onChange={(e) => setSelectedGroupe(e.target.value)}>
+                                        <select name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
                                             <option value="Tous">Tous</option>
-                                            <option value="Groupe 1">Groupe 1</option>
-                                            <option value="Groupe 2">Groupe 2</option>
-                                            <option value="Groupe 3">Groupe 3</option>
+                                            {selectedFilters.sport === "Tous" &&
+                                                sportsGroupes.map(sport => (
+                                                    sport.groupes.map(groupe => (
+                                                        <option key={groupe.id_groupe} value={groupe.nom_groupe}>{groupe.nom_groupe}</option>
+                                                    ))
+                                                ))
+                                            }
+                                            {selectedFilters.sport !== "Tous" &&
+                                                sportsGroupes.find(sport => sport.nom === selectedFilters.sport).groupes.map(groupe => (
+                                                    <option key={groupe.id_groupe} value={groupe.nom_groupe}>{groupe.nom_groupe}</option>
+                                                ))
+                                            }
                                         </select>
                                     </div>
                                     <button onClick={HandleClearFilters} className="btn-reinit pointed">

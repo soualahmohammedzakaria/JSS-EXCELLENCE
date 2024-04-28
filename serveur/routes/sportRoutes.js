@@ -3,10 +3,10 @@ const router = express.Router();
 const sportController = require('../controllers/sportController');
 
  
-//router.post('/addsport', sportController.addsport);
+router.post('/addSport', sportController.addSport);
 router.get('/getAllSports', sportController.getAllSports); 
-//router.put('/updatesport/:id', sportController.updatesport); 
-//router.delete('/deletesport/:id', sportController.deletesport); 
+router.put('/updateSport/:id', sportController.updateSport); 
+router.delete('/deleteSport/:id', sportController.deleteSport); 
 router.get('/getAllSportsGroupes', sportController.getAllSportsGroupes);
 
 module.exports = router;
