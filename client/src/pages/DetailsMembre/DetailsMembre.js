@@ -147,7 +147,10 @@ const DetailsMembre = () => {
                             </div>
                         </div>
                         <div>
-                            <h1>Groupes</h1>
+                            <>
+                                <h1>Groupes</h1>
+                                <Link to="/membres/details/absences" className="link"><span className="material-icons-outlined">cancel</span><span>Assigner groupe</span></Link>
+                            </>
                             <div className="membre-groupes">
                                 <div className="membre-groupe">Judo | Judo U17</div>
                                 <div className="membre-groupe">Karate | Karate Junior</div>

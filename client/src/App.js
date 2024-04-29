@@ -7,8 +7,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Authentification from './pages/Authentification/Authentification';
 
 import Membres from './pages/Membres/Membres';
-import AjouterMembre from './pages/AjouterMembre/AjouterMembre';
-import ModifierMembre from './pages/ModifierMembre/ModifierMembre';
+import AjouterMembre from './pages/Membres/AjouterMembre';
+import ModifierMembre from './pages/Membres/ModifierMembre';
 import DetailsMembre from './pages/DetailsMembre/DetailsMembre';
 import PresencesMembre from './pages/PresencesMembre/PresencesMembre';
 import AbsencesMembre from './pages/DetailsMembre/AbsencesMembre';
@@ -25,12 +25,12 @@ import Groupes from './pages/Groupes/Groupes';
 import AjouterGroupe from './pages/AjouterGroupe/AjouterGroupe';
 
 import Planning from './pages/Planning/Planning';
-import AjouterCreneaux from './pages/AjouterCreneau/AjouterCreneau';
-import ModifierCreneau from './pages/ModifierCreneau/ModifierCreneau';
+import AjouterCreneaux from './pages/Planning/AjouterCreneau';
+import ModifierCreneau from './pages/Planning/ModifierCreneau';
 
-import Admins from './pages/Personnel/Personnel';
-import AjouterAdmin from './pages/AjouterAdmin/AjouterAdmin';
-import ModifierAdmin from './pages/ModifierAdmin/ModifierAdmin';
+import Personnel from './pages/Personnel/Personnel';
+import AjouterUser from './pages/Personnel/AjouterAdmin';
+import ModifierUser from './pages/Personnel/ModifierAdmin';
 
 function App() {
   return (
@@ -54,9 +54,9 @@ function App() {
             <Route path='/planning/ajouter' element={<AjouterCreneaux/>}></Route>
             <Route path='/planning/modifier' element={<ModifierCreneau/>}></Route>
 
-            <Route path='/admins' element={<Admins/>}></Route>
-            <Route path='/admins/ajouter' element={<AjouterAdmin/>}></Route>
-            <Route path='/admins/modifier' element={<ModifierAdmin/>}></Route>
+            <Route path='/admins' element={<Personnel/>}></Route>
+            <Route path='/admins/ajouter' element={<AjouterUser/>}></Route>
+            <Route path='/admins/modifier' element={<ModifierUser/>}></Route>
 
             <Route path='/salles' element={<Salles/>}></Route>
             <Route path='/salles/ajouter' element={<AjouterSalle/>}></Route>

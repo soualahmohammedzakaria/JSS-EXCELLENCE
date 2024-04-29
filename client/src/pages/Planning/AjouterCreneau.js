@@ -7,7 +7,7 @@ import axios from "axios";
 
 const AjouterCreneau = () => {
     const [salles, setSalles] = useState([]);
-    const [groupes, setGroupes] = useState([]);
+    const [sportsGroupes, setSportsGroupes] = useState([]);
     const [formData, setFormData] = useState({
         id_groupe: null,
         numero_salle: null,
@@ -17,42 +17,71 @@ const AjouterCreneau = () => {
         type: 'Séance',
         description: ''
     });
+    const [selectedSport, setSelectedSport] = useState(null);
+    const [selectedGroup, setSelectedGroup] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch salles from the API
-        axios.get("http://localhost:4000/salle/getNomIdSalles")
-            .then(response => {
-                setSalles(response.data.salles);
-                // Set default value for numero_salle after fetching data
-                if (response.data.salles.length > 0) {
-                    setFormData(prevFormData => ({
-                        ...prevFormData,
-                        numero_salle: response.data.salles[0].numero_salle
-                    }));
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching salles:", error);
-            });
-
-        // Fetch groupes from the API
-        axios.get("http://localhost:4000/groupe/getNomIdGroupes")
-            .then(response => {
-                setGroupes(response.data.groupes);
-                // Set default value for id_groupe after fetching data
-                if (response.data.groupes.length > 0) {
-                    setFormData(prevFormData => ({
-                        ...prevFormData,
-                        id_groupe: response.data.groupes[0].id_groupe
-                    }));
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching groupes:", error);
-            });
+        fetchSalles();
+        fetchSportsGroupes();
     }, []);
+
+    const fetchSalles = async () => {
+        try {
+            const response = await axios.get("http://localhost:4000/salle/getNomIdSalles");
+            setSalles(response.data.salles);
+            if (response.data.salles.length > 0) {
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    numero_salle: response.data.salles[0].numero_salle
+                }));
+            }
+        } catch (error) {
+            console.error("Error fetching salles:", error);
+        }
+    };
+
+    const fetchSportsGroupes = async () => {
+        try {
+            const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
+            setSportsGroupes(response.data.sportsGroupes);
+            // Set default values for sport and group after fetching data
+            if (response.data.sportsGroupes.length > 0) {
+                const defaultSport = response.data.sportsGroupes[0];
+                const defaultGroup = defaultSport.groupes[0];
+                setSelectedSport(defaultSport);
+                setSelectedGroup(defaultGroup);
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    id_groupe: defaultGroup.id_groupe
+                }));
+            }
+        } catch (error) {
+            console.error("Error fetching sports with groups:", error);
+        }
+    };
+
+    const handleSportChange = (e) => {
+        const sportId = parseInt(e.target.value);
+        const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
+        setSelectedSport(selectedSport);
+        setSelectedGroup(selectedSport.groupes[0]);
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            id_groupe: selectedSport.groupes[0].id_groupe
+        }));
+    };
+
+    const handleGroupChange = (e) => {
+        const groupId = parseInt(e.target.value);
+        const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId);
+        setSelectedGroup(selectedGroup);
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            id_groupe: groupId
+        }));
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -93,7 +122,7 @@ const AjouterCreneau = () => {
                                 <div className="add-input">
                                     <span className="material-icons-outlined">subtitles</span> 
                                     <input type="text" name="titre" placeholder="Titre" value={formData.titre} onChange={handleChange} required/>
-                                </div>
+                                </div>                                
                                 <div className="add-input">
                                     <span className="material-icons-outlined">timer</span>
                                     <label>Début</label>
@@ -111,7 +140,7 @@ const AjouterCreneau = () => {
                                         <option value="Séance">Séance</option>
                                         <option value="Evénement">Evénement</option>                        
                                     </select>
-                                </div> 
+                                </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">meeting_room</span>
                                     <label>Salle</label>
@@ -122,14 +151,25 @@ const AjouterCreneau = () => {
                                             </option>
                                         ))}
                                     </select>
+                                </div>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">sports_gymnastics</span>
+                                    <label>Sport</label>
+                                    <select name="sport" value={selectedSport?.id_sport} onChange={handleSportChange}>
+                                        {sportsGroupes.map(sport => (
+                                            <option key={sport.id_sport} value={sport.id_sport}>
+                                                {sport.nom}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div> 
                                 <div className="add-input">
                                     <span className="material-icons-outlined">group</span>
                                     <label>Groupe</label>
-                                    <select name="id_groupe" value={formData.id_groupe} onChange={handleChange}>
-                                        {groupes.map(groupe => (
-                                            <option key={groupe.id_groupe} value={groupe.id_groupe}>
-                                                {groupe.nom_groupe}
+                                    <select name="id_groupe" value={selectedGroup?.id_groupe} onChange={handleGroupChange}>
+                                        {selectedSport?.groupes.map(group => (
+                                            <option key={group.id_groupe} value={group.id_groupe}>
+                                                {group.nom_groupe}
                                             </option>
                                         ))}
                                     </select>
