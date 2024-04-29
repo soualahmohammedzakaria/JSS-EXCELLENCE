@@ -1,12 +1,33 @@
 import React, { useState, useEffect } from "react";
 import './DetailsMembre.css';
 import { Link } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from 'axios';
 import PhotoStandard from '../../assets/images/photoprofile.png';
+import { formatDate, calculerAge } from "../../utils/datesUtils";
 
 const DetailsMembre = () => {
+    const location = useLocation();
+    const [membre, setMembre] = useState([]);
+
+    useEffect(() => {
+        fetchMembre(); 
+    }, []);
+
+    const fetchMembre = () => {
+        axios.get(`http://localhost:4000/member/getMember/${location.state.id}`)
+            .then(response => {
+                if(response.data.success){
+                    setMembre(response.data.member);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de l\'obtention du membre:', error);
+            });
+    };
+
     return (
         <>
             <Navbar/>
@@ -43,30 +64,40 @@ const DetailsMembre = () => {
                                     <h1>Informations personnelles</h1>
                                     <div className="info-membre">
                                         <h2>Nom</h2>
-                                        <p className="info-membre-val">SOUALAH MOHAMMED</p>
+                                        <p className="info-membre-val">{membre.nom}</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Prénom</h2>
-                                        <p className="info-membre-val">Zakaria</p>
+                                        <p className="info-membre-val">{membre.prenom}</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Date de naissance</h2>
-                                        <p className="info-membre-val">18/09/2005</p>
+                                        {membre.date_naissance && (
+                                            <p className="info-membre-val">{formatDate(membre.date_naissance)}</p>
+                                        )}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Sexe</h2>
-                                        <p className="info-membre-val">Homme</p>
+                                        <p className="info-membre-val">{membre.sexe}</p>
                                     </div>
                                 </div>
                                 <div className="infos-groupe">
                                     <h1>Informations de paiement</h1>
                                     <div className="info-membre">
+                                        <h2>Date d'inscription</h2>
+                                        {membre.date_naissance && (
+                                            <p className="info-membre-val">{formatDate(membre.date_inscription)}</p>
+                                        )}
+                                    </div>
+                                    <div className="info-membre">
                                         <h2>Etat de l'abonnement</h2>
-                                        <p className="info-membre-val success">Payé</p>
+                                        <p className={`info-membre-val ${new Date(membre.date_inscription) > new Date() ? "success" : "danger"}`}>{new Date(membre.date_inscription) > new Date() ? "Payé" : "Non payé"}</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Date d'abonnement</h2>
-                                        <p className="info-membre-val">18/03/2024</p>
+                                        {membre.date_naissance && (
+                                            <p className="info-membre-val">{formatDate(membre.date_inscription)}</p>
+                                        )}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Montant Payé</h2>
@@ -94,19 +125,19 @@ const DetailsMembre = () => {
                                     <h1>Dossier medical</h1>
                                     <div className="info-membre">
                                         <h2>Age</h2>
-                                        <p className="info-membre-val">18 ans</p>
+                                        <p className="info-membre-val">{calculerAge(membre.date_naissance)} ans</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Poids</h2>
-                                        <p className="info-membre-val">89 kg</p>
+                                        <p className="info-membre-val">{membre.poids} kg</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Groupe sanguin</h2>
-                                        <p className="info-membre-val">O+</p>
+                                        <p className="info-membre-val">{membre.groupe_sanguin}</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Taille</h2>
-                                        <p className="info-membre-val">183 cm</p>
+                                        <p className="info-membre-val">{membre.taille} cm</p>
                                     </div>
                                     <div className="info-membre">
                                         <h2>Maladies</h2>

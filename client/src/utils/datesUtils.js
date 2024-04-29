@@ -2,8 +2,10 @@ export const formatDate = (date) => {
     return date.split("-").reverse().join("/");
 }
 
-export const calculerAge = (dateNaiss) => {
+export const calculerAge = (date) => {
     const today = new Date();
+    const dateNaiss = new Date(date);
+    
     const anNaiss = dateNaiss.getFullYear();
     const moisNaiss = dateNaiss.getMonth();
     const jourNaiss = dateNaiss.getDate();

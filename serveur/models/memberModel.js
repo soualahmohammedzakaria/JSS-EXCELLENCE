@@ -16,8 +16,8 @@ function getMemberByName(nom, prenom) {
 
 function addMember(newMember) {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO membres (nom, prenom, age, sexe, date_naissance, date_inscription, email, photo, telephone, groupe_sanguin, maladies, poids, taille, supprime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        mydb.query(query, [newMember.nom, newMember.prenom, newMember.age, newMember.sexe, newMember.date_naissance, newMember.date_inscription, newMember.email, newMember.photo, newMember.telephone, newMember.groupe_sanguin, newMember.maladies, newMember.poids, newMember.taille, 0 ], (error, results) => {
+        const query = 'INSERT INTO membres (nom, prenom, sexe, date_naissance, date_inscription, email, photo, telephone, groupe_sanguin, maladies, poids, taille, supprime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        mydb.query(query, [newMember.nom, newMember.prenom, newMember.sexe, newMember.date_naissance, newMember.date_inscription, newMember.email, newMember.photo, newMember.telephone, newMember.groupe_sanguin, newMember.maladies, newMember.poids, newMember.taille, 0 ], (error, results) => {
         if (error) {
             reject(error);
         } else {
@@ -195,4 +195,3 @@ module.exports = {
     updateMember,
     deleteGroupMember 
  };
-  

@@ -147,8 +147,7 @@ const Membres = () => {
     
         if (selectedFilters.categorie !== "Tous") {
             filtered = filtered.filter(membre => {
-                const dateNaiss = new Date(membre.date_naissance);
-                const age = calculerAge(dateNaiss);
+                const age = calculerAge(membre.date_naissance);
                 console.log(membre, age);
                 if (selectedFilters.categorie === "Enfants") {
                     return age < 13;
@@ -265,7 +264,7 @@ const Membres = () => {
                                             <th>{formatDate(membre.date_inscription)}</th>
                                             <th><span className={new Date(membre.date_inscription) > new Date() ? "success" : "danger"}>{new Date(membre.date_inscription) > new Date() ? "Payé" : "Non payé"}</span></th>
                                             <th>
-                                                <Link className="link" to="./details"><span className="material-icons-outlined pointed">info</span></Link>
+                                                <Link className="link" to="./details" state={{id: membre.id_membre}}><span className="material-icons-outlined pointed">info</span></Link>
                                                 <Link className="link" to="./modifier" state={{id: membre.id_membre, nom: membre.nom, prenom: membre.prenom, email: membre.email, dateNais: membre.dateNais, sexe: membre.sexe, telephone: membre.telephone, age: membre.age, taille: membre.taille, poids: membre.poids, sang: membre.sang, maladies: membre.maladies, date_inscription: membre.date_inscription, montantPaye: membre.montantPaye, montantRestant: membre.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleDeleteMembre(membre.id_membre)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
