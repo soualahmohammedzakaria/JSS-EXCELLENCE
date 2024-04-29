@@ -16,8 +16,8 @@ function getMemberByName(nom, prenom) {
 
 function addMember(newMember) {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO membres (nom, prenom, age, sexe, date_naissance, date_inscription, email, photo, telephone, groupe_sanguin, maladies, poids, taille, supprime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        mydb.query(query, [newMember.nom, newMember.prenom, newMember.age, newMember.sexe, newMember.date_naissance, newMember.date_inscription, newMember.email, newMember.photo, newMember.telephone, newMember.groupe_sanguin, newMember.maladies, newMember.poids, newMember.taille, 0 ], (error, results) => {
+        const query = 'INSERT INTO membres (nom, prenom, sexe, date_naissance, date_inscription, email, telephone, groupe_sanguin, maladies, poids, taille, supprime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        mydb.query(query, [newMember.nom, newMember.prenom, newMember.sexe, newMember.date_naissance, newMember.date_inscription, newMember.email, newMember.telephone, newMember.groupe_sanguin, newMember.maladies, newMember.poids, newMember.taille, 0 ], (error, results) => {
         if (error) {
             reject(error);
         } else {
@@ -54,32 +54,7 @@ function deleteMemberById(id) {
   });
 }
 
-/*function getAllMembers() {
-  return new Promise((resolve, reject) => {
-    const query =`
-    SELECT m.*, JSON_ARRAYAGG(gm.id_groupe) AS groupIds
-    FROM membres m
-    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
-    WHERE m.supprime = 0
-    GROUP BY m.id_membre
-    `;
-    mydb.query(query, (error, results) => {
-      if (error) {
-        reject(error); // Rejeter la promesse en cas d'erreur
-      } else {
-        // Formatter les résultats pour inclure le tableau d'IDs de groupe
-        const membersWithGroups = results.map(member => {
-          return {
-            ...member,
-            groupIds: member.groupIds ? JSON.parse(member.groupIds) : []
-          };
-        });
-
-        resolve(membersWithGroups); // Résoudre la promesse avec les membres formatés
-      }
-    });
-  });
-};*/
+ 
 
 function getAllMembers() {
   return new Promise((resolve, reject) => {
@@ -136,6 +111,49 @@ function getMemberById(memberId) {
     });
   });
 }
+
+/*function getMemberById(memberId) {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT m.*,
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'id_sport', s.id_sport,
+            'nom_sport', s.nom,
+            'groupes', grp.groupes  -- Utilisation de l'alias grp
+        )
+    ) AS sports
+FROM membres m
+LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
+LEFT JOIN (
+    SELECT g.id_sport, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
+    FROM groupes g
+    GROUP BY g.id_sport
+) AS grp ON gm.id_groupe = grp.id_sport
+LEFT JOIN sports s ON grp.id_sport = s.id_sport
+WHERE m.id_membre = ?
+    AND m.supprime = 0
+GROUP BY m.id_membre;
+
+    `;
+    mydb.query(query, [memberId], (error, results) => {
+      if (error) {
+        reject(error); // Rejeter la promesse en cas d'erreur
+      } else {
+        if (results.length > 0) {
+          const member = {
+            ...results[0],
+            sports: results[0].sports ? JSON.parse(results[0].sports) : []
+          };
+          resolve(member); // Résoudre la promesse avec le membre formaté
+        } else {
+          resolve(null); // Aucun membre trouvé avec cet ID
+        }
+      }
+    });
+  });
+}
+*/
 
 
 function checkMember(nom, prenom, memberId) {

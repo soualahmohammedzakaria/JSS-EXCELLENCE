@@ -1,17 +1,46 @@
 const coachModel = require('../models/coachModel');
 //const utils = require('../utils');
 const moment = require('moment-timezone');
+const multer = require('multer');
+const path = require('path');
+
+
+
+// Configuration de Multer pour stocker les images dans le dossier "images"
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, '../public/images/coachs'); // Dossier de destination
+  },
+  filename: (req, file, cb) => {
+    const ext = '.jpeg'; // Extension fixe
+    const filename = 'c_' + req.body.nom + '_' + req.body.prenom + ext; // Nom du fichier basé sur le nom et le prénom
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 async function addCoach(req, res) {
     try {
-        const { nom, prenom, email, dateNaissance, photo, telephone, sexe, groupIds } = req.body;
+        const { nom, prenom, email, dateNaissance, telephone, sexe, groupIds } = req.body;
 
         const coach = await coachModel.getCoachByName(nom,prenom);
         if (coach) {
         res.json({ success: false, message: 'Nom du coach déjà utilisé' });
         } else {     
-        const coachData = {nom, prenom, email,dateNaissance, photo, telephone, sexe, groupIds}; 
+        const coachData = {nom, prenom, email,dateNaissance, telephone, sexe, groupIds}; 
         const IdCoach = await coachModel.addCoach(coachData);
+        // Traitement du téléchargement de la photo
+        /*upload.single('photo')(req, res, async (err) => {
+        if (err instanceof multer.MulterError) {
+        // Erreur Multer
+         return res.json({ success: false, message: 'Erreur lors du téléchargement de la photo' });
+         } else if (err) {
+         // Autres erreurs
+         return res.json({ success: false, message: err.message });
+       }
+       });*/
+
         // Assignation du coach aux groupes
         if (coachData.groupIds && coachData.groupIds.length > 0) {
           await coachModel.assignCoachToGroups(IdCoach, coachData.groupIds);

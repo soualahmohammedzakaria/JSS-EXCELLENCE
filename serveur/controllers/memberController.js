@@ -1,7 +1,22 @@
 const memberModel = require('../models/memberModel');
+const multer = require('multer');
+const path = require('path');
 const moment = require('moment-timezone');
 
-// il reste des choses à faire 
+// Configuration de Multer pour stocker les images dans le dossier "images"
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, '../public/images/membres'); // Dossier de destination
+  },
+  filename: (req, file, cb) => {
+    const ext = '.jpeg'; // Extension fixe
+    const filename = 'm_' + req.body.nom + '_' + req.body.prenom + ext; // Nom du fichier basé sur le nom et le prénom
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 async function addMember(req, res){
     try {
       const newMember = req.body;
@@ -11,7 +26,17 @@ async function addMember(req, res){
       res.json({ success: false, message: 'Nom du membre déjà utilisé' });
       } else {
       const IdMember = await memberModel.addMember(newMember);
-
+      
+       // Traitement du téléchargement de la photo  
+    /*upload.single('photo')(req, res, async (err) => {
+      if (err instanceof multer.MulterError) {
+        // Erreur Multer
+        return res.json({ success: false, message: 'Erreur lors du téléchargement de la photo' });
+      } else if (err) {
+        // Autres erreurs
+        return res.json({ success: false, message: err.message });
+    }
+  });*/
       // Assignation du membre aux groupes
       if (newMember.groupIds && newMember.groupIds.length > 0) {
         await memberModel.assignMemberToGroups(IdMember, newMember.groupIds);

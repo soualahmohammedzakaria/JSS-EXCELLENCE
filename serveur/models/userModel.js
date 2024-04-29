@@ -27,13 +27,13 @@ async function comparePassword(plainPassword, hashedPassword) {
     return plainpasswordHashed === hashedPassword;
 }
 
-function addUser(nom, prenom, username, password, role, photo) {
+function addUser(nom, prenom, username, password, role) {
   return new Promise((resolve, reject) => {
         const hash = crypto.createHash('md5');
         hash.update(password);
         password = hash.digest('hex');
-        const query = 'INSERT INTO administrateurs (nom, prenom, username, password, role, photo) VALUES (?, ?, ?, ?, ?, ?)';
-        mydb.query(query, [nom, prenom, username, password, role, photo], (error, results) => {
+        const query = 'INSERT INTO administrateurs (nom, prenom, username, password, role) VALUES (?, ?, ?, ?, ?)';
+        mydb.query(query, [nom, prenom, username, password, role], (error, results) => {
           if (error) {
             reject(error); 
           } else {

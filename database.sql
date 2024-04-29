@@ -101,7 +101,6 @@ CREATE TABLE `accomplissements` (
 
 LOCK TABLES `accomplissements` WRITE;
 /*!40000 ALTER TABLE `accomplissements` DISABLE KEYS */;
-INSERT INTO `accomplissements` VALUES (4,'coupe d\'algerie','1980-12-26','judo','hgyguylggglg',5),(5,'coupe d\'algerie','2017-12-26','karate','hgyguylggglg',5);
 /*!40000 ALTER TABLE `accomplissements` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,10 +118,9 @@ CREATE TABLE `administrateurs` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('Gestionnaire','Administrateur') NOT NULL,
-  `photo` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_admin`),
   UNIQUE KEY `id_admin_UNIQUE` (`id_admin`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +129,7 @@ CREATE TABLE `administrateurs` (
 
 LOCK TABLES `administrateurs` WRITE;
 /*!40000 ALTER TABLE `administrateurs` DISABLE KEYS */;
-INSERT INTO `administrateurs` VALUES (1,'SOUALAH MOHAMMED','Zakaria','zaxy17','7215ee9c7d9dc229d2921a40e899ec5f','Administrateur',''),(16,'ZEGHIMI','Zayd Aymen','zzaydou','a341c7080e9c303c1e885ba96e710730','Gestionnaire',''),(18,'HEMIMED','Anis','h_anis','25f9e794323b453885f5181f1b624d0b','Gestionnaire',''),(19,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(20,'SAHRAOUI','Ramy','ramy18','bc70904109e8f620e4b53c33eaf8b811','Gestionnaire',''),(21,'LEHIDANE','Mohammed','m_lehidane','f1d9b0a5ac1ae1811b80ab6fde4f4396','Administrateur',''),(28,'BOUKAKIOU','Rayan','bkrayan','25f9e794323b453885f5181f1b624d0b','Gestionnaire',''),(30,'BETTAYEB','Yazid','yazidbet','25f9e794323b453885f5181f1b624d0b','Administrateur',NULL),(32,'KOUDRI','Chemsedine','chemso17','b2220407b7e07a6abb7beac457bc679a','Gestionnaire',''),(33,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(35,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(36,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(38,'KHALED','Adriane Anis','adralo','798547eb8831c98ae7474f328e3a57c4','Administrateur',''),(39,'BETTAYEB','Yazid','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(40,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(41,'KHALED','Adriane Anis','adralow1','25f9e794323b453885f5181f1b624d0b','Administrateur',''),(42,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(43,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(44,'BETTAYEB','Yazid','yazzzid','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',''),(45,'BETTAYEB','BETTAYEB','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire',NULL),(47,'KHALED','Adriane Anis','adralow11111111','798547eb8831c98ae7474f328e3a57c4','Administrateur',''),(50,'boukakiou','rayan','bkrayano','25f9e794323b453885f5181f1b624d0b','Administrateur',NULL),(51,'soualah mohammed','zakaria','zax','25f9e794323b453885f5181f1b624d0b','Administrateur','cristiano');
+INSERT INTO `administrateurs` VALUES (1,'SOUALAH MOHAMMED','Zakaria','zaxy17','7215ee9c7d9dc229d2921a40e899ec5f','Administrateur'),(16,'ZEGHIMI','Zayd Aymen','zzaydou','a341c7080e9c303c1e885ba96e710730','Gestionnaire'),(18,'HEMIMED','Anis','h_anis','25f9e794323b453885f5181f1b624d0b','Gestionnaire'),(19,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(20,'SAHRAOUI','Ramy','ramy18','bc70904109e8f620e4b53c33eaf8b811','Gestionnaire'),(21,'LEHIDANE','Mohammed','m_lehidane','f1d9b0a5ac1ae1811b80ab6fde4f4396','Administrateur'),(28,'BOUKAKIOU','Rayan','bkrayan','25f9e794323b453885f5181f1b624d0b','Gestionnaire'),(30,'BETTAYEB','Yazid','yazidbet','25f9e794323b453885f5181f1b624d0b','Administrateur'),(32,'KOUDRI','Chemsedine','chemso17','b2220407b7e07a6abb7beac457bc679a','Gestionnaire'),(33,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(35,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(36,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(38,'KHALED','Adriane Anis','adralo','798547eb8831c98ae7474f328e3a57c4','Administrateur'),(39,'BETTAYEB','Yazid','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(40,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(41,'KHALED','Adriane Anis','adralow1','25f9e794323b453885f5181f1b624d0b','Administrateur'),(42,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(43,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(44,'BETTAYEB','Yazid','yazzzid','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(45,'BETTAYEB','BETTAYEB','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(47,'KHALED','Adriane Anis','adralow11111111','798547eb8831c98ae7474f328e3a57c4','Administrateur'),(50,'boukakiou','rayan','bkrayano','25f9e794323b453885f5181f1b624d0b','Administrateur'),(51,'soualah mohammed','zakaria','zax','25f9e794323b453885f5181f1b624d0b','Administrateur'),(52,'soualah mohammed','zaky','zaxy19','25f9e794323b453885f5181f1b624d0b','Administrateur');
 /*!40000 ALTER TABLE `administrateurs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,12 +205,11 @@ CREATE TABLE `coachs` (
   `prenom` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `date_naissance` date NOT NULL,
-  `photo` varchar(255) NOT NULL,
   `telephone` varchar(15) NOT NULL,
   `sexe` enum('Homme','Femme') NOT NULL,
   PRIMARY KEY (`id_coach`),
   UNIQUE KEY `id_coach_UNIQUE` (`id_coach`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +218,7 @@ CREATE TABLE `coachs` (
 
 LOCK TABLES `coachs` WRITE;
 /*!40000 ALTER TABLE `coachs` DISABLE KEYS */;
-INSERT INTO `coachs` VALUES (6,'boukakiou','rayan','boukarayan2004@gmail.com','2004-08-08','hvtuffyt','0697050635','Homme'),(8,'zeghimi','zaydoo','mz-zeghimi@esi.dz','2010-12-10','hvtuffyt','0512598765','Homme'),(10,'zeghimi','zaydo','mz_zeghimi@esi.dz','2000-12-26','hvtuffyt','0578219634','Homme'),(11,'boukakiou','mohammed','mz_zeghimi@esi.dz','2000-12-26','hvtuffyt','0578219634','Homme'),(12,'boukakiou','moh','mz_zeghimi@esi.dz','2000-12-26','hvtuffyt','0578219634','Homme');
+INSERT INTO `coachs` VALUES (14,'soualah','zakaria','mz_zeghimi@esi.dz','2000-12-26','0578219634','Homme'),(15,'zeghimi','zaydoo','mz-zeghimi@esi.dz','2010-12-10','0512598765','Homme');
 /*!40000 ALTER TABLE `coachs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,7 +369,7 @@ CREATE TABLE `groupes_a_coachs` (
 
 LOCK TABLES `groupes_a_coachs` WRITE;
 /*!40000 ALTER TABLE `groupes_a_coachs` DISABLE KEYS */;
-INSERT INTO `groupes_a_coachs` VALUES (2,12);
+INSERT INTO `groupes_a_coachs` VALUES (11,15);
 /*!40000 ALTER TABLE `groupes_a_coachs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -400,7 +397,6 @@ CREATE TABLE `groupes_a_membres` (
 
 LOCK TABLES `groupes_a_membres` WRITE;
 /*!40000 ALTER TABLE `groupes_a_membres` DISABLE KEYS */;
-INSERT INTO `groupes_a_membres` VALUES (1,6),(1,7),(2,2),(2,6);
 /*!40000 ALTER TABLE `groupes_a_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -415,12 +411,10 @@ CREATE TABLE `membres` (
   `id_membre` int unsigned NOT NULL AUTO_INCREMENT,
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) NOT NULL,
-  `age` tinyint unsigned NOT NULL,
-  `sexe` enum('M','F') NOT NULL,
+  `sexe` enum('Homme','Femme') NOT NULL,
   `date_naissance` date NOT NULL,
   `date_inscription` date NOT NULL,
   `email` varchar(50) NOT NULL,
-  `photo` varchar(255) NOT NULL,
   `telephone` varchar(15) NOT NULL,
   `groupe_sanguin` varchar(20) NOT NULL,
   `maladies` varchar(255) NOT NULL,
@@ -429,7 +423,7 @@ CREATE TABLE `membres` (
   `supprime` tinyint NOT NULL,
   PRIMARY KEY (`id_membre`),
   UNIQUE KEY `id_membre_UNIQUE` (`id_membre`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -438,7 +432,7 @@ CREATE TABLE `membres` (
 
 LOCK TABLES `membres` WRITE;
 /*!40000 ALTER TABLE `membres` DISABLE KEYS */;
-INSERT INTO `membres` VALUES (1,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,1),(2,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,0),(3,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,1),(4,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,0),(5,'boukakiou','rayan',19,'M','2004-08-08','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,0),(6,'boukakiou','wassim',19,'M','2014-12-30','2015-05-03','boukarayan@gmail.com','hvtuffyt','0578219634','O+','/',70,179,1),(7,'boukakiou','mohammed',19,'M','2000-03-05','2015-05-03','boukarayan@gmail.com','jhuhixxdf','0789634587','ab','/',85,179,0),(8,'bouka','mohammed',19,'M','2000-03-05','2015-05-03','boukarayan@gmail.com','jhuhixxdf','0789634587','ab','/',85,179,0);
+INSERT INTO `membres` VALUES (10,'bouka','rayan','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0),(11,'boukakiou','rayan','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0),(12,'boukakiou','rayano','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0);
 /*!40000 ALTER TABLE `membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -588,4 +582,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-27 22:33:46
+-- Dump completed on 2024-04-29 19:03:45
