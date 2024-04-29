@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 
 import Authentification from './pages/Authentification/Authentification';
 
+import Assiduite from './pages/Assiduite/Assiduite';
+
 import Membres from './pages/Membres/Membres';
 import AjouterMembre from './pages/Membres/AjouterMembre';
 import ModifierMembre from './pages/Membres/ModifierMembre';
@@ -41,6 +43,8 @@ function App() {
             <Route path='/' element={<Authentification/>}></Route>
 
             <Route path='/dashboard' element={<Dashboard/>}></Route>
+
+            <Route path='/assiduite' element={<Assiduite/>}></Route>
 
             <Route path='/membres' element={<Membres/>}></Route>
             <Route path='/membres/ajouter' element={<AjouterMembre/>}></Route>
