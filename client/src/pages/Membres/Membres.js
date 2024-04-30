@@ -74,7 +74,6 @@ const Membres = () => {
     };
 
     const confirmDeleteMembre = async () => {
-        console.log(membreIdToDelete);
         try {
             await axios.delete(`http://localhost:4000/member/deleteMember/${membreIdToDelete}`);
             setShowDeleteModal(false);

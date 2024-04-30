@@ -58,7 +58,7 @@
 }
 
 .infos-groupe h1{
-    margin-bottom: 2%;
+    margin-bottom: 1%;
 }
 
 .info-membre{
@@ -114,5 +114,29 @@
 }
 
 .membre-groupe:hover {
+    background: var(--color-blue);
+}
+
+.membre-groupes-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1%;
+    margin-top: 1rem;
+}
+
+.membre-groupes-header button{
+    background: var(--color-primary);
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--color-white);
+    border-radius: var(--border-radius-1);
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+}
+
+.membre-groupes-header button:hover{
     background: var(--color-blue);
 }

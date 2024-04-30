@@ -37,12 +37,13 @@ async function deleteAchievement(req, res) {
         }
     }
 
-    async function getAllAchievements(req, res) {
+    async function getAchievements(req, res) {
         try {
-           const achievements = await achievementModel.getAllAchievements();
+           const memberId = req.params.id;
+           const achievements = await achievementModel.getAchievements(memberId);
            achievements.forEach(achievement => {
             achievement.date_evenement = moment(achievement.date_evenement).format('YYYY-MM-DD');
-           });
+           });           
            res.json({ success: true, achievements });
         } catch (error) {
            res.json({ success: false, message: 'Erreur lors de la récupération des accomplissements.', error: error.message });
@@ -54,6 +55,6 @@ async function deleteAchievement(req, res) {
     addAchievement,
     deleteAchievement,    
     updateAchievement,
-    getAllAchievements
+    getAchievements
     
 }

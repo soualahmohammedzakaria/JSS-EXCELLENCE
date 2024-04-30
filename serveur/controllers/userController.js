@@ -1,5 +1,7 @@
 const userModel = require('../models/userModel');
 const passwordValidator = require('password-validator');
+const multer = require('multer');
+const path = require('path');
 
 // On cree un schema pour valider la robustesse du mot de passe
 const passwordSchema = new passwordValidator();
@@ -7,10 +9,25 @@ passwordSchema
   .is().min(8)                                    // Longueur minimale 8 caractères
   .has().digits()                                 // Au moins un chiffre
   .not().spaces()                                 // Pas d'espaces 
+                                  
+
+// Configuration de Multer pour stocker les images dans le dossier "images"
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, '../public/images/utilisateurs'); // Dossier de destination
+  },
+  filename: (req, file, cb) => {
+    const ext = '.jpeg'; // Extension fixe
+    const filename = 'a_' + req.body.nom + '_' + req.body.prenom + ext; // Nom du fichier basé sur le nom et le prénom
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 async function addUser(req, res) {
     try {
-        const {nom, prenom, username, password, role, photo } = req.body;
+        const {nom, prenom, username, password, role } = req.body;
         // Vérifier si le nom d'utilisateur a au moins 4 caractères et contient au moins une lettre
         if (username.length < 4 || !/[a-zA-Z]/.test(username)) {
           return res.json({ success: false, message: 'Le nom d\'utilisateur doit avoir au moins 4 caractères et contenir au moins une lettre.' });
@@ -23,8 +40,18 @@ async function addUser(req, res) {
             if (!passwordSchema.validate(password)) {
               return res.json({ success: false, message: 'Essayez un mot de passe plus fort. Votre mot de passe doit être composé d\'au moins 8 caractères, avec des lettres et des chiffres, sans espaces.'});
             }
-        await userModel.addUser(nom, prenom, username, password, role, photo);
-        res.json({ success: true, message: 'Utilisateur ajouté avec success!' });
+        await userModel.addUser(nom, prenom, username, password, role);
+        // Traitement du téléchargement de la photo
+       /* upload.single('photo')(req, res, async (err) => {
+          if (err instanceof multer.MulterError) {
+            // Erreur Multer
+            return res.json({ success: false, message: 'Erreur lors du téléchargement de la photo' });
+          } else if (err) {
+            // Autres erreurs
+            return res.json({ success: false, message: err.message });
+        }
+      });*/
+      res.json({ success: true, message: 'Utilisateur ajouté avec success!' });
         }
     } catch (error) {
         console.error('Erreur lors de l\'ajout d\'un utilisateur:', error);

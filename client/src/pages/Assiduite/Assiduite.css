@@ -1,3 +1,7 @@
+.assiduite-container{
+    overflow-y: scroll;
+}
+
 .qr-page {
     display: flex;
     flex-direction: column; /* Pour empiler les éléments verticalement */

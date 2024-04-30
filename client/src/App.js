@@ -8,6 +8,12 @@ import Authentification from './pages/Authentification/Authentification';
 
 import Assiduite from './pages/Assiduite/Assiduite';
 
+import Depenses from './pages/Depenses/Depenses';
+
+import Accomplissements from './pages/Accomplissements/Accomplissements';
+import AjouterAccomplissement from './pages/Accomplissements/AjouterAccomplissement';
+import ModifierAccomplissement from './pages/Accomplissements/ModifierAccomplissement';
+
 import Membres from './pages/Membres/Membres';
 import AjouterMembre from './pages/Membres/AjouterMembre';
 import ModifierMembre from './pages/Membres/ModifierMembre';
@@ -45,6 +51,12 @@ function App() {
             <Route path='/dashboard' element={<Dashboard/>}></Route>
 
             <Route path='/assiduite' element={<Assiduite/>}></Route>
+
+            <Route path='/depenses' element={<Depenses/>}></Route>
+
+            <Route path='/membres/details/accomplissements' element={<Accomplissements/>}></Route>
+            <Route path='/membres/details/accomplissements/ajouter' element={<AjouterAccomplissement/>}></Route>
+            <Route path='/membres/details/accomplissements/modifier' element={<ModifierAccomplissement/>}></Route>
 
             <Route path='/membres' element={<Membres/>}></Route>
             <Route path='/membres/ajouter' element={<AjouterMembre/>}></Route>

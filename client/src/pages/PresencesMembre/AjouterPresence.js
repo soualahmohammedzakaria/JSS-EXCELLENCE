@@ -5,7 +5,7 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const AjouterAdmin = () => {
+const AjouterPresence = () => {
     // State for form data
     const [formData, setFormData] = useState({
         date: '',
@@ -27,7 +27,7 @@ const AjouterAdmin = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:4000/user/addUser", formData);
+            const response = await axios.post("http://localhost:4000/", formData);
             if(response.data.success){
                 navigate('/membres/details/presences');
             }else{
@@ -86,4 +86,4 @@ const AjouterAdmin = () => {
     );
 };
 
-export default AjouterAdmin;
+export default AjouterPresence;

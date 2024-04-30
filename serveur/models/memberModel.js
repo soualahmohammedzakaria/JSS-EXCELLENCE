@@ -16,8 +16,8 @@ function getMemberByName(nom, prenom) {
 
 function addMember(newMember) {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO membres (nom, prenom, sexe, date_naissance, date_inscription, email, photo, telephone, groupe_sanguin, maladies, poids, taille, supprime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        mydb.query(query, [newMember.nom, newMember.prenom, newMember.sexe, newMember.date_naissance, newMember.date_inscription, newMember.email, newMember.photo, newMember.telephone, newMember.groupe_sanguin, newMember.maladies, newMember.poids, newMember.taille, 0 ], (error, results) => {
+        const query = 'INSERT INTO membres (nom, prenom, sexe, date_naissance, date_inscription, email, telephone, groupe_sanguin, maladies, poids, taille, supprime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        mydb.query(query, [newMember.nom, newMember.prenom, newMember.sexe, newMember.date_naissance, newMember.date_inscription, newMember.email, newMember.telephone, newMember.groupe_sanguin, newMember.maladies, newMember.poids, newMember.taille, 0 ], (error, results) => {
         if (error) {
             reject(error);
         } else {
@@ -40,6 +40,35 @@ const assignMemberToGroups = async (memberId, groupIds) => {
       });
     });
   }
+
+  async function isMemberAssignedToGroup(memberId, groupId) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT COUNT(*) AS count FROM groupes_a_membres WHERE id_membre = ? AND id_groupe = ?';
+        mydb.query(query, [memberId, groupId], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                const count = results[0].count;
+                resolve(count > 0);
+            }
+        });
+    });
+}
+
+async function assignMemberToGroup(memberId, groupId) {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO groupes_a_membres (id_membre, id_groupe) VALUES (?, ?)';
+        mydb.query(query, [memberId, groupId], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+
   
 function deleteMemberById(id) {
   return new Promise((resolve, reject) => {
@@ -54,32 +83,7 @@ function deleteMemberById(id) {
   });
 }
 
-/*function getAllMembers() {
-  return new Promise((resolve, reject) => {
-    const query =`
-    SELECT m.*, JSON_ARRAYAGG(gm.id_groupe) AS groupIds
-    FROM membres m
-    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
-    WHERE m.supprime = 0
-    GROUP BY m.id_membre
-    `;
-    mydb.query(query, (error, results) => {
-      if (error) {
-        reject(error); // Rejeter la promesse en cas d'erreur
-      } else {
-        // Formatter les résultats pour inclure le tableau d'IDs de groupe
-        const membersWithGroups = results.map(member => {
-          return {
-            ...member,
-            groupIds: member.groupIds ? JSON.parse(member.groupIds) : []
-          };
-        });
-
-        resolve(membersWithGroups); // Résoudre la promesse avec les membres formatés
-      }
-    });
-  });
-};*/
+ 
 
 function getAllMembers() {
   return new Promise((resolve, reject) => {
@@ -137,6 +141,9 @@ function getMemberById(memberId) {
   });
 }
 
+ 
+
+ 
 
 function checkMember(nom, prenom, memberId) {
   return new Promise((resolve, reject) => {
@@ -188,6 +195,8 @@ module.exports = {
     getMemberByName, 
     addMember,
     assignMemberToGroups,
+    isMemberAssignedToGroup,
+    assignMemberToGroup,
     deleteMemberById,
     getAllMembers,
     getMemberById,

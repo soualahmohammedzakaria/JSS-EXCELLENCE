@@ -39,7 +39,7 @@ const Assiduite = () => {
                         <h1>Assiduité</h1>
                     </div>
 
-                    <div>
+                    <div className="top-container assiduite-container">
                         { QRcodeScan == "Aucun Code QR scanné" ? (
                             <div className="qr-page">
                                 <h1 className="qr-title">Scannez votre code QR</h1>
@@ -155,8 +155,7 @@ const Assiduite = () => {
                                         <button className={`membre-groupe ${groupeSelectionne === 7 ? 'selected' : ''}`} onClick={() => handleSelectGroupe(7)}>
                                             <div>Judo | Judo U17</div>
                                         </button>
-                                       <p>groupe : {groupeSelectionne}</p>
-                                        {/* Ajoutez d'autres boutons de groupe ici */}
+                                       <p>Groupe : {groupeSelectionne} - {QRcodeScan}</p>
                                     </div>
                                 </div>
                                     <div className="bottom-buttons"> 
