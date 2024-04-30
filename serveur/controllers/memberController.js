@@ -1,6 +1,5 @@
 const memberModel = require('../models/memberModel');
 const multer = require('multer');
-const path = require('path');
 const moment = require('moment-timezone');
 
 // Configuration de Multer pour stocker les images dans le dossier "images"
@@ -17,6 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// A verifier apres le cas des membres supprimes logiquement 
 async function addMember(req, res){
     try {
       const newMember = req.body;
@@ -37,6 +37,7 @@ async function addMember(req, res){
         return res.json({ success: false, message: err.message });
     }
   });*/
+  
       // Assignation du membre aux groupes
       if (newMember.groupIds && newMember.groupIds.length > 0) {
         await memberModel.assignMemberToGroups(IdMember, newMember.groupIds);
@@ -126,12 +127,32 @@ async function deleteMember(req, res) {
       res.json({ success: false, message: 'Erreur lors de l\'assignation du membre aux groupes' });
     }
   }
+
+  async function assignMemberToGroup(req, res) {
+    try {
+        const memberId = req.params.id;
+        const {groupId} = req.body;
+
+        // Vérifier si le membre appartient déjà au groupe
+        const isMemberAssigned = await memberModel.isMemberAssignedToGroup(memberId, groupId);
+
+        if (isMemberAssigned) {
+            res.json({ success: false, message: 'Le membre est déjà assigné à ce groupe' });
+        } else {
+            await memberModel.assignMemberToGroup(memberId, groupId);
+            res.json({ success: true, message: 'Membre assigné au groupe avec succès' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'assignation du membre au groupe :', error);
+        res.json({ success: false, message: 'Erreur lors de l\'assignation du membre au groupe' });
+    }
+}
+
   
   async function deleteGroupMember(req, res) {
     try {
       const memberId = req.params.id;
       const {groupId} = req.body;
-      console.log(groupId);
       await memberModel.deleteGroupMember(memberId, groupId);
       res.json({ success: true, message: 'Membre retiré du groupe avec succès' });
     } catch (error) {
@@ -152,5 +173,6 @@ async function deleteMember(req, res) {
     getMember,
     updateMember,
     assignMemberToGroups,
+    assignMemberToGroup,
     deleteGroupMember
 }

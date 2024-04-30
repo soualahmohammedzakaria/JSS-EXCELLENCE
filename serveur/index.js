@@ -12,6 +12,7 @@ const salleRoutes = require('./routes/salleRoutes');
 const groupRoutes = require('./routes/groupRoutes');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const sportRoutes = require('./routes/sportRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
  
 const app=express();
 app.use(cors());
@@ -34,6 +35,7 @@ app.use('/salle', salleRoutes);
 app.use('/group', groupRoutes);
 app.use('/equipment', equipmentRoutes);
 app.use('/sport', sportRoutes);
+app.use('/transaction', paymentRoutes);
 
 
 

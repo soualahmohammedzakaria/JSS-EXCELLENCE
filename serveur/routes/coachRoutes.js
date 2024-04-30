@@ -8,7 +8,7 @@ router.delete('/deleteCoach/:id', coachController.deleteCoach);
 router.get('/getAllCoachs', coachController.getAllCoachs);
 router.get('/getCoach/:id', coachController.getCoach);
 router.put('/updateCoach/:id', coachController.updateCoach);
-router.post('/assignCoachToGroups/:id', coachController.assignCoachToGroups);
+router.post('/assignCoachToGroup/:id', coachController.assignCoachToGroup);
 router.delete('/deleteGroupCoach/:id', coachController.deleteGroupCoach);
 
      

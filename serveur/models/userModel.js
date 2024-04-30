@@ -59,7 +59,7 @@ function deleteUserById(id) {
 
 function getAllUsers() {
   return new Promise((resolve, reject) => {
-    const query = 'SELECT id_admin, nom, prenom, username, role, photo FROM administrateurs';
+    const query = 'SELECT id_admin, nom, prenom, username, role FROM administrateurs';
     mydb.query(query, (error, results) => {
       if (error) {
         reject(error);

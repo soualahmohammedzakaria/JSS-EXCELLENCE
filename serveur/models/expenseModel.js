@@ -16,10 +16,10 @@ function getExpenseById(id) {
     });
   }
 
-async function addExpense(nom,type,montant,date,description,facture) {
+async function addExpense(nom,type,montant,date,description) {
     return new Promise((resolve, reject) => {
-      const query = 'INSERT INTO depenses (nom, type, montant, date, description, facture) VALUES (?, ?, ?, ?, ?, ?)';
-      mydb.query(query, [nom,type,montant,date,description,facture], (error, results) => {
+      const query = 'INSERT INTO depenses (nom, type, montant, date, description) VALUES (?, ?, ?, ?, ?)';
+      mydb.query(query, [nom,type,montant,date,description], (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -42,10 +42,10 @@ async function deleteExpenseById(id) {
     });
 }
   
-async function updateExpenseById(id, nom, type, montant, date, description, facture) {
+async function updateExpenseById(id, nom, type, montant, date, description) {
     return new Promise((resolve, reject) => {
-      const query = 'UPDATE depenses SET nom = ?, type = ?, montant = ?, date = ?, description = ?, facture = ? WHERE id_depense = ?';
-      mydb.query(query, [nom, type, montant, date, description, facture, id], (error, results) => {
+      const query = 'UPDATE depenses SET nom = ?, type = ?, montant = ?, date = ?, description = ? WHERE id_depense = ?';
+      mydb.query(query, [nom, type, montant, date, description, id], (error, results) => {
         if (error) {
           reject(error);
         } else {

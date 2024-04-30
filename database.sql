@@ -92,7 +92,7 @@ CREATE TABLE `accomplissements` (
   UNIQUE KEY `id_accomp_UNIQUE` (`id_accomp`),
   KEY `fk_accomp_membres` (`id_membre`),
   CONSTRAINT `fk_accomp_membres` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,6 +101,7 @@ CREATE TABLE `accomplissements` (
 
 LOCK TABLES `accomplissements` WRITE;
 /*!40000 ALTER TABLE `accomplissements` DISABLE KEYS */;
+INSERT INTO `accomplissements` VALUES (7,'coupe d\'algerie','1980-12-26','judo','hgyguylggglg',12),(8,'coupe d\'afrique ','1980-12-26','judo','hgyguylggglg',12),(9,'coupe d\'europe ','1980-12-26','judo','Test',12);
 /*!40000 ALTER TABLE `accomplissements` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -271,10 +272,9 @@ CREATE TABLE `depenses` (
   `montant` decimal(10,2) unsigned NOT NULL,
   `date` date NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `facture` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_depense`),
   UNIQUE KEY `id_transaction_UNIQUE` (`id_depense`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,7 +283,7 @@ CREATE TABLE `depenses` (
 
 LOCK TABLES `depenses` WRITE;
 /*!40000 ALTER TABLE `depenses` DISABLE KEYS */;
-INSERT INTO `depenses` VALUES (1,'vvlgvgjvjgglv','tsshy',5000.00,'2023-12-19','iygygygyu','chemin');
+INSERT INTO `depenses` VALUES (3,'nouvelle table','tsshy',5000.00,'2023-12-19','rien a dire'),(4,'nouvelle chaise','tsshy',10000.00,'2020-09-19','iygygygyu');
 /*!40000 ALTER TABLE `depenses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -369,7 +369,7 @@ CREATE TABLE `groupes_a_coachs` (
 
 LOCK TABLES `groupes_a_coachs` WRITE;
 /*!40000 ALTER TABLE `groupes_a_coachs` DISABLE KEYS */;
-INSERT INTO `groupes_a_coachs` VALUES (11,15);
+INSERT INTO `groupes_a_coachs` VALUES (8,14),(11,15);
 /*!40000 ALTER TABLE `groupes_a_coachs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -397,6 +397,7 @@ CREATE TABLE `groupes_a_membres` (
 
 LOCK TABLES `groupes_a_membres` WRITE;
 /*!40000 ALTER TABLE `groupes_a_membres` DISABLE KEYS */;
+INSERT INTO `groupes_a_membres` VALUES (2,10),(8,10),(11,10),(11,11);
 /*!40000 ALTER TABLE `groupes_a_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -437,31 +438,6 @@ INSERT INTO `membres` VALUES (10,'bouka','rayan','Homme','2004-12-08','2015-05-0
 UNLOCK TABLES;
 
 --
--- Table structure for table `membres_a_abonnements`
---
-
-DROP TABLE IF EXISTS `membres_a_abonnements`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `membres_a_abonnements` (
-  `id_abonnement` int unsigned NOT NULL,
-  `id_membre` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_abonnement`,`id_membre`),
-  KEY `fk_membres_has_abonnements_abonnements1_idx` (`id_abonnement`),
-  CONSTRAINT `fk_membres_has_abonnements_abonnements1` FOREIGN KEY (`id_abonnement`) REFERENCES `types_abonnements` (`id_abonnement`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `membres_a_abonnements`
---
-
-LOCK TABLES `membres_a_abonnements` WRITE;
-/*!40000 ALTER TABLE `membres_a_abonnements` DISABLE KEYS */;
-/*!40000 ALTER TABLE `membres_a_abonnements` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `paiements_membres`
 --
 
@@ -470,19 +446,16 @@ DROP TABLE IF EXISTS `paiements_membres`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `paiements_membres` (
   `id_paiement` int unsigned NOT NULL AUTO_INCREMENT,
-  `id_abonnement` int unsigned NOT NULL,
-  `montant` decimal(10,2) NOT NULL,
+  `id_membre` int unsigned NOT NULL,
+  `montant_paye` decimal(10,2) NOT NULL,
+  `montant_restant` decimal(10,2) NOT NULL,
   `date_paiement` date NOT NULL,
-  `date_debut_abonnement` date NOT NULL,
-  `date_fin_abonnement` smallint unsigned NOT NULL,
-  `points_restants` smallint unsigned NOT NULL,
-  `methode_paiement` varchar(45) NOT NULL,
-  `id_membre` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_paiement`,`id_abonnement`,`id_membre`),
+  `mois` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_paiement`),
   UNIQUE KEY `id_paiement_UNIQUE` (`id_paiement`),
-  KEY `fk_paiements_membres_abonnements1_idx` (`id_abonnement`),
-  CONSTRAINT `fk_paiements_membres_abonnements1` FOREIGN KEY (`id_abonnement`) REFERENCES `types_abonnements` (`id_abonnement`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  KEY `id_membre` (`id_membre`),
+  CONSTRAINT `paiements_membres_ibfk_1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -491,6 +464,7 @@ CREATE TABLE `paiements_membres` (
 
 LOCK TABLES `paiements_membres` WRITE;
 /*!40000 ALTER TABLE `paiements_membres` DISABLE KEYS */;
+INSERT INTO `paiements_membres` VALUES (7,12,2500.00,500.00,'2024-04-30','2024-05'),(8,12,2500.00,0.00,'2024-04-30','2024-06'),(9,10,2500.00,0.00,'2024-04-30','2025-05'),(10,11,1000.00,1000.00,'2024-05-01','2024-06'),(11,11,1000.00,1000.00,'2024-05-01','2024-05');
 /*!40000 ALTER TABLE `paiements_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -545,33 +519,6 @@ LOCK TABLES `sports` WRITE;
 INSERT INTO `sports` VALUES (4,'foot ball'),(3,'kick boxing'),(1,'kick fitness');
 /*!40000 ALTER TABLE `sports` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `types_abonnements`
---
-
-DROP TABLE IF EXISTS `types_abonnements`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `types_abonnements` (
-  `id_abonnement` int unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(70) NOT NULL,
-  `tarif` decimal(10,2) unsigned NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `nombre_points` smallint unsigned NOT NULL,
-  PRIMARY KEY (`id_abonnement`),
-  UNIQUE KEY `id_abonnement_UNIQUE` (`id_abonnement`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `types_abonnements`
---
-
-LOCK TABLES `types_abonnements` WRITE;
-/*!40000 ALTER TABLE `types_abonnements` DISABLE KEYS */;
-/*!40000 ALTER TABLE `types_abonnements` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -582,4 +529,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-29 19:03:45
+-- Dump completed on 2024-05-01  0:27:05

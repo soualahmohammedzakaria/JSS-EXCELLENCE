@@ -40,6 +40,35 @@ const assignMemberToGroups = async (memberId, groupIds) => {
       });
     });
   }
+
+async function isMemberAssignedToGroup(memberId, groupId) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT COUNT(*) AS count FROM groupes_a_membres WHERE id_membre = ? AND id_groupe = ?';
+        mydb.query(query, [memberId, groupId], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                const count = results[0].count;
+                resolve(count > 0);
+            }
+        });
+    });
+}
+
+async function assignMemberToGroup(memberId, groupId) {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO groupes_a_membres (id_membre, id_groupe) VALUES (?, ?)';
+        mydb.query(query, [memberId, groupId], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+
   
 function deleteMemberById(id) {
   return new Promise((resolve, reject) => {
@@ -56,7 +85,7 @@ function deleteMemberById(id) {
 
  
 
-function getAllMembers() {
+/*function getAllMembers() {
   return new Promise((resolve, reject) => {
     const query =`
     SELECT m.*, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
@@ -82,7 +111,54 @@ function getAllMembers() {
       }
     });
   });
+};*/
+
+async function getAllMembers() {
+  return new Promise((resolve, reject) => {
+    const query =`
+    SELECT 
+    m.*, -- Sélectionne toutes les colonnes de la table membres
+    JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes, -- Crée un tableau JSON des groupes associés à chaque membre
+    CASE 
+        WHEN EXISTS (
+            SELECT * 
+            FROM paiements_membres pm 
+            WHERE m.id_membre = pm.id_membre 
+            AND pm.mois = DATE_FORMAT(NOW(), '%Y-%m')
+        ) THEN 'Payé' -- Si un paiement pour le mois actuel existe pour ce membre, définir l'état à 'Payé'
+        ELSE 'Non Payé' -- Sinon, définir l'état à 'Non Payé'
+    END AS etat_abonnement -- Alias pour l'état de l'abonnement
+FROM 
+    membres m
+LEFT JOIN 
+    groupes_a_membres gm ON m.id_membre = gm.id_membre -- Jointure pour lier les membres aux groupes auxquels ils appartiennent
+LEFT JOIN 
+    groupes g ON gm.id_groupe = g.id_groupe -- Jointure pour récupérer les détails des groupes
+WHERE 
+    m.supprime = 0 -- Filtre les membres supprimés
+GROUP BY 
+    m.id_membre; -- Regroupe les résultats par ID de membre pour éviter les doublons
+
+    `;
+    mydb.query(query, (error, results) => {
+      if (error) {
+        reject(error); // Rejeter la promesse en cas d'erreur
+      } else {
+        // Formatter les résultats pour inclure les informations des groupes
+        const membersWithGroups = results.map(member => {
+          return {
+            ...member,
+            groupes: member.groupes ? JSON.parse(member.groupes) : [],
+            etat_abonnement: member.etat_abonnement // Ajout de l'état de l'abonnement
+          };
+        });
+
+        resolve(membersWithGroups); // Résoudre la promesse avec les membres formatés
+      }
+    });
+  });
 };
+
 
 function getMemberById(memberId) {
   return new Promise((resolve, reject) => {
@@ -112,49 +188,9 @@ function getMemberById(memberId) {
   });
 }
 
-/*function getMemberById(memberId) {
-  return new Promise((resolve, reject) => {
-    const query = `
-    SELECT m.*,
-    JSON_ARRAYAGG(
-        JSON_OBJECT(
-            'id_sport', s.id_sport,
-            'nom_sport', s.nom,
-            'groupes', grp.groupes  -- Utilisation de l'alias grp
-        )
-    ) AS sports
-FROM membres m
-LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
-LEFT JOIN (
-    SELECT g.id_sport, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
-    FROM groupes g
-    GROUP BY g.id_sport
-) AS grp ON gm.id_groupe = grp.id_sport
-LEFT JOIN sports s ON grp.id_sport = s.id_sport
-WHERE m.id_membre = ?
-    AND m.supprime = 0
-GROUP BY m.id_membre;
+ 
 
-    `;
-    mydb.query(query, [memberId], (error, results) => {
-      if (error) {
-        reject(error); // Rejeter la promesse en cas d'erreur
-      } else {
-        if (results.length > 0) {
-          const member = {
-            ...results[0],
-            sports: results[0].sports ? JSON.parse(results[0].sports) : []
-          };
-          resolve(member); // Résoudre la promesse avec le membre formaté
-        } else {
-          resolve(null); // Aucun membre trouvé avec cet ID
-        }
-      }
-    });
-  });
-}
-*/
-
+ 
 
 function checkMember(nom, prenom, memberId) {
   return new Promise((resolve, reject) => {
@@ -206,6 +242,8 @@ module.exports = {
     getMemberByName, 
     addMember,
     assignMemberToGroups,
+    isMemberAssignedToGroup,
+    assignMemberToGroup,
     deleteMemberById,
     getAllMembers,
     getMemberById,

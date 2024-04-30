@@ -39,10 +39,10 @@ function deleteAchievementById(id) {
         });
     }
 
-    function getAllAchievements() {
+    function getAchievements(memberId) {
         return new Promise((resolve, reject) => {
-          const query = 'SELECT * FROM accomplissements';
-          mydb.query(query, (error, results) => {
+          const query = 'SELECT * FROM accomplissements WHERE id_membre = ?';
+          mydb.query(query, [memberId], (error, results) => {
             if (error) {
               reject(error);
             } else {
@@ -55,13 +55,11 @@ function deleteAchievementById(id) {
 
 
 
-
-
   module.exports = { 
     addAchievement,
     deleteAchievementById,
     updateAchievement,
-    getAllAchievements,
+    getAchievements,
 
     
 };

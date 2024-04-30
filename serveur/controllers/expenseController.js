@@ -3,8 +3,8 @@ const moment = require('moment-timezone');
 
   async function addExpense(req, res) {
     try {
-      const { nom, type, montant, date, description, facture } = req.body;
-      await expenseModel.addExpense(nom, type, montant, date, description, facture);
+      const { nom, type, montant, date, description } = req.body;
+      await expenseModel.addExpense(nom, type, montant, date, description);
       res.json({ success: true, message: 'Dépense ajoutée avec succès' });
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la dépense :', error);
@@ -28,8 +28,8 @@ const moment = require('moment-timezone');
   async function updateExpense(req, res) {
     try {
       const depenseId = req.params.id;
-      const { nom, type, montant, date, description, facture } = req.body;
-      await expenseModel.updateExpenseById(depenseId, nom, type, montant, date, description, facture);
+      const { nom, type, montant, date, description} = req.body;
+      await expenseModel.updateExpenseById(depenseId, nom, type, montant, date, description);
       res.json({ success: true, message: 'Dépense mise à jour avec succès' });
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la dépense :', error);

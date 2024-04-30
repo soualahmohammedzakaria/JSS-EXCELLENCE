@@ -137,6 +137,33 @@ function deleteCoachById(id) {
     });
   }
 
+  async function isCoachAssignedToGroup(coachId, groupId) {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT COUNT(*) AS count FROM groupes_a_coachs WHERE id_coach = ? AND id_groupe = ?';
+        mydb.query(query, [coachId, groupId], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                const count = results[0].count;
+                resolve(count > 0);
+            }
+        });
+    });
+}
+
+async function assignCoachToGroup(coachId, groupId) {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO groupes_a_coachs (id_coach, id_groupe) VALUES (?, ?)';
+        mydb.query(query, [coachId, groupId], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
 
   function deleteGroupCoach(coachId, groupId) {
     return new Promise((resolve, reject) => {
@@ -161,5 +188,7 @@ module.exports = {
     checkCoach,
     updateCoach,
     assignCoachToGroups,
+    isCoachAssignedToGroup,
+    assignCoachToGroup,
     deleteGroupCoach
 };
