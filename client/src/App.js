@@ -9,6 +9,12 @@ import Authentification from './pages/Authentification/Authentification';
 import Assiduite from './pages/Assiduite/Assiduite';
 
 import Depenses from './pages/Depenses/Depenses';
+import AjouterDepense from './pages/Depenses/AjouterDepense';
+import ModifierDepense from './pages/Depenses/ModifierDepense';
+
+import Paiements from './pages/Paiements/Paiements';
+import AjouterPaiement from './pages/Paiements/AjouterPaiement';
+import ModifierPaiement from './pages/Paiements/ModifierPaiement';
 
 import Accomplissements from './pages/Accomplissements/Accomplissements';
 import AjouterAccomplissement from './pages/Accomplissements/AjouterAccomplissement';
@@ -53,6 +59,12 @@ function App() {
             <Route path='/assiduite' element={<Assiduite/>}></Route>
 
             <Route path='/depenses' element={<Depenses/>}></Route>
+            <Route path='/depenses/ajouter' element={<AjouterDepense/>}></Route>
+            <Route path='/depenses/modifier' element={<ModifierDepense/>}></Route>
+
+            <Route path='/membres/details/paiements' element={<Paiements/>}></Route>
+            <Route path='/membres/details/paiements/ajouter' element={<AjouterPaiement/>}></Route>
+            <Route path='/membres/details/paiements/modifier' element={<ModifierPaiement/>}></Route>
 
             <Route path='/membres/details/accomplissements' element={<Accomplissements/>}></Route>
             <Route path='/membres/details/accomplissements/ajouter' element={<AjouterAccomplissement/>}></Route>

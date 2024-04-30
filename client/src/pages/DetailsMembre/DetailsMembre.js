@@ -119,13 +119,16 @@ const DetailsMembre = () => {
                                     <Link to="/membres/modifier" className="link"><span className="material-icons-outlined">edit</span><span>Modifier profil</span></Link>
                                 </button>
                                 <button className="membre-btn pointed">
-                                    <Link to="/membres/details/accomplissements" state={{id: membre.id_membre}} className="link"><span className="material-icons-outlined">military_tech</span><span>Accomplissements</span></Link>
+                                    <Link to="./accomplissements" state={{id: membre.id_membre}} className="link"><span className="material-icons-outlined">military_tech</span><span>Accomplissements</span></Link>
                                 </button>
                                 <button className="membre-btn pointed">
-                                    <Link to="/membres/details/presences" className="link"><span className="material-icons-outlined">check_circle</span><span>Voir présences</span></Link>
+                                    <Link to="./paiements" className="link" state={{id: membre.id_membre}}><span className="material-icons-outlined">history</span><span>Paiements</span></Link>
                                 </button>
                                 <button className="membre-btn pointed">
-                                    <Link to="/membres/details/absences" className="link"><span className="material-icons-outlined">cancel</span><span>Voir absences</span></Link>
+                                    <Link to="./presences" className="link" state={{id: membre.id_membre}}><span className="material-icons-outlined">check_circle</span><span>Voir présences</span></Link>
+                                </button>
+                                <button className="membre-btn pointed">
+                                    <Link to="./absences" className="link" state={{id: membre.id_membre}}><span className="material-icons-outlined">cancel</span><span>Voir absences</span></Link>
                                 </button>
                             </div>
                             <div>

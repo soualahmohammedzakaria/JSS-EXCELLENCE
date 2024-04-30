@@ -27,7 +27,7 @@ const upload = multer({ storage: storage });
 
 async function addUser(req, res) {
     try {
-        const {nom, prenom, username, password, role } = req.body;
+        const {nom, prenom, username, password, role, photo } = req.body;
         // Vérifier si le nom d'utilisateur a au moins 4 caractères et contient au moins une lettre
         if (username.length < 4 || !/[a-zA-Z]/.test(username)) {
           return res.json({ success: false, message: 'Le nom d\'utilisateur doit avoir au moins 4 caractères et contenir au moins une lettre.' });
@@ -42,7 +42,8 @@ async function addUser(req, res) {
             }
         await userModel.addUser(nom, prenom, username, password, role);
         // Traitement du téléchargement de la photo
-       /* upload.single('photo')(req, res, async (err) => {
+        if(photo !== undefined && photo !== null && photo !== '') {
+          upload.single('photo')(req, res, async (err) => {
           if (err instanceof multer.MulterError) {
             // Erreur Multer
             return res.json({ success: false, message: 'Erreur lors du téléchargement de la photo' });
@@ -50,7 +51,8 @@ async function addUser(req, res) {
             // Autres erreurs
             return res.json({ success: false, message: err.message });
         }
-      });*/
+        });
+    }
       res.json({ success: true, message: 'Utilisateur ajouté avec success!' });
         }
     } catch (error) {
@@ -127,5 +129,3 @@ module.exports = {
     updateUser,
     updateUserPassword
 }
-
- 

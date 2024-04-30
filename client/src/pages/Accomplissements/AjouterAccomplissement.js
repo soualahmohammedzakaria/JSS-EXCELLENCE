@@ -44,7 +44,6 @@ const AjouterAccomplissement = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(formData);
         try {
             const response = await axios.post("http://localhost:4000/achievement/addAchievement", formData);
             if(response.data.success){

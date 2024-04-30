@@ -34,11 +34,10 @@ const Depenses = () => {
             })
             .catch((error) => {
                 console.error("Erreur de l'obtention des dépenses:", error);
-                // You can add additional error handling or state updates here
             });
     };
 
-    const nbItems = 5; // Number of items per page
+    const nbItems = 7;
     const nbPages = Math.ceil(filteredDepenses.length / nbItems);
 
     // Ensure indices are within valid bounds
@@ -78,35 +77,61 @@ const Depenses = () => {
         setShowFilterModal(true);
     };
 
+    const HandleClearFilters = () => {
+        setSelectedNom("Pas de filtre");
+        setSelectedDate("Tous");
+        setSelectedMontant("Tous");
+    };
+
     const filterDepenses = () => {
-        let filtered = depenses || [];
+        let filtered = depenses;
     
+        // Case insensitive search by name
         if (searchQuery.trim() !== "") {
             filtered = filtered.filter((depense) => {
-                const name = `${depense.nom}`.toLowerCase();
-                return name.includes(searchQuery.toLowerCase());
+                const name = depense.nom.toLowerCase();
+                const type = depense.type.toLowerCase();
+                return (name.includes(searchQuery.toLowerCase()) || type.includes(searchQuery.toLowerCase()));
             });
         }
     
         if (selectedMontant !== "Tous") {
-            filtered = filtered.filter((depense) => depense.montant === selectedMontant);
-        }
-    
-        if (selectedDate !== "Tous") {
+            const montantThreshold = parseInt(selectedMontant.substring(1), 10); // Convert selectedMontant to integer
+            const isNegative = selectedMontant.includes("-");
             filtered = filtered.filter((depense) => {
-                const date = new Date(depense.date);
-                const diffYears = new Date().getFullYear() - date.getFullYear();
-                
-                if (selectedDate === "-1 ans") {
-                    return diffYears < 1;
-                } else if (selectedDate === "+1 ans") {
-                    return diffYears >= 1;
+                if (isNegative) {
+                    return depense.montant <= montantThreshold;
+                } else {
+                    return depense.montant > montantThreshold;
                 }
-                return true;
+            });
+        }        
+    
+        // Filter by date
+        if (selectedDate !== "Tous") {
+            const currentDate = new Date();
+            filtered = filtered.filter((depense) => {
+                const depenseDate = new Date(depense.date);
+                const diffTime = currentDate - depenseDate;
+                const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365); // Convert milliseconds to years
+                switch (selectedDate) {
+                    case "Ce mois":
+                        return depenseDate.getMonth() === currentDate.getMonth() && depenseDate.getFullYear() === currentDate.getFullYear();
+                    case "-6 mois":
+                        return diffYears <= 0.5;
+                    case "-1 ans":
+                        return diffYears <= 1;
+                    case "-2 ans":
+                        return diffYears <= 2;
+                    case "+2 ans":
+                        return diffYears > 2;
+                    default:
+                        return true;
+                }
             });
         }
     
-        // Apply sorting by name if needed
+        // Sort by nom
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
@@ -119,7 +144,7 @@ const Depenses = () => {
         }
     
         setFilteredDepenses(filtered);
-    };
+    };    
 
     const handleFilter = () => {
         setShowFilterModal(false);
@@ -132,7 +157,7 @@ const Depenses = () => {
                 <Sidebar currPage="/depenses" />
                 <div className="top-container">
                     <div className="header">
-                        <h1>Depenses</h1>
+                        <h1>Dépenses</h1>
                         <button className="btn">
                             <Link to="/depenses/ajouter" className="link">
                                 <span className="material-icons-outlined">add</span>
@@ -142,7 +167,7 @@ const Depenses = () => {
                     <Searchbar handleSearch={handleSearch} handleFilterModal={handleFilterModal}/>
                     <div>
                         {depensesParPage.length === 0 ? (
-                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de profils!</h1>
+                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de dépenses!</h1>
                             ) : (
                             <table className="table-profiles">
                                 <thead>
@@ -165,8 +190,7 @@ const Depenses = () => {
                                             <th>{formatDate(depense.date)}</th>
                                             
                                             <th>
-                                                <Link className="link" to="./details" state={{}}><span className="material-icons-outlined pointed">info</span></Link>
-                                                <Link className="link" to="./modifier" state={{id: depense.id_depense, nom: depense.nom, montant:depense.mintant, type: depense.type, date: depense.date}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id: depense.id_depense, nom: depense.nom, montant:depense.montant, type: depense.type, date: depense.date}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleDeleteDepense(depense.id_depense)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>
@@ -195,7 +219,7 @@ const Depenses = () => {
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-content">
-                            <h3>Etes-vous sûr de vouloir supprimer cette depense?</h3>
+                            <h3>Etes-vous sûr de vouloir supprimer cette dépense?</h3>
                         </div>
                         <div className="modal-buttons">
                             <button onClick={confirmDeleteDepense} className="btn pointed"><span className="link">Confirmer</span></button>
@@ -211,32 +235,39 @@ const Depenses = () => {
                             <div className="modal-header">
                                 <h1>Filtrer les résultats</h1>
                             </div>
-                            <div className="filters-body">
-                                    <div className="filter-option">
-                                        <label>Nom</label>
-                                        <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
-                                            <option value="Pas de filtre">Pas de filtre</option>
-                                            <option value="Ascendant">Ascendant</option>
-                                            <option value="Descendant">Descendant</option>
-                                        </select>
-                                    </div>
-                                    <div className="filter-option">
-                                        <label>Montant</label>
-                                        <select name="montant" id="montant" value={selectedMontant} onChange={(e) => setSelectedMontant(e.target.value)}>
-                                            <option value="tous">Tous</option>
-                                            <option value="-5000 DZD">-5000 DZD</option>
-                                            <option value="+5000 DZD">+5000DZD</option>
-                                            <option value="+10000 DZD">+10000DZD</option> 
-                                        </select>
-                                    </div>
-                                    <div className="filter-option">
-                                        <label>Date</label>
-                                        <select name="Date" id="Date" value={Date} onChange={(e) => setSelectedDate(e.target.value)}>
-                                            <option value="Tous">Tous</option>
-                                            <option value="-1 ans">-1 ans</option>
-                                            <option value="+1 ans">+1 ans</option>
-                                        </select>
-                                     </div>
+                            <div className="filter-options">
+                                <div className="filter-option">
+                                    <label>Nom</label>
+                                    <select name="nom" id="nom" value={selectedNom} onChange={(e) => setSelectedNom(e.target.value)}>
+                                        <option value="Pas de filtre">Pas de filtre</option>
+                                        <option value="Ascendant">Ascendant</option>
+                                        <option value="Descendant">Descendant</option>
+                                    </select>
+                                </div>
+                                <div className="filter-option">
+                                    <label>Date</label>
+                                    <select name="date" id="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
+                                        <option value="Tous">Tous</option>
+                                        <option value="Ce mois">Ce mois</option>
+                                        <option value="-6 mois">-6 mois</option>
+                                        <option value="-1 ans">-1 ans</option>
+                                        <option value="-2 ans">-2 ans</option>
+                                        <option value="+2 ans">+2 ans</option>
+                                    </select>
+                                </div>
+                                <div className="filter-option">
+                                    <label>Montant</label>
+                                    <select name="montant" id="montant" value={selectedMontant} onChange={(e) => setSelectedMontant(e.target.value)}>
+                                        <option value="Tous">Tous</option>
+                                        <option value="-5000 DZD">-5000 DZD</option>
+                                        <option value="-10000 DZD">-10000 DZD</option>
+                                        <option value="-50000 DZD">-50000 DZD</option>
+                                        <option value="+50000 DZD">+50000 DZD</option>
+                                    </select>
+                                </div>
+                                <button onClick={HandleClearFilters} className="btn-reinit pointed">
+                                    <span className="link">Réinitialiser les filtres</span>
+                                </button>
                             </div>
                         </div>
                         <div className="modal-buttons">

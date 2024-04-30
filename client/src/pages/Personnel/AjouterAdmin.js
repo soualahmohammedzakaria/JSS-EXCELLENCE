@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
@@ -6,57 +6,65 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const AjouterAdmin = () => {
-    // State for form data
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
         role: 'Gestionnaire',
         username: '',
         password: '',
-        photo: null // State for storing selected image file
+        photo: null
     });
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
-    // Handle changes in form fields
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // Handle changes in image input field
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setFormData({ ...formData, photo: file });
     };
 
-    // Submit form data
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (formData.password !== confirmPassword || !formData.password) {
             setErrorMessage("Le mot de passe et le mot de passe de confirmation ne sont pas les mêmes!");
-        } else {
-            try {
-                // Create FormData object to send file data
-                const formDataToSend = new FormData();
-                formDataToSend.append('nom', formData.nom);
-                formDataToSend.append('prenom', formData.prenom);
-                formDataToSend.append('role', formData.role);
-                formDataToSend.append('username', formData.username);
-                formDataToSend.append('password', formData.password);
-                formDataToSend.append('photo', formData.photo); // Append image file
+            return;
+        }
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('nom', formData.nom);
+            formDataToSend.append('prenom', formData.prenom);
+            formDataToSend.append('role', formData.role);
+            formDataToSend.append('username', formData.username);
+            formDataToSend.append('password', formData.password);
+            formDataToSend.append('photo', formData.photo);
 
-                const response = await axios.post("http://localhost:4000/user/addUser", formDataToSend);
-                if(response.data.success){
-                    navigate('/admins');
-                }else{
-                    setErrorMessage(response.data.message);
+            const response = await axios.post("http://localhost:4000/user/addUser", formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Ensure correct content type for FormData
                 }
-            }catch (error) {
-                setErrorMessage("Désolé, une erreur s'est produite!");
+            });
+            if (response.data.success) {
+                setFormData({
+                    nom: '',
+                    prenom: '',
+                    role: 'Gestionnaire',
+                    username: '',
+                    password: '',
+                    photo: null
+                });
+                setConfirmPassword("");
+                navigate('/admins');
+            } else {
+                setErrorMessage(response.data.message);
             }
-        }  
+        } catch (error) {
+            setErrorMessage("Désolé, une erreur s'est produite!");
+        }
     };
 
     return (
@@ -77,25 +85,25 @@ const AjouterAdmin = () => {
                         <div className="add-container">
                             <form className="add-form" onSubmit={handleSubmit}>
                                 <div className="add-input">
-                                    <span className="material-icons-outlined">badge</span> 
+                                    <span className="material-icons-outlined">badge</span>
                                     <input type="text" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required/>
                                 </div>
                                 <div className="add-input">
-                                    <span className="material-icons-outlined">badge</span> 
+                                    <span className="material-icons-outlined">badge</span>
                                     <input type="text" name="prenom" placeholder="Prénom" value={formData.prenom} onChange={handleChange} required/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">image</span>
-                                    <input type="file" accept="image/*" onChange={handleImageChange}/> {/* Image input field */}
+                                    <input type="file" accept="image/*" onChange={handleImageChange}/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">admin_panel_settings</span>
                                     <label>Rôle</label>
                                     <select name="role" value={formData.role} onChange={handleChange}>
                                         <option value="Administrateur">Administrateur</option>
-                                        <option value="Gestionnaire">Gestionnaire</option>                            
+                                        <option value="Gestionnaire">Gestionnaire</option>
                                     </select>
-                                </div> 
+                                </div>
                                 <div className="add-input">
                                     <span className="material-icons-sharp">person</span>
                                     <input type="text" name="username" placeholder="Nom d'utilisateur" value={formData.username} onChange={handleChange} required/>
