@@ -8,8 +8,7 @@ router.post('/addTransaction/', paymentController.addTransaction);
 router.delete('/deleteTransaction/:id', paymentController.deleteTransaction);
 router.put('/updateTransaction/:id', paymentController.updateTransaction);
 router.get('/getTransactions/:id', paymentController.getTransactions);    
-//router.get('/generateInvoice', paymentController.generateInvoice); 
-//router.get('/sendInvoiceByEmail', paymentController.sendInvoiceByEmail); 
+router.post('/sendInvoiceByEmail', paymentController.sendInvoiceByEmail); 
 
  
 

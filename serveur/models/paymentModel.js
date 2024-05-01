@@ -1,23 +1,22 @@
 const mydb=require('../config/database');
+const utils = require('../utils'); 
 const pdf = require('html-pdf');
-const fs = require('fs');
 const nodemailer = require('nodemailer');
  
 
-
-
-/*function getTransactionById(id1,id2,id3) {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM paiements_membres WHERE id_paiement = ? AND id_membre = ? AND id_abonnement = ?';
-      mydb.query(query, [id1,id2,id3], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results[0]);
-        }
+// Fonction pour obtenir une transaction par id
+async function getTransactionById(id) {
+  return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM paiements_membres WHERE id_paiement = ?';
+      mydb.query(query, [id], (error, results) => {
+          if (error) {
+              reject(error);
+          } else {
+              resolve(results[0]);
+          }
       });
-    });
-  }*/
+  });
+}
 
 // Fonction pour obtenir une transaction par membre et mois
 async function getTransactionByMemberAndMonth(id_membre, mois) {
@@ -114,177 +113,119 @@ function getTransactions(memberId) {
 
 
 // Fonction pour générer la facture au format PDF s'une transaction d'id_paiement = id1 , id_abonnement = id3 
-function generateInvoice( ) {
-  return new Promise((resolve, reject) => {
-  
-   
-  // Afin de remplir la facture on a besoin d'accéder au type d'abonnement correspondant 
-
-  // const membershipeType = membershipTypeModel.getMembershipTypeById(id3);
-
+function generateInvoice(data) {
+  return new Promise((resolve, reject) => {  
   // code HTML de la facture
   const html = `
   <!DOCTYPE html>
-  <html lang="en">
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        font-size: 12px;
-        line-height: 1.5;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
-      .header {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .header h1 {
-        font-size: 40px;
-        text-align : right;
-        margin-right: 10px;
-        margin-top: 10;
-        margin-bottom: 20px;
-      }
-      .header p {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 0;
-      }
-      .invoice-info {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-      }
-      .invoice-info p {
-        margin-bottom: 0;
-        text-align : right;
-        margin-right: 10px;
-        
-      }
-      .invoice-info .invoice-number {
-        font-size: 16px;
-        font-weight: bold;
-      }
-      .invoice-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-      }
-      .invoice-table th,
-      .invoice-table td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-      .invoice-table th {
-        background-color: #f2f2f2;
-        font-weight: bold;
-      }
-      .invoice-table tr:nth-child(even) {
-        background-color: #f2f2f2;
-        border-top: 2px solid black;
-        margin-bottom: 20px;
-      }
-      .total {
-        text-align: right;
-        font-weight: bold;
-        font-size: 16px;
-        margin-bottom: 20px;
-      }
-      .total span {
-        font-size: 14px;
-        color: #666;
-      }
-      .footer {
-        text-align: center;
-        font-size: 12px;
-        color: #666;
-        margin-top: 500px;
-        border-top: 1px solid #ddd;
-        padding-top: 20px;
-      }
-      .line {
-        border-top: 2px solid black;
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>Facture</h1>
-       
-      </div>
-      <div class="invoice-info">
-        <p>
-          <strong>Expéditeur </strong><br>
-          JSS Excellence<br>
-          Cité Bellouta, Saoula<br>
-          Alger, Algérie<br>
-          Téléphone :  0673 08 44 80<br>
-        </p>
-        <hr class="line">
-        <p style="text-align: left">
-          <strong>Client </strong><br>
-          Nom : Boukakiou Wassim <br>      
-          Téléphone : 0697050635 <br>  
-          Date :30/04/2024  <br>    
-        </p>
-      </div>
-      <table class="invoice-table">
-        <thead>
-          <tr>
-            <th>Abonnement</th>
-            <th>Description</th>
-            <th>Durée</th>
-            <th>Prix </th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>     <! -- normalement \${membershipType.type}  -->
-            <td></td>  <! -- normalement \${membershipType.description}  -->
-            <td> du $du 01 au 30 </td> 
-            <td> DA</td>   <! -- normalement \${membershipType.tarif}  -->
-            <td> DA</td>   <! -- normalement \${membershipType.tarif}  -->
-          </tr>
-        </tbody>
-      </table>
-      <p class="total">
-        Total : DA<br>
-        <span>TVA : 0 DA</span><br> 
-        <span>Total TTC :  DA</span> <! -- normalement \${membershipType.tarif}  -->
-      </p>
-      <div class="footer">
-        Merci pour votre abonnement.<br>
-      </div>
-    </div>
-  </body>
-  </html>
-  `;
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    background-color: #fff; /* Fond blanc */
+}
 
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.invoice-details {
+    margin-top: 20px;
+}
+
+.invoice-details table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc; /* Ajout d'une bordure */
+}
+
+.invoice-details table td, .invoice-details table th {
+    padding: 10px;
+    border: 1px solid #ccc; /* Ajout d'une bordure */
+    text-align: center; /* Centrage du contenu */
+}
+
+.invoice-details table th {
+    background-color: #f2f2f2;
+}
+
+.footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #777;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Facture de Paiement</h1>
+            <p>Merci pour votre paiement !</p>
+        </div>
+        <div class="invoice-details">
+            <h2>Informations du Membre</h2>
+            <table>
+                <tr>
+                    <th>Nom:</th>
+                    <td> ${data.dataMember.nom} ${data.dataMember.prenom} </td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td>${data.dataMember.email}</td>
+                </tr>
+                <tr>
+                    <th>Date d'Inscription:</th>
+                    <td>${data.dataMember.date_inscription}</td>
+                </tr>
+                <!-- Ajoutez plus d'informations sur le membre si nécessaire -->
+            </table>
+            <br>
+            <h2>Détails du Paiement</h2>
+            <table>
+                <tr>
+                    <th>Date de Paiement</th>
+                    <th>Montant Payé</th>
+                    <th>Montant Restant</th>
+                    <th>Mois de Paiement</th>
+                </tr>
+                <tr>
+                    <td>${data.dataPayment.date_paiement}</td>
+                    <td>${data.dataPayment.montant_paye} DZD</td>
+                    <td>${data.dataPayment.montant_restant} DZD</td>
+                    <td>${utils.formatMois(data.dataPayment.mois)}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            <p>© 2024 JSS EXCELLENCE. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>
+  `;
   // Options pour la conversion en PDF
   const options = { format: 'A4' };
-
   // Générer le PDF
   pdf.create(html, options).toBuffer(function(err, buffer) {
     if (err) {
       reject(error);
     } else {
-      // Enregistrer le PDF généré
-      fs.writeFileSync("invoice.pdf", buffer);
       resolve(buffer);
       
     }
@@ -293,9 +234,8 @@ function generateInvoice( ) {
 )}
 
 // Fonction pour envoyer la facture d'une transaction 
-function sendInvoiceByEmail() {
+function sendInvoiceByEmail(invoice,email) {
   return new Promise((resolve, reject) => {
-    //const user = userModel.getUserByUserName(user_username);
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -309,10 +249,10 @@ function sendInvoiceByEmail() {
       to: 'mz_soualahmohammed@esi.dz',
       subject: 'JSS Excellence :  Facture de votre abonnement',
       text: 'Veuillez trouver ci-joint votre facture.',
-      /*attachments: [{
+      attachments: [{
         filename: 'Facture.pdf',
-        content: pdfBuffer
-      }]*/
+        content: invoice,
+      }]
     };
 
     transporter.sendMail(mailOptions, function(error, info) {
@@ -325,9 +265,23 @@ function sendInvoiceByEmail() {
   });
 }
 
+function getMemberById(id) {
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT nom, prenom, email, date_inscription, date_naissance FROM membres WHERE id_membre = ?';
+    mydb.query(query, [id], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results[0]);
+      }
+    });
+  });
+}
+
  
 module.exports = {
-  //getTransactionById,
+  getTransactionById,
+  getMemberById,
   addTransaction,
   getTransactionByMemberAndMonth,
   deleteTransactionById,

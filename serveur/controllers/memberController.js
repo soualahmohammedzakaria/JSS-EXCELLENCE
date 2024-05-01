@@ -80,6 +80,25 @@ async function deleteMember(req, res) {
     try {
       const memberId = req.params.id;
       const member = await memberModel.getMemberById(memberId);
+      if(member.id_paiement != null){
+        const transaction = await memberModel.getTransaction(member.id_paiement);
+        transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
+        transaction.mois_abonnement = transaction.mois;
+        delete transaction.mois;
+        delete transaction.date_paiement;
+        member.transaction = transaction;
+      }
+      else{
+        const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
+            if (lastTransaction) {
+                member.id_paiement = lastTransaction.id_paiement;
+                lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
+                lastTransaction.mois_abonnement = lastTransaction.mois;
+                delete lastTransaction.mois;
+                delete lastTransaction.date_paiement;
+                member.transaction = lastTransaction;
+            }        
+      }
       if (member) {
         member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
         member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
