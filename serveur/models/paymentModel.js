@@ -191,7 +191,7 @@ function generateInvoice(data) {
                 </tr>
                 <tr>
                     <th>Date d'Inscription:</th>
-                    <td>${data.dataMember.date_inscription}</td>
+                    <td>${utils.formatDate(data.dataMember.date_inscription)}</td>
                 </tr>
                 <!-- Ajoutez plus d'informations sur le membre si nécessaire -->
             </table>
@@ -205,7 +205,7 @@ function generateInvoice(data) {
                     <th>Mois de Paiement</th>
                 </tr>
                 <tr>
-                    <td>${data.dataPayment.date_paiement}</td>
+                    <td>${utils.formatDate(data.dataPayment.date_paiement)}</td>
                     <td>${data.dataPayment.montant_paye} DZD</td>
                     <td>${data.dataPayment.montant_restant} DZD</td>
                     <td>${utils.formatMois(data.dataPayment.mois)}</td>
@@ -236,6 +236,7 @@ function generateInvoice(data) {
 // Fonction pour envoyer la facture d'une transaction 
 function sendInvoiceByEmail(invoice,email) {
   return new Promise((resolve, reject) => {
+    console.log(process.env.PORT);
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -246,7 +247,7 @@ function sendInvoiceByEmail(invoice,email) {
 
     const mailOptions = {
       from: 'ghackcourrier@gmail.com',  
-      to: 'mz_soualahmohammed@esi.dz',
+      to: email,
       subject: 'JSS Excellence :  Facture de votre abonnement',
       text: 'Veuillez trouver ci-joint votre facture.',
       attachments: [{

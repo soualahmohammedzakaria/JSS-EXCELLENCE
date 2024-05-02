@@ -9,6 +9,12 @@ const formatMois = (date) => {
     return `${nomMois} ${an}`;
 };
 
+const formatDate = (date) => {
+    return date.split('-').reverse().join('/');
+};
+
+
 module.exports = {
-    formatMois
+    formatMois,
+    formatDate
 };

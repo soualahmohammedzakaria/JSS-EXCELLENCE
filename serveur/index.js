@@ -13,7 +13,7 @@ const groupRoutes = require('./routes/groupRoutes');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const sportRoutes = require('./routes/sportRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
-//const attendanceRoutes = require('./routes/attendanceRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
  
 const app=express();
 app.use(cors());
@@ -22,8 +22,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 const PORT=process.env.PORT || 4000;
 app.use(bodyParser.json());
-
-
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
@@ -37,7 +35,7 @@ app.use('/group', groupRoutes);
 app.use('/equipment', equipmentRoutes);
 app.use('/sport', sportRoutes);
 app.use('/transaction', paymentRoutes);
-//app.use('/attendance', attendanceRoutes);
+app.use('/attendance', attendanceRoutes);
 
 
 
