@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
-import { formatDate } from "../../utils/datesUtils";
+import { formatDate, formatAnMois } from "../../utils/datesUtils";
 
 const Paiements = () => {
     const location = useLocation();
@@ -18,10 +18,11 @@ const Paiements = () => {
 
     const fetchPaiements = () => {
         axios
-            .get(`http://localhost:4000/payments/getAllPayments/${location.state.id}`)
+            .get(`http://localhost:4000/transaction/getTransactions/${location.state.id}`)
             .then((response) => {
                 if (response.data.success) {
-                    const fetchedPaiements = response.data.payments || [];
+                    const fetchedPaiements = response.data.transactions || [];
+                    fetchedPaiements.sort((a, b) => { return new Date(b.date_abonnement) - new Date(a.date_abonnement); });
                     setPaiements(fetchedPaiements);
                 }
             })
@@ -46,7 +47,7 @@ const Paiements = () => {
 
     const confirmerSupprimerPaiement = async () => {
         try {
-            await axios.delete(`http://localhost:4000/expense/deleteExpense/${idPaiementSupprimer}`);
+            await axios.delete(`http://localhost:4000/transaction/deleteTransaction/${idPaiementSupprimer}`);
             setSupprimerModal(false);
             fetchPaiements();
             setCurrInd(1);
@@ -65,15 +66,22 @@ const Paiements = () => {
         <>
             <Navbar />
             <main>
-                <Sidebar currPage="/paiements" />
+                <Sidebar currPage="/membres" />
                 <div className="top-container">
                     <div className="header">
                         <h1>Paiements d'un membre</h1>
-                        <button className="btn">
-                            <Link to="./ajouter" className="link" state={{id: location.state.id}}>
-                                <span className="material-icons-outlined">add</span>
-                            </Link>
-                        </button>
+                        <div>
+                            <button className="btn" style={{ marginRight: "0.5rem" }}>
+                                <Link to="./ajouter" state={{id: location.state.id}} className="link">
+                                    <span className="material-icons-outlined">add</span>
+                                </Link>
+                            </button>
+                            <button className="btn">
+                                <Link to="/membres/details" className="link" state={{id: location.state.id}}>
+                                    <span className="material-icons-outlined">undo</span>
+                                </Link>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         {paiementsParPage.length === 0 ? (
@@ -85,20 +93,21 @@ const Paiements = () => {
                                     <th>Numéro</th>
                                     <th>Date de paiement</th>
                                     <th>Mois du paiement</th>
-                                    <th>Montant Payé</th>
+                                    <th>Montant payé</th>
                                     <th>Montant restant</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                     {paiementsParPage.map((paiement) => (
                                         <tr key={paiement.id_paiement}>
                                             <th>{paiement.id_paiement}</th>
-                                            <th>{paiement.date_abonnement}</th>
-                                            <th>{paiement.mois_abonnement}</th>
+                                            <th>{formatDate(paiement.date_abonnement)}</th>
+                                            <th>{formatAnMois(paiement.mois_abonnement)}</th>
                                             <th>{paiement.montant_paye} DZD</th>
-                                            <th>{formatDate(paiement.montant_restant)}</th>                             
+                                            <th>{paiement.montant_restant} DZD</th>                             
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id: paiement.id_paiement, date_abonnement: paiement.date_abonnement, mois_abonnement: paiement.mois_abonnement, }}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id_paiement: paiement.id_paiement, id_membre: location.state.id, date_abonnement: paiement.date_abonnement, mois: paiement.mois_abonnement, montant_paye: paiement.montant_paye, montant_restant: paiement.montant_restant}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleSupprimerPaiement(paiement.id_paiement)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

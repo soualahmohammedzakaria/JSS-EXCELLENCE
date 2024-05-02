@@ -12,12 +12,12 @@ async function getNomIdGroups(req, res) {
 
 async function addGroup(req, res) {
     try {
-        const { id_sport, nom_groupe, description } = req.body;
+        const { id_sport, nom_groupe } = req.body;
         const group = await groupModel.getGroup(id_sport, nom_groupe);
         if (group) {
             res.json({ success: false, message: 'Ce groupe existe deja' });
         } else {
-        await groupModel.addGroup(id_sport, nom_groupe, description);
+        await groupModel.addGroup(id_sport, nom_groupe);
         res.json({ success: true, message: 'Groupe ajouté avec succès' });
         }
     } catch (error) {

@@ -140,12 +140,12 @@ const AjouterMembre = () => {
                                 <div class="add-input">
                                     <span className="material-icons-outlined">attach_money</span>
                                     <label>Payé(DZD)</label>
-                                    <input min={0} type="number" name="montant_paye" step={500} value={formData.montant_paye} onChange={handleChange} required/>
+                                    <input min={0} type="number" name="montant_paye" value={formData.montant_paye} onChange={handleChange} required/>
                                 </div>
                                 <div class="add-input">
                                     <span className="material-icons-outlined">money_off</span>
                                     <label>Restant(DZD)</label>
-                                    <input min={0} type="number" name="montant_restant" step={500} value={formData.montant_restant} onChange={handleChange} required/>
+                                    <input min={0} type="number" name="montant_restant" value={formData.montant_restant} onChange={handleChange} required/>
                                 </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>

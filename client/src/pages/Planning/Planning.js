@@ -26,7 +26,7 @@ const Planning = () => {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
             setTimeslots(response.data.creneaux);
         } catch (error) {
-            console.error('Erreur lors de l\'obtention des membres:', error);
+            console.error('Erreur lors de l\'obtention des creneaux:', error);
         }
     };
 

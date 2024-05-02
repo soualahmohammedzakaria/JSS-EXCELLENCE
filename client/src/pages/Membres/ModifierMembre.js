@@ -131,13 +131,13 @@ const ModifierMembre = () => {
                                 <div class="add-input">
                                     <span className="material-icons-outlined">attach_money</span>
                                     <label>Payé(DZD)</label>
-                                    <input min={0} type="number" name="montantPaye" step={500} value={formData.montantPaye} onChange={handleChange} required/>
+                                    <input min={0} type="number" name="montantPaye" value={formData.montantPaye} onChange={handleChange} required/>
                                 </div>
                                 {/* Corrected name attribute */}
                                 <div class="add-input">
                                     <span className="material-icons-outlined">money_off</span>
                                     <label>Restant(DZD)</label>
-                                    <input min={0} type="number" name="montantRestant" step={500} value={formData.montantRestant} onChange={handleChange} required/>
+                                    <input min={0} type="number" name="montantRestant" value={formData.montantRestant} onChange={handleChange} required/>
                                 </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>

@@ -127,7 +127,6 @@ const Membres = () => {
             return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
         });
     
-        // Apply selected filters
         if (selectedFilters.sexe !== "Tous") {
             filtered = filtered.filter(membre => membre.sexe === selectedFilters.sexe);
         }
@@ -138,9 +137,9 @@ const Membres = () => {
     
         if (selectedFilters.etat !== "Tous") {
             if (selectedFilters.etat === "Payé") {
-                filtered = filtered.filter(membre => new Date(membre.date_inscription) > new Date());
+                filtered = filtered.filter(membre => membre.etat_abonnement === "Payé");
             } else if (selectedFilters.etat === "Non payé") {
-                filtered = filtered.filter(membre => new Date(membre.date_inscription) < new Date());
+                filtered = filtered.filter(membre => membre.etat_abonnement === "Non payé");
             }
         }
     
@@ -261,7 +260,7 @@ const Membres = () => {
                                             <th>{formatDate(membre.date_naissance)}</th>
                                             <th>{membre.sexe}</th>
                                             <th>{formatDate(membre.date_inscription)}</th>
-                                            <th><span className={new Date(membre.date_inscription) > new Date() ? "success" : "danger"}>{new Date(membre.date_inscription) > new Date() ? "Payé" : "Non payé"}</span></th>
+                                            <th><span className={membre.etat_abonnement === "Payé" ? "success" : "danger"}>{membre.etat_abonnement}</span></th>
                                             <th>
                                                 <Link className="link" to="./details" state={{id: membre.id_membre}}><span className="material-icons-outlined pointed">info</span></Link>
                                                 <Link className="link" to="./modifier" state={{id: membre.id_membre, nom: membre.nom, prenom: membre.prenom, email: membre.email, dateNais: membre.dateNais, sexe: membre.sexe, telephone: membre.telephone, age: membre.age, taille: membre.taille, poids: membre.poids, sang: membre.sang, maladies: membre.maladies, date_inscription: membre.date_inscription, montantPaye: membre.montantPaye, montantRestant: membre.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>

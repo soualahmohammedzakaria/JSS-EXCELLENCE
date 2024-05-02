@@ -1,5 +1,6 @@
 .assiduite-container{
     overflow-y: scroll;
+    height: 80dvh;
 }
 
 .qr-page {
@@ -159,7 +160,7 @@
   display: flex;
   justify-content: center;
   gap:1.5%;
-  margin-top: 8rem; /* Marge supplémentaire en bas */
+  margin-top: 3rem; /* Marge supplémentaire en bas */
   padding: 1rem 2rem;
 
 }

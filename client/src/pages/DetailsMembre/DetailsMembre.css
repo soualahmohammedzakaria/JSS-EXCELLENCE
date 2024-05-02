@@ -100,7 +100,7 @@
     margin-top: 1%;
     display: flex;
     flex-wrap: wrap;
-    gap: 1%;
+    gap: 0.5%;
 }
 
 .membre-groupe {

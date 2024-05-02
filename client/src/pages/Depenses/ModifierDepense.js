@@ -68,7 +68,7 @@ const ModifierDepense = () => {
                                 <div class="add-input">
                                     <span className="material-icons-outlined">attach_money</span>
                                     <label>Montant(DZD)</label>
-                                    <input min={0} type="number" name="montant" step={500} value={formData.montant} onChange={handleChange} required/>
+                                    <input min={0} type="number" name="montant" value={formData.montant} onChange={handleChange} required/>
                                 </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>

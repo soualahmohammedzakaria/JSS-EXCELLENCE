@@ -1,0 +1,48 @@
+.coach-groupes {
+    margin: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.coach-groupe {
+    flex: 0 0 auto;
+    background: var(--color-primary); 
+    color: var(--color-white);
+    padding: 1rem 2rem;
+    font-family: "Poppins", sans-serif;
+    border-radius: var(--card-border-radius);
+    font-size: 1.2rem;
+    margin-bottom: 1%;
+}
+
+.coach-groupe:hover{
+    background: var(--color-blue);
+}
+
+.coach-groupes-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.coach-groupes-header button{
+    background: var(--color-primary);
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--color-white);
+    border-radius: var(--border-radius-1);
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+}
+
+.coach-groupes-header button:hover{
+    background: var(--color-blue);
+}

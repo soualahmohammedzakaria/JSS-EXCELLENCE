@@ -85,7 +85,6 @@ const DetailsMembre = () => {
     };
 
     const confirmDeleteMembre = async () => {
-        console.log('Groupe à supprimer:', groupToDelete);
         try {
             const response = await axios.delete(`http://localhost:4000/member/deleteGroupMember/${location.state.id}`, { data: { groupId: groupToDelete } });
 
@@ -116,7 +115,7 @@ const DetailsMembre = () => {
                             <div className="infos-bouttons">
                                 <img src={PhotoStandard} alt=""/>
                                 <button className="membre-btn pointed">
-                                    <Link to="/membres/modifier" className="link"><span className="material-icons-outlined">edit</span><span>Modifier profil</span></Link>
+                                    <Link to="./modifier" className="link"><span className="material-icons-outlined">edit</span><span>Modifier profil</span></Link>
                                 </button>
                                 <button className="membre-btn pointed">
                                     <Link to="./accomplissements" state={{id: membre.id_membre}} className="link"><span className="material-icons-outlined">military_tech</span><span>Accomplissements</span></Link>

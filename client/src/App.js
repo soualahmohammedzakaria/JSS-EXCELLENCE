@@ -20,23 +20,28 @@ import Accomplissements from './pages/Accomplissements/Accomplissements';
 import AjouterAccomplissement from './pages/Accomplissements/AjouterAccomplissement';
 import ModifierAccomplissement from './pages/Accomplissements/ModifierAccomplissement';
 
+import Coachs from './pages/Coachs/Coachs';
+import AjouterCoach from './pages/Coachs/AjouterCoach';
+import ModifierCoach from './pages/Coachs/ModifierCoach';
+
 import Membres from './pages/Membres/Membres';
 import AjouterMembre from './pages/Membres/AjouterMembre';
 import ModifierMembre from './pages/Membres/ModifierMembre';
 import DetailsMembre from './pages/DetailsMembre/DetailsMembre';
+
+
 import PresencesMembre from './pages/PresencesMembre/PresencesMembre';
-import AbsencesMembre from './pages/DetailsMembre/AbsencesMembre';
 import AjouterPresence from './pages/PresencesMembre/AjouterPresence';
 
 import Salles from './pages/Salles/Salles';
-import AjouterSalle from './pages/AjouterSalle/AjouterSalle';
-import ModifierSalle from './pages/ModifierSalle/ModifierSalle';
+import AjouterSalle from './pages/Salles/AjouterSalle';
+import ModifierSalle from './pages/Salles/ModifierSalle';
 
 import Sports from './pages/Sports/Sports';
-import AjouterSport from './pages/AjouterSport/AjouterSport';
+import AjouterSport from './pages/Sports/AjouterSport';
 
 import Groupes from './pages/Groupes/Groupes';
-import AjouterGroupe from './pages/AjouterGroupe/AjouterGroupe';
+import AjouterGroupe from './pages/Groupes/AjouterGroupe';
 
 import Planning from './pages/Planning/Planning';
 import AjouterCreneaux from './pages/Planning/AjouterCreneau';
@@ -70,12 +75,16 @@ function App() {
             <Route path='/membres/details/accomplissements/ajouter' element={<AjouterAccomplissement/>}></Route>
             <Route path='/membres/details/accomplissements/modifier' element={<ModifierAccomplissement/>}></Route>
 
+            <Route path='/coachs' element={<Coachs/>}></Route>
+            <Route path='/coachs/ajouter' element={<AjouterCoach/>}></Route>
+            <Route path='/coachs/modifier' element={<ModifierCoach/>}></Route>
+
             <Route path='/membres' element={<Membres/>}></Route>
             <Route path='/membres/ajouter' element={<AjouterMembre/>}></Route>
             <Route path='/membres/modifier' element={<ModifierMembre/>}></Route>
             <Route path='/membres/details' element={<DetailsMembre/>}></Route>
+            
             <Route path='/membres/details/presences' element={<PresencesMembre/>}></Route>
-            <Route path='/membres/details/absences' element={<AbsencesMembre/>}></Route>
             <Route path='/membres/details/presences/ajouter' element={<AjouterPresence/>}></Route>
 
             <Route path='/planning' element={<Planning/>}></Route>

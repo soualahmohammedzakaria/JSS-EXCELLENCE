@@ -38,8 +38,7 @@ const Assiduite = () => {
                     <div className="header">
                         <h1>Assiduité</h1>
                     </div>
-
-                    <div className="top-container assiduite-container">
+                    <div className="assiduite-container">
                         { QRcodeScan == "Aucun Code QR scanné" ? (
                             <div className="qr-page">
                                 <h1 className="qr-title">Scannez votre code QR</h1>
@@ -158,14 +157,14 @@ const Assiduite = () => {
                                        <p>Groupe : {groupeSelectionne} - {QRcodeScan}</p>
                                     </div>
                                 </div>
-                                    <div className="bottom-buttons"> 
-                                        <button className={`membre-btn pointed ${!groupeSelectionne ? 'disabled' : ''}`} disabled={!groupeSelectionne}>
-                                            <Link to="/membres/details/presences" className="link"><span className="material-icons-outlined">check_circle</span><span>Signaler la présence</span></Link>
-                                        </button>
-                                        <button className="membre-btn">
-                                            <Link to="/membres/details/absences" className="link"><span className="material-icons-outlined">undo</span><span>Retour</span></Link>
-                                        </button>
-                                    </div>
+                                <div className="bottom-buttons"> 
+                                    <button className={`btn pointed ${!groupeSelectionne ? 'disabled' : ''}`} disabled={!groupeSelectionne}>
+                                        <Link to="/membres/details/presences" className="link"><span className="material-icons-outlined">check_circle</span><span>Signaler la présence</span></Link>
+                                    </button>
+                                    <button className="btn">
+                                        <Link to="/membres/details/absences" className="link"><span className="material-icons-outlined">undo</span><span>Retour</span></Link>
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>

@@ -127,6 +127,26 @@ async function deleteCoach(req, res) {
       res.json({ success: false, message: 'Erreur lors de l\'assignation du coach aux groupes' });
     }
   }
+
+  async function assignCoachToGroup(req, res) {
+    try {
+        const coachId = req.params.id;
+        const {groupId} = req.body;
+
+        // Vérifier si le coach appartient déjà au groupe
+        const isCoachAssigned = await coachModel.isCoachAssignedToGroup(coachId, groupId);
+
+        if (isCoachAssigned) {
+            res.json({ success: false, message: 'Le coach est déjà assigné à ce groupe' });
+        } else {
+            await coachModel.assignCoachToGroup(coachId, groupId);
+            res.json({ success: true, message: 'Coach assigné au groupe avec succès' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'assignation du coach au groupe :', error);
+        res.json({ success: false, message: 'Erreur lors de l\'assignation du coach au groupe' });
+    }
+}
   
   async function deleteGroupCoach(req, res) {
     try {
@@ -149,6 +169,7 @@ module.exports = {
     getCoach,
     updateCoach,
     assignCoachToGroups,
+    assignCoachToGroup,
     deleteGroupCoach
     
 }

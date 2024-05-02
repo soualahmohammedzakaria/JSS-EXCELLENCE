@@ -24,7 +24,7 @@ const Sidebar = ({ currPage }) => {
         if (authData.role === 'Administrateur') {
             return true;
         } else {
-            return !['Personnel', 'Dépenses', 'Coachs', 'Sports', 'Groupes', 'Salles'].includes(page.page);
+            return !['Personnel', 'Dépenses', 'Coachs', 'Sports', 'Salles'].includes(page.page);
         }
     });
 

@@ -1,6 +1,5 @@
 const memberModel = require('../models/memberModel');
 const multer = require('multer');
-const path = require('path');
 const moment = require('moment-timezone');
 
 // Configuration de Multer pour stocker les images dans le dossier "images"
@@ -17,6 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// A verifier apres le cas des membres supprimes logiquement 
 async function addMember(req, res){
     try {
       const newMember = req.body;
@@ -37,6 +37,7 @@ async function addMember(req, res){
         return res.json({ success: false, message: err.message });
     }
   });*/
+  
       // Assignation du membre aux groupes
       if (newMember.groupIds && newMember.groupIds.length > 0) {
         await memberModel.assignMemberToGroups(IdMember, newMember.groupIds);
@@ -79,6 +80,25 @@ async function deleteMember(req, res) {
     try {
       const memberId = req.params.id;
       const member = await memberModel.getMemberById(memberId);
+      if(member.id_paiement != null){
+        const transaction = await memberModel.getTransaction(member.id_paiement);
+        transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
+        transaction.mois_abonnement = transaction.mois;
+        delete transaction.mois;
+        delete transaction.date_paiement;
+        member.transaction = transaction;
+      }
+      else{
+        const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
+            if (lastTransaction) {
+                member.id_paiement = lastTransaction.id_paiement;
+                lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
+                lastTransaction.mois_abonnement = lastTransaction.mois;
+                delete lastTransaction.mois;
+                delete lastTransaction.date_paiement;
+                member.transaction = lastTransaction;
+            }        
+      }
       if (member) {
         member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
         member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
@@ -126,6 +146,7 @@ async function deleteMember(req, res) {
       res.json({ success: false, message: 'Erreur lors de l\'assignation du membre aux groupes' });
     }
   }
+
   async function assignMemberToGroup(req, res) {
     try {
         const memberId = req.params.id;

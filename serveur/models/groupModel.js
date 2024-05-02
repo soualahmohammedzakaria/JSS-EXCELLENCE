@@ -27,10 +27,10 @@ function getNomIdGroups() {
     });
   }
 
-  function addGroup(id_sport, nom_groupe, description ) {
+  function addGroup(id_sport, nom_groupe ) {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO groupes (id_sport, nom_groupe, description  ) VALUES ( ?, ?, ?)';
-        mydb.query(query, [id_sport, nom_groupe, description  ], (error, results) => {
+        const query = 'INSERT INTO groupes (id_sport, nom_groupe) VALUES ( ?, ?)';
+        mydb.query(query, [id_sport, nom_groupe], (error, results) => {
             if (error) {
                 reject(error);
             } else {

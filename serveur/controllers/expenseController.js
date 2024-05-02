@@ -8,7 +8,7 @@ const moment = require('moment-timezone');
       res.json({ success: true, message: 'Dépense ajoutée avec succès' });
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la dépense :', error);
-      res.json({ success: false, message: 'Erreur lors de l\'ajout de la dépense' });
+      res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de la dépense' });
     }
   }
   
@@ -20,7 +20,7 @@ const moment = require('moment-timezone');
       res.json({ success: true, message: 'Dépense supprimée avec succès' });
     } catch (error) {
       console.error('Erreur lors de la suppression de la dépense :', error);
-      res.json({ success: false, message: 'Erreur lors de la suppression de la dépense' });
+      res.status(500).json({ success: false, message: 'Erreur lors de la suppression de la dépense' });
     }
   }
 
