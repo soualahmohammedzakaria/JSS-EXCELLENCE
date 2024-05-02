@@ -268,15 +268,7 @@ function getMemberById(memberId) {
       }
     });
   });
-}
-
-
- 
-
-
-
-
- 
+} 
 
 function checkMember(nom, prenom, memberId) {
   return new Promise((resolve, reject) => {
@@ -354,7 +346,72 @@ function getLastTransactionBeforeCurrentMonth(memberId) {
   });
 }
 
+function DefinitivelyDeleteMember(id) {
+  return new Promise((resolve, reject) => {
+    const query = 'DELETE  FROM membres WHERE id_membre = ?';
+    mydb.query(query, [id], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
+function getAllDeletedMembers() {
+  return new Promise((resolve, reject) => {
+    const query =`
+    SELECT m.*, JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes
+    FROM membres m
+    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
+    LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
+    WHERE m.supprime = 1
+    GROUP BY m.id_membre
+    `;
+    mydb.query(query, (error, results) => {
+      if (error) {
+        reject(error); // Rejeter la promesse en cas d'erreur
+      } else {
+        // Formatter les résultats pour inclure les informations des groupes
+        const membersWithGroups = results.map(member => {
+          return {
+            ...member,
+            groupes: member.groupes ? JSON.parse(member.groupes) : []
+          };
+        });
+
+        resolve(membersWithGroups); // Résoudre la promesse avec les membres formatés
+      }
+    });
+  });
+};
+
+function restoreMember(id) {
+  return new Promise((resolve, reject) => {
+    const query = `UPDATE membres SET supprime = 0 WHERE id_membre = ?`;
+    mydb.query(query, [id], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
+
+function DefinitivelyDeleteAllMembers() {
+  return new Promise((resolve, reject) => {
+    const query = 'DELETE FROM membres WHERE supprime = 1';
+    mydb.query(query, (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
 
 
@@ -371,6 +428,10 @@ module.exports = {
     updateMember,
     deleteGroupMember,
     getTransaction,
-    getLastTransactionBeforeCurrentMonth
+    getLastTransactionBeforeCurrentMonth,
+    DefinitivelyDeleteMember,
+    getAllDeletedMembers,
+    restoreMember,
+    DefinitivelyDeleteAllMembers
  };
   

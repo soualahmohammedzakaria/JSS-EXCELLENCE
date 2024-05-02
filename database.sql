@@ -54,15 +54,20 @@ DROP TABLE IF EXISTS `absences_membres`;
 CREATE TABLE `absences_membres` (
   `id_absence` int unsigned NOT NULL AUTO_INCREMENT,
   `id_groupe` int unsigned NOT NULL,
+  `id_membre` int unsigned NOT NULL,
+  `id_creneau` int unsigned NOT NULL,
   `date` date NOT NULL,
   `justifiee` tinyint NOT NULL,
-  `justification` varchar(255) NOT NULL,
-  `id_membre` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_absence`,`id_groupe`,`id_membre`),
+  `justification` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_absence`),
   UNIQUE KEY `id_absence_UNIQUE` (`id_absence`),
   KEY `fk_absences_membres_groupes1_idx` (`id_groupe`),
-  CONSTRAINT `fk_absences_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  KEY `fk_absences_membres_membres1_idx` (`id_membre`),
+  KEY `fk_absences_membres_creneaux1_idx` (`id_creneau`),
+  CONSTRAINT `fk_absences_membres_creneaux1` FOREIGN KEY (`id_creneau`) REFERENCES `creneaux` (`id_creneau`),
+  CONSTRAINT `fk_absences_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`),
+  CONSTRAINT `fk_absences_membres_membres1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,6 +76,7 @@ CREATE TABLE `absences_membres` (
 
 LOCK TABLES `absences_membres` WRITE;
 /*!40000 ALTER TABLE `absences_membres` DISABLE KEYS */;
+INSERT INTO `absences_membres` VALUES (3,2,12,15,'2024-05-02',0,NULL);
 /*!40000 ALTER TABLE `absences_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,7 +97,7 @@ CREATE TABLE `accomplissements` (
   PRIMARY KEY (`id_accomp`),
   UNIQUE KEY `id_accomp_UNIQUE` (`id_accomp`),
   KEY `fk_accomp_membres` (`id_membre`),
-  CONSTRAINT `fk_accomp_membres` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`)
+  CONSTRAINT `fk_accomp_membres` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -173,15 +179,19 @@ DROP TABLE IF EXISTS `assiduite_membres`;
 CREATE TABLE `assiduite_membres` (
   `id_assiduite` int unsigned NOT NULL AUTO_INCREMENT,
   `id_groupe` int unsigned NOT NULL,
-  `date` date NOT NULL,
-  `heure_entree` time NOT NULL,
-  `heure_sortie` time DEFAULT NULL,
-  `id_membre` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_assiduite`,`id_groupe`,`id_membre`),
+  `id_membre` int unsigned NOT NULL,
+  `id_creneau` int unsigned NOT NULL,
+  `date_entree` datetime NOT NULL,
+  `date_sortie` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_assiduite`),
   UNIQUE KEY `id_assiduite_UNIQUE` (`id_assiduite`),
   KEY `fk_assiduite_membres_groupes1_idx` (`id_groupe`),
-  CONSTRAINT `fk_assiduite_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  KEY `fk_assiduite_membres_membres1_idx` (`id_membre`),
+  KEY `fk_assiduite_membres_creneaux1_idx` (`id_creneau`),
+  CONSTRAINT `fk_assiduite_membres_creneaux1` FOREIGN KEY (`id_creneau`) REFERENCES `creneaux` (`id_creneau`),
+  CONSTRAINT `fk_assiduite_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`),
+  CONSTRAINT `fk_assiduite_membres_membres1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,6 +200,7 @@ CREATE TABLE `assiduite_membres` (
 
 LOCK TABLES `assiduite_membres` WRITE;
 /*!40000 ALTER TABLE `assiduite_membres` DISABLE KEYS */;
+INSERT INTO `assiduite_membres` VALUES (4,2,10,15,'2024-05-10 15:30:00','2024-05-10 17:30:00'),(8,2,11,15,'2024-05-10 15:30:00','2024-05-10 17:30:00');
 /*!40000 ALTER TABLE `assiduite_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -245,7 +256,7 @@ CREATE TABLE `creneaux` (
   KEY `fk_creneaux_salles1_idx` (`numero_salle`),
   CONSTRAINT `fk_creneaux_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`) ON DELETE CASCADE,
   CONSTRAINT `fk_creneaux_salles1` FOREIGN KEY (`numero_salle`) REFERENCES `salles` (`numero_salle`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,7 +265,7 @@ CREATE TABLE `creneaux` (
 
 LOCK TABLES `creneaux` WRITE;
 /*!40000 ALTER TABLE `creneaux` DISABLE KEYS */;
-INSERT INTO `creneaux` VALUES (14,2,'seance karate','2024-05-15 17:00:00','2024-10-15 19:00:00','Seance','blabla',2);
+INSERT INTO `creneaux` VALUES (14,2,'seance karate','2024-05-15 17:00:00','2024-10-15 19:00:00','Seance','blabla',2),(15,2,'seance judo','2024-05-02 15:59:00','2024-05-02 19:00:00','Seance','blabla',2);
 /*!40000 ALTER TABLE `creneaux` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -327,12 +338,11 @@ CREATE TABLE `groupes` (
   `id_groupe` int unsigned NOT NULL AUTO_INCREMENT,
   `id_sport` int unsigned NOT NULL,
   `nom_groupe` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
   PRIMARY KEY (`id_groupe`),
   UNIQUE KEY `id_sport_UNIQUE` (`id_groupe`),
   KEY `fk_groupes_sports1_idx` (`id_sport`),
   CONSTRAINT `fk_groupes_sports1` FOREIGN KEY (`id_sport`) REFERENCES `sports` (`id_sport`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -341,7 +351,7 @@ CREATE TABLE `groupes` (
 
 LOCK TABLES `groupes` WRITE;
 /*!40000 ALTER TABLE `groupes` DISABLE KEYS */;
-INSERT INTO `groupes` VALUES (1,1,'u17','jdnudccc'),(2,1,'gcxg','cffv'),(8,4,'u17','jdnudccc'),(11,3,'u17','jdnudccc');
+INSERT INTO `groupes` VALUES (1,1,'u17'),(2,1,'gcxg'),(8,4,'u17'),(11,3,'u17'),(12,3,'U20');
 /*!40000 ALTER TABLE `groupes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -387,7 +397,7 @@ CREATE TABLE `groupes_a_membres` (
   KEY `fk_groupes_has_membres_groupes1_idx` (`id_groupe`),
   KEY `fk_groupes_has_membres_membres1` (`id_membre`),
   CONSTRAINT `fk_groupes_has_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`) ON DELETE CASCADE,
-  CONSTRAINT `fk_groupes_has_membres_membres1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`)
+  CONSTRAINT `fk_groupes_has_membres_membres1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -397,7 +407,7 @@ CREATE TABLE `groupes_a_membres` (
 
 LOCK TABLES `groupes_a_membres` WRITE;
 /*!40000 ALTER TABLE `groupes_a_membres` DISABLE KEYS */;
-INSERT INTO `groupes_a_membres` VALUES (2,10),(8,10),(11,10),(11,11);
+INSERT INTO `groupes_a_membres` VALUES (2,10),(2,11),(2,12),(8,10),(11,10);
 /*!40000 ALTER TABLE `groupes_a_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -433,7 +443,7 @@ CREATE TABLE `membres` (
 
 LOCK TABLES `membres` WRITE;
 /*!40000 ALTER TABLE `membres` DISABLE KEYS */;
-INSERT INTO `membres` VALUES (10,'bouka','rayan','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0),(11,'boukakiou','rayan','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0),(12,'boukakiou','rayano','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0);
+INSERT INTO `membres` VALUES (10,'bouka','rayan','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0),(11,'boukakiou','rayan','Homme','2004-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,0),(12,'boukakiou','rayano','Homme','2014-12-08','2015-05-03','boukarayan@gmail.com','0578219634','O+','/',70,179,1);
 /*!40000 ALTER TABLE `membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -453,9 +463,9 @@ CREATE TABLE `paiements_membres` (
   `mois` varchar(45) NOT NULL,
   PRIMARY KEY (`id_paiement`),
   UNIQUE KEY `id_paiement_UNIQUE` (`id_paiement`),
-  KEY `id_membre` (`id_membre`),
-  CONSTRAINT `paiements_membres_ibfk_1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+  KEY `paiements_membres_ibfk_1` (`id_membre`),
+  CONSTRAINT `paiements_membres_ibfk_1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -464,7 +474,7 @@ CREATE TABLE `paiements_membres` (
 
 LOCK TABLES `paiements_membres` WRITE;
 /*!40000 ALTER TABLE `paiements_membres` DISABLE KEYS */;
-INSERT INTO `paiements_membres` VALUES (7,12,2500.00,500.00,'2024-04-30','2024-05'),(8,12,2500.00,0.00,'2024-04-30','2024-06'),(9,10,2500.00,0.00,'2024-04-30','2025-05'),(10,11,1000.00,1000.00,'2024-05-01','2024-06'),(11,11,1000.00,1000.00,'2024-05-01','2024-05');
+INSERT INTO `paiements_membres` VALUES (7,12,2500.00,500.00,'2024-04-30','2024-05'),(8,12,2500.00,0.00,'2024-04-30','2024-06'),(9,10,2500.00,0.00,'2024-04-30','2023-02'),(12,11,1000.00,1000.00,'2024-05-01','2024-05');
 /*!40000 ALTER TABLE `paiements_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -516,7 +526,7 @@ CREATE TABLE `sports` (
 
 LOCK TABLES `sports` WRITE;
 /*!40000 ALTER TABLE `sports` DISABLE KEYS */;
-INSERT INTO `sports` VALUES (4,'foot ball'),(3,'kick boxing'),(1,'kick fitness');
+INSERT INTO `sports` VALUES (4,'foot ball'),(1,'karate'),(3,'kick boxing');
 /*!40000 ALTER TABLE `sports` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -529,4 +539,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-01  0:27:05
+-- Dump completed on 2024-05-02 23:45:30
