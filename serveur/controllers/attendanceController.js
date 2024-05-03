@@ -54,8 +54,7 @@ async function getPresencesMember(req, res) {
 
 async function addAbsenceMember(req, res) {
     try {
-        const { id_membre, id_groupe, id_creneau, justifiee, justification } = req.body;
-        const date = moment().format('YYYY-MM-DD'); // Date actuelle
+        const { id_membre, id_groupe, id_creneau, date, justifiee, justification } = req.body;
         await attendanceModel.addAbsenceMember(id_membre, id_groupe, id_creneau, date, justifiee, justification );
         res.json({ success: true, message: 'Absence ajoutée avec succès' });
     } catch (error) {
