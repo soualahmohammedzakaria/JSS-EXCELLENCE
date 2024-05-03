@@ -242,6 +242,10 @@ main .header{
   padding: 1rem 2.5rem;
 }
 
+.disabled-button:hover{
+  cursor: not-allowed;
+}
+
 /* Style des tables d'affichage */
 
 .table-profiles {

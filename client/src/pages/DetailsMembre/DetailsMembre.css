@@ -2,7 +2,7 @@
     margin: 0 2%;
     padding: 1% 0;
     overflow-y: scroll;
-    border-radius: var(--card-border-radius);
+    height: 80dvh;
 }
 
 .infos-bouttons{
@@ -108,9 +108,10 @@
     background: var(--color-primary); 
     color: var(--color-white);
     padding: 1rem 2rem;
-    border-radius: var(--card-border-radius);
+    border-radius: var(--border-radius-1);
     font-size: 1.2rem;
     margin-bottom: 1%;
+    font-family: "Poppins", sans-serif;
 }
 
 .membre-groupe:hover {

@@ -149,7 +149,7 @@ const Membres = () => {
                 console.log(membre, age);
                 if (selectedFilters.categorie === "Enfants") {
                     return age < 13;
-                } else if (selectedFilters.categorie === "Adolescent") {
+                } else if (selectedFilters.categorie === "Adolescents") {
                     return (age >= 13 && age < 19);
                 } else if (selectedFilters.categorie === "Adultes") {
                     return age >= 19;
@@ -347,7 +347,7 @@ const Membres = () => {
                                         <select name="categorie" value={selectedFilters.categorie} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, categorie: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             <option value="Enfants">Enfants</option>
-                                            <option value="Adolescent">Adolescent</option>
+                                            <option value="Adolescents">Adolescents</option>
                                             <option value="Adultes">Adultes</option>
                                         </select>
                                     </div>

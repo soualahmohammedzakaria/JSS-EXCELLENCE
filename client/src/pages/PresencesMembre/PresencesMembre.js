@@ -84,7 +84,7 @@ const Presences = () => {
                     </div>
                     <div>
                         {presencesParPage.length === 0 ? (
-                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de Présences!</h1>
+                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de présences!</h1>
                             ) : (
                             <table className="table-profiles">
                                 <thead>
@@ -100,11 +100,11 @@ const Presences = () => {
                                     {presencesParPage.map((presence) => (
                                         <tr key={presence.id_assiduite}>
                                             <th>{formatDateHeure(presence.date_entree)}</th>
-                                            <th>{formatDateHeure(presence.date_sortie)}</th>
+                                            <th>{presence.date_sortie == null || presence.date_sortie === "Invalid date" ? "-" : formatDateHeure(presence.date_sortie)}</th>
                                             <th>{presence.nom_groupe}</th>
                                             <th>{presence.titre}</th>                    
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_presence: presence.id_assiduite, id_membre: location.state.id, date_entree: presence.date_entree, date_sortie: presence.date_sortie, id_groupe: presence.id_groupe, id_creneau: presence.id_creneau}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id_presence: presence.id_assiduite, id: location.state.id, date_entree: presence.date_entree, date_sortie: presence.date_sortie, id_groupe: presence.id_groupe, id_creneau: presence.id_creneau}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleSupprimerPresence(presence.id_assiduite)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

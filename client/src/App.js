@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Authentification from './pages/Authentification/Authentification';
 
 import Assiduite from './pages/Assiduite/Assiduite';
+import DetailsAssiduite from './pages/Assiduite/DetailsAssiduite';
+import ResultatSignalement from './pages/Assiduite/ResultatSignalement';
 
 import Depenses from './pages/Depenses/Depenses';
 import AjouterDepense from './pages/Depenses/AjouterDepense';
@@ -32,6 +34,11 @@ import DetailsMembre from './pages/DetailsMembre/DetailsMembre';
 
 import PresencesMembre from './pages/PresencesMembre/PresencesMembre';
 import AjouterPresence from './pages/PresencesMembre/AjouterPresence';
+import ModifierPresence from './pages/PresencesMembre/ModifierPresence';
+
+import AbsencesMembre from './pages/AbsencesMembre/AbsencesMembre';
+import AjouterAbsence from './pages/AbsencesMembre/AjouterAbsence';
+import ModifierAbsence from './pages/AbsencesMembre/ModifierAbsence';
 
 import Salles from './pages/Salles/Salles';
 import AjouterSalle from './pages/Salles/AjouterSalle';
@@ -62,6 +69,8 @@ function App() {
             <Route path='/dashboard' element={<Dashboard/>}></Route>
 
             <Route path='/assiduite' element={<Assiduite/>}></Route>
+            <Route path='/assiduite/details' element={<DetailsAssiduite/>}></Route>
+            <Route path='/assiduite/resultat' element={<ResultatSignalement/>}></Route>
 
             <Route path='/depenses' element={<Depenses/>}></Route>
             <Route path='/depenses/ajouter' element={<AjouterDepense/>}></Route>
@@ -86,6 +95,11 @@ function App() {
             
             <Route path='/membres/details/presences' element={<PresencesMembre/>}></Route>
             <Route path='/membres/details/presences/ajouter' element={<AjouterPresence/>}></Route>
+            <Route path='/membres/details/presences/modifier' element={<ModifierPresence/>}></Route>
+
+            <Route path='/membres/details/absences' element={<AbsencesMembre/>}></Route>
+            <Route path='/membres/details/absences/ajouter' element={<AjouterAbsence/>}></Route>
+            <Route path='/membres/details/absences/modifier' element={<ModifierAbsence/>}></Route>
 
             <Route path='/planning' element={<Planning/>}></Route>
             <Route path='/planning/ajouter' element={<AjouterCreneaux/>}></Route>

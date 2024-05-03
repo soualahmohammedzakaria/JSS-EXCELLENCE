@@ -3,12 +3,14 @@ import { Link, useLocation } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
-import { formatDate, formatAnMois } from "../../utils/datesUtils";
+import { formatDate } from "../../utils/datesUtils";
 
 const Absences = () => {
     const location = useLocation();
     const [absences, setAbsences] = useState([]);
     const [supprimerModal, setSupprimerModal] = useState(false);
+    const [justificationModal, setJustificationModal] = useState(false);
+    const [justification, setJustification] = useState("");
     const [idASupprime, setIdASupprime] = useState(null);
     const [currInd, setCurrInd] = useState(1);
 
@@ -18,11 +20,11 @@ const Absences = () => {
 
     const fetchAbsences = () => {
         axios
-            .get(`http://localhost:4000/transaction/getTransactions/${location.state.id}`) // A CHANGER
+            .get(`http://localhost:4000/attendance/getAbsencesMember/${location.state.id}`)
             .then((response) => {
                 if (response.data.success) {
-                    const fetchedAbsences = response.data.transactions || []; // A CHANGER
-                    fetchedAbsences.sort((a, b) => { return new Date(b.date) - new Date(a.date); }); // A CHANGER
+                    const fetchedAbsences = response.data.absences || [];
+                    fetchedAbsences.sort((a, b) => { return new Date(b.date_entree) - new Date(a.date_sortie); });
                     setAbsences(fetchedAbsences);
                 }
             })
@@ -34,25 +36,24 @@ const Absences = () => {
     const nbItems = 7;
     const nbPages = Math.ceil(absences.length / nbItems);
 
-    // Ensure indices are within valid bounds
     const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
     const finInd = Math.min(debInd + nbItems, absences.length); // End index
 
     const absencesParPage = absences.slice(debInd, finInd);
 
-    const handleSupprimerabsence = (id) => {
+    const handleSupprimerAbsence = (id) => {
         setIdASupprime(id);
         setSupprimerModal(true);
     };
 
     const confirmerSupprimerAbsence = async () => {
         try {
-            await axios.delete(`http://localhost:4000/transaction/deleteTransaction/${idASupprime}`); // A CHANGER
+            await axios.delete(`http://localhost:4000/attendance/deleteAbsenceMember/${idASupprime}`);
             setSupprimerModal(false);
             fetchAbsences();
             setCurrInd(1);
         } catch (error) {
-            console.error("Erreur lors de la suppression de l'absence:", error);
+            console.error("Erreur lors de la suppression de la présences:", error);
         }
     };
 
@@ -62,11 +63,16 @@ const Absences = () => {
         }
     };
 
+    const handleJustification = (justification) => {
+        setJustificationModal(true);
+        setJustification(justification);
+    };
+
     return (
         <>
             <Navbar />
             <main>
-                <Sidebar currPage="/membres"/>
+                <Sidebar currPage="/membres" />
                 <div className="top-container">
                     <div className="header">
                         <h1>Absences d'un membre</h1>
@@ -90,8 +96,9 @@ const Absences = () => {
                             <table className="table-profiles">
                                 <thead>
                                 <tr>
-                                    <th>Date de l'absence</th>
+                                    <th>Date</th>
                                     <th>Groupe</th>
+                                    <th>Créneau horaire</th>
                                     <th>Justifiée</th>
                                     <th>Justification</th>
                                     <th>Actions</th>
@@ -99,14 +106,15 @@ const Absences = () => {
                                 </thead>
                                 <tbody>
                                     {absencesParPage.map((absence) => (
-                                        <tr key={absence.id_assiduite}>
-                                            <th>{absence.date}</th>
+                                        <tr key={absence.id_absence}>
+                                            <th>{formatDate(absence.date)}</th>
                                             <th>{absence.nom_groupe}</th>
-                                            <th>{absence.justifee}</th>
-                                            <th style={{wordWrap: "break-word"}}>{absence.justification}</th>                          
+                                            <th>{absence.titre_creneau}</th>
+                                            <th>{absence.justifiee === 0 ? "Non" : "Oui"}</th>       
+                                            <th><button disabled={absence.justifiee === 0} className={absence.justifiee === 0 ? "disabled-button" : "link"} onClick={() => handleJustification(absence.justification)}><span className={`material-icons-outlined ${absence.justifiee !== 0 ? "pointed" : ""}`}>info</span></button></th>      
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_absence: absence.id_absence, id_membre: location.state.id, date: absence.date, groupe: absence.id_groupe, hustifee: absence.justifee, justification: absence.justification}}><span className="material-icons-outlined pointed">edit</span></Link>
-                                                <button className="link" onClick={() => handleSupprimerabsence(absence.id_absence)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                <Link className="link" to="./modifier" state={{id_absence: absence.id_absence, id: location.state.id, date: absence.date, justifiee: absence.justifiee, justification: absence.justification, id_groupe: absence.id_groupe, id_creneau: absence.id_creneau}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <button className="link" onClick={() => handleSupprimerAbsence(absence.id_absence)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>
                                     ))}
@@ -134,11 +142,26 @@ const Absences = () => {
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-content">
-                            <h3>Etes-vous sûr de vouloir supprimer cette absence?</h3>
+                            <h3>Etes-vous sûr de vouloir supprimer ce absence?</h3>
                         </div>
                         <div className="modal-buttons">
                             <button onClick={confirmerSupprimerAbsence} className="btn pointed"><span className="link">Confirmer</span></button>
                             <button onClick={() => setSupprimerModal(false)} className="btn pointed"><span className="link">Retourner</span></button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {justificationModal && (
+                <div className="modal-overlay">
+                    <div className="modal-container">
+                        <div className="modal-header">
+                            <h2>Justification de l'absence</h2>
+                        </div>
+                        <div className="modal-body" style={{textAlign: "center", margin: "1rem", fontSize: "1.4rem"}}>
+                            <p>{justification}</p>
+                        </div>
+                        <div className="modal-buttons">
+                            <button onClick={() => setJustificationModal(false)} className="btn pointed"><span className="link">Retourner</span></button>
                         </div>
                     </div>
                 </div>

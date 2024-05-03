@@ -11,13 +11,12 @@ const AjouterPresence = () => {
     const location = useLocation();
     const [creneaux, setCreneaux] = useState([]);
     const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [selectedSport, setSelectedSport] = useState(null);
-    const [selectedGroup, setSelectedGroup] = useState(null);
+    const [selectedGroupe, setSelectedGroupe] = useState(null);
     const [selectedCreneau, setSelectedCreneau] = useState(null);
     const [formData, setFormData] = useState({
         id_membre: location.state.id,
         date_entree: '',
-        date_sortie: '',
+        date_sortie: null,
         id_groupe: null,
         id_creneau: null
     });
@@ -42,10 +41,8 @@ const AjouterPresence = () => {
             const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
             setSportsGroupes(response.data.sportsGroupes);
             if (response.data.sportsGroupes.length > 0) {
-                const defaultSport = response.data.sportsGroupes[0];
-                const defaultGroup = defaultSport.groupes[0];
-                setSelectedSport(defaultSport);
-                setSelectedGroup(defaultGroup);
+                const defaultGroup = response.data.sportsGroupes[0].groupes[0];
+                setSelectedGroupe(defaultGroup);
                 setFormData(prevFormData => ({
                     ...prevFormData,
                     id_groupe: defaultGroup.id_groupe
@@ -75,26 +72,13 @@ const AjouterPresence = () => {
         }
     };
 
-    const handleSportChange = (e) => {
-        const sportId = parseInt(e.target.value);
-        const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
-        setSelectedSport(selectedSport);
-        const defaultGroup = selectedSport.groupes[0];
-        setSelectedGroup(defaultGroup);
-    
-        // Reset selected creneau and id_creneau when sport changes
-        setSelectedCreneau(null);
-        setFormData(prevFormData => ({
-            ...prevFormData,
-            id_groupe: defaultGroup.id_groupe,
-            id_creneau: null // Reset id_creneau to null
-        }));
-    };    
-
     const handleGroupChange = (e) => {
         const groupId = parseInt(e.target.value);
-        const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId);
-        setSelectedGroup(selectedGroup);
+        const selectedGroupe = sportsGroupes
+            .flatMap(sport => sport.groupes)
+            .find(group => group.id_groupe === groupId);
+
+        setSelectedGroupe(selectedGroupe);
         setSelectedCreneau(null); // Reset selected creneau when group changes
     
         // Find the first creneau of the newly selected group
@@ -127,7 +111,7 @@ const AjouterPresence = () => {
         }));
     };
 
-    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroup?.id_groupe);
+    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe);
 
     return (
         <>
@@ -154,27 +138,18 @@ const AjouterPresence = () => {
                                 <div className="add-input">
                                     <span className="material-icons-outlined">logout</span>
                                     <label>Sortie</label>
-                                    <input type="datetime-local" name="date_sortie" value={formData.date_sortie} onChange={handleChange} required />
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">sports_gymnastics</span>
-                                    <label>Sport</label>
-                                    <select name="sport" value={selectedSport?.id_sport} onChange={handleSportChange}>
-                                        {sportsGroupes.map(sport => (
-                                            <option key={sport.id_sport} value={sport.id_sport}>
-                                                {sport.nom}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <input type="datetime-local" name="date_sortie" value={formData.date_sortie} onChange={handleChange}/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">group</span>
                                     <label>Groupe</label>
-                                    <select name="id_groupe" value={selectedGroup?.id_groupe} onChange={handleGroupChange}>
-                                        {selectedSport?.groupes.map(group => (
-                                            <option key={group.id_groupe} value={group.id_groupe}>
-                                                {group.nom_groupe}
-                                            </option>
+                                    <select name="id_groupe" value={selectedGroupe?.id_groupe} onChange={handleGroupChange}>
+                                        {sportsGroupes.map(sport => (
+                                            sport.groupes.map(group => (
+                                                <option key={group.id_groupe} value={group.id_groupe}>
+                                                    {sport.nom} | {group.nom_groupe}
+                                                </option>
+                                            ))
                                         ))}
                                     </select>
                                 </div>

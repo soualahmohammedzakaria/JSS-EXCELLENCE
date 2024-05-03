@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
     cb(null, filename);
   }
 });
-
 const upload = multer({ storage: storage });
 
 // A verifier apres le cas des membres supprimes logiquement 
@@ -80,26 +79,27 @@ async function deleteMember(req, res) {
     try {
       const memberId = req.params.id;
       const member = await memberModel.getMemberById(memberId);
-      if(member.id_paiement != null){
-        const transaction = await memberModel.getTransaction(member.id_paiement);
-        transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
-        transaction.mois_abonnement = transaction.mois;
-        delete transaction.mois;
-        delete transaction.date_paiement;
-        member.transaction = transaction;
-      }
-      else{
-        const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
-            if (lastTransaction) {
-                member.id_paiement = lastTransaction.id_paiement;
-                lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
-                lastTransaction.mois_abonnement = lastTransaction.mois;
-                delete lastTransaction.mois;
-                delete lastTransaction.date_paiement;
-                member.transaction = lastTransaction;
-            }        
-      }
+      
       if (member) {
+        if (member.id_paiement != null) {
+          const transaction = await memberModel.getTransaction(member.id_paiement);
+          transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
+          transaction.mois_abonnement = transaction.mois;
+          delete transaction.mois;
+          delete transaction.date_paiement;
+          member.transaction = transaction;
+        } else {
+          const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
+          if (lastTransaction) {
+            member.id_paiement = lastTransaction.id_paiement;
+            lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
+            lastTransaction.mois_abonnement = lastTransaction.mois;
+            delete lastTransaction.mois;
+            delete lastTransaction.date_paiement;
+            member.transaction = lastTransaction;
+          }
+        }
+        
         member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
         member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
         res.json({ success: true, member });
@@ -110,7 +110,8 @@ async function deleteMember(req, res) {
       console.error('Erreur lors de la récupération du membre :', error);
       res.json({ success: false, message: 'Erreur lors de la récupération du membre' });
     }
-  }
+}
+
 
   async function updateMember(req, res) {
     try {
@@ -179,8 +180,51 @@ async function deleteMember(req, res) {
       res.json({ success: false, message: 'Erreur lors de la suppression du membre du groupe' });
     }
   }
-  
 
+  async function DefinitivelyDeleteMember(req, res) {
+    try {
+      const id = req.params.id;  
+      await memberModel.DefinitivelyDeleteMember(id);
+      res.json({ success: true, message: 'Membre supprimé avec succès' });
+    } catch (error) {
+      console.error('Erreur lors de la suppression du membre :', error);
+      res.json({ success: false, message: 'Erreur lors de la suppression du membre' });
+    }
+  }
+  
+  async function getAllDeletedMembers(req, res){
+    try {
+      const members = await memberModel.getAllDeletedMembers(); 
+      members.forEach(member => {
+      member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
+      member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
+       });
+      res.json({ success: true, members });
+    } catch (error) {
+      res.json({ success: false, message: 'Erreur lors de la récupération des membres.', error: error.message });
+    }
+  }
+
+  async function restoreMember(req, res) {
+    try {
+      const id = req.params.id;  
+      await memberModel.restoreMember(id);
+      res.json({ success: true, message: 'Membre restauré avec succès' });
+    } catch (error) {
+      console.error('Erreur lors de la restauration du membre :', error);
+      res.json({ success: false, message: 'Erreur lors de la restauration du membre' });
+    }
+  }
+
+  async function DefinitivelyDeleteAllMembers(req, res) {
+    try {
+      await memberModel.DefinitivelyDeleteAllMembers();
+      res.json({ success: true, message: 'Membres supprimés avec succès' });
+    } catch (error) {
+      console.error('Erreur lors de la suppression des membres :', error);
+      res.json({ success: false, message: 'Erreur lors de la suppression des membres' });
+    }
+  }
 
 
 
@@ -193,5 +237,9 @@ async function deleteMember(req, res) {
     updateMember,
     assignMemberToGroups,
     assignMemberToGroup,
-    deleteGroupMember
+    deleteGroupMember,
+    DefinitivelyDeleteMember,
+    getAllDeletedMembers,
+    restoreMember,
+    DefinitivelyDeleteAllMembers
 }
