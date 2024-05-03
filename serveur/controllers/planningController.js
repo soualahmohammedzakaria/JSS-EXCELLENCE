@@ -75,12 +75,47 @@ async function deleteCreneau(req, res) {
     }
   }
 
-
-
+  async function addCreneaux(req, res) {
+    try {
+        const { id_groupe, numero_salle, titre, jour, date_debut, date_fin, heure_debut, heure_fin, type, description } = req.body;
+        if (date_debut >= date_fin) {
+            res.json({ success: false, message: 'La date de début doit être inférieure à la date de fin' });
+            return;
+        }
+        let trouve = false;
+        // Insérer les créneaux pour chaque date entre date_debut et date_fin pour le jour spécifié
+        let currentDate = new Date(date_debut);
+        const endDate = new Date(date_fin);
+        while (currentDate <= endDate) {
+            if (currentDate.getDay() == jour) {              
+                const dateFormatted = currentDate.toISOString().split('T')[0];
+                const date_debut =  dateFormatted + ' ' + heure_debut; 
+                const date_fin =  dateFormatted + ' ' + heure_fin;          
+                const creneau = await planningModel.getCreneau(titre, date_debut, date_fin);
+                if (creneau) {
+                    trouve = true;
+                } else {                     
+                await planningModel.addCreneau(id_groupe, numero_salle, titre,date_debut,date_fin, type, description);
+                }
+            }
+            currentDate.setDate(currentDate.getDate() + 1);            
+        }
+        if(trouve){
+            res.json({ success: true, message: 'Quelques creneaux sont deja pris' });
+        }
+        else{
+        res.json({ success: true, message: 'Créneaux ajoutés avec succès' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout de créneaux :', error);
+        res.json({ success: false, message: 'Erreur lors de l\'ajout de créneaux' });
+    }
+}
 
 
 module.exports = { 
     addCreneau,
+    addCreneaux,
     deleteCreneau,
     updateCreneau,
     getAllCreneaux

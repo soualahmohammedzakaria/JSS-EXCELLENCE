@@ -5,7 +5,9 @@ async function getDistribution(req, res) {
     try {
         const Statistics = await statisticModel.getDistribution();
         const coachCount = await statisticModel.getCoachCount();
+        const totalEquipments = await statisticModel.getTotalEquipments();
         Statistics.coachCount = coachCount;
+        Statistics.totalEquipments = totalEquipments;
         res.json({ success: true, Statistics });
     } catch (error) {
         console.error('Erreur lors de la récupération des statistiques  :', error);
