@@ -1,11 +1,12 @@
 const paymentModel = require('../models/paymentModel');
+const settingModel = require('../models/settingModel');
 const moment = require('moment-timezone');
 
 
 
 async function addTransaction(req, res) {
     try {
-        const { id_membre, montant_paye, montant_restant, mois } = req.body;
+        const { id_membre, montant_paye, montant_restant, mois, envoi } = req.body;
         const date_paiement = moment().format('YYYY-MM-DD'); // Date actuelle
 
         // Vérifier si une transaction pour le même mois et le même membre existe déjà
@@ -16,7 +17,19 @@ async function addTransaction(req, res) {
 
         // Ajouter la transaction  
         await paymentModel.addTransaction(id_membre, montant_paye, montant_restant, date_paiement, mois);
+        if(envoi == 1){
+          const dataPayment = {montant_paye, montant_restant, date_paiement, mois}
+          const dataMember = await paymentModel.getMemberById(id_membre);
+          dataMember.date_inscription = moment(dataMember.date_inscription).format('YYYY-MM-DD');
+          const data = {dataMember,dataPayment};
+          invoice = await paymentModel.generateInvoice(data);
+          parametres = await settingModel.getParametres();
+          await paymentModel.sendInvoiceByEmail(invoice, dataMember.email,parametres);
+          res.json({ success: true, message: 'Transaction ajoutée avec succès et facture envoyée par email' });
+        }
+        else{
         res.json({ success: true, message: 'Transaction ajoutée avec succès' });
+        }
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la transaction :', error);
         res.json({ success: false, message: 'Erreur lors de l\'ajout de la transaction' });
@@ -76,11 +89,11 @@ async function sendInvoiceByEmail(req, res) {
     const dataPayment = await paymentModel.getTransactionById(id_paiement);
     const dataMember = await paymentModel.getMemberById(dataPayment.id_membre); 
     dataMember.date_inscription = moment(dataMember.date_inscription).format('YYYY-MM-DD'); 
-    dataMember.date_naissance = moment(dataMember.date_naissance).format('YYYY-MM-DD');
     dataPayment.date_paiement = moment(dataPayment.date_paiement).format('YYYY-MM-DD'); 
     const data = {dataMember,dataPayment};
     invoice = await paymentModel.generateInvoice(data);
-    await paymentModel.sendInvoiceByEmail(invoice, dataMember.email);
+    const parametres = await settingModel.getParametres();
+    await paymentModel.sendInvoiceByEmail(invoice, dataMember.email,parametres);
     res.json({ success: true, message: 'Facture envoyée avec succès' });
   } catch (error) {
     console.error('Erreur lors de l\'envoi de la facture par email:', error);

@@ -14,7 +14,9 @@ router.put('/updateMember/:id', memberController.updateMember);
 router.post('/assignMemberToGroup/:id', memberController.assignMemberToGroup);
 router.delete('/deleteGroupMember/:id', memberController.deleteGroupMember);
 router.patch('/restoreMember/:id', memberController.restoreMember);
-router.delete('/DefinitivelyDeleteAllMembers', memberController.DefinitivelyDeleteAllMembers)
+router.delete('/DefinitivelyDeleteAllMembers', memberController.DefinitivelyDeleteAllMembers);
+router.post('/sendQrCodeByEmail/:id', memberController.sendQrCodeByEmail); 
+
 
      
 

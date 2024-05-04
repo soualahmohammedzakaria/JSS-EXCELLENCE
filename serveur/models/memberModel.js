@@ -1,5 +1,5 @@
 const mydb=require('../config/database');
-
+const nodemailer = require('nodemailer');
 
 function getMemberByName(nom, prenom) {
     return new Promise((resolve, reject) => {
@@ -159,51 +159,6 @@ GROUP BY
   });
 };
 
-
-  
-
-/*function getMemberById(memberId) {
-  return new Promise((resolve, reject) => {
-    const query =`
-    SELECT 
-      m.*, 
-      JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes,
-      CASE 
-        WHEN EXISTS (
-            SELECT * 
-            FROM paiements_membres pm 
-            WHERE m.id_membre = pm.id_membre 
-            AND pm.mois = DATE_FORMAT(NOW(), '%Y-%m')
-        ) THEN 'Payé' -- Si un paiement pour le mois actuel existe pour ce membre, définir l'état à 'Payé'
-        ELSE 'Non payé' -- Sinon, définir l'état à 'Non payé'
-    END AS etat_abonnement -- Alias pour l'état de l'abonnement
-    FROM membres m
-    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
-    LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
-    LEFT JOIN paiements_membres pm ON m.id_membre = pm.id_membre
-    WHERE m.id_membre = ? AND m.supprime = 0
-    GROUP BY m.id_membre;
-    `;
-    mydb.query(query, [memberId], (error, results) => {
-      if (error) {
-        reject(error); // Rejeter la promesse en cas d'erreur
-      } else {
-        if (results.length > 0) {
-          const member = {
-            ...results[0],
-            groupes: results[0].groupes ? JSON.parse(results[0].groupes) : [],
-            etat_abonnement: results[0].etat_abonnement
-          };
-          resolve(member); // Résoudre la promesse avec le membre formaté
-        } else {
-          resolve(null); // Aucun membre trouvé avec cet ID
-        }
-      }
-    });
-  });
-}
-*/
-
 function getMemberById(memberId) {
   return new Promise((resolve, reject) => {
     const query =`
@@ -269,6 +224,34 @@ function getMemberById(memberId) {
     });
   });
 } 
+
+function getGroupeDetail(idGroupe) {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT g.id_groupe, g.nom_groupe, g.id_sport, s.nom AS nom_sport
+      FROM groupes g
+      INNER JOIN sports s ON g.id_sport = s.id_sport
+      WHERE g.id_groupe = ?`;
+    mydb.query(query, [idGroupe], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        if (results.length > 0) {
+          const groupeDetail = {
+            id_groupe: results[0].id_groupe,
+            nom_groupe: results[0].nom_groupe,
+            id_sport: results[0].id_sport,
+            nom_sport: results[0].nom_sport
+          };
+          resolve(groupeDetail);
+        } else {
+          resolve(null); // Aucun groupe trouvé avec cet ID
+        }
+      }
+    });
+  });
+}
+
 
 function checkMember(nom, prenom, memberId) {
   return new Promise((resolve, reject) => {
@@ -413,6 +396,38 @@ function DefinitivelyDeleteAllMembers() {
   });
 }
 
+function sendQrCodeByEmail(email, qrCodeUrl, parametres, nom, prenom) {
+  return new Promise((resolve, reject) => {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: parametres.email, 
+        pass: parametres.password  
+      }
+    });
+
+    const mailOptions = {
+      from:  parametres.email,  
+      to:  email,
+      subject: 'JSS Excellence :  Code QR',
+      text: 'Voici votre code QR en pièce jointe.',
+      attachments: [{
+        filename: `QR_${nom}_${prenom}.png`,
+        content: qrCodeUrl.split(';base64,').pop(),
+        encoding: 'base64'
+    }]
+    };
+
+    transporter.sendMail(mailOptions, function(error, info) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 
 
 module.exports = { 
@@ -432,6 +447,8 @@ module.exports = {
     DefinitivelyDeleteMember,
     getAllDeletedMembers,
     restoreMember,
-    DefinitivelyDeleteAllMembers
+    DefinitivelyDeleteAllMembers,
+    getGroupeDetail,
+    sendQrCodeByEmail
  };
   

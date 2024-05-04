@@ -1,4 +1,7 @@
 const memberModel = require('../models/memberModel');
+const paymentModel = require('../models/paymentModel');
+const settingModel = require('../models/settingModel');
+const QRCode = require('qrcode');
 const multer = require('multer');
 const moment = require('moment-timezone');
 
@@ -27,7 +30,7 @@ async function addMember(req, res){
       const IdMember = await memberModel.addMember(newMember);
       
        // Traitement du téléchargement de la photo  
-    /*upload.single('photo')(req, res, async (err) => {
+    upload.single('photo')(req, res, async (err) => {
       if (err instanceof multer.MulterError) {
         // Erreur Multer
         return res.json({ success: false, message: 'Erreur lors du téléchargement de la photo' });
@@ -35,7 +38,7 @@ async function addMember(req, res){
         // Autres erreurs
         return res.json({ success: false, message: err.message });
     }
-  });*/
+  });
   
       // Assignation du membre aux groupes
       if (newMember.groupIds && newMember.groupIds.length > 0) {
@@ -74,43 +77,51 @@ async function deleteMember(req, res) {
       res.json({ success: false, message: 'Erreur lors de la récupération des membres.', error: error.message });
     }
   }
-
-  async function getMember(req, res) {
-    try {
+  
+async function getMember(req, res) {
+  try {
       const memberId = req.params.id;
       const member = await memberModel.getMemberById(memberId);
-      
+
       if (member) {
-        if (member.id_paiement != null) {
-          const transaction = await memberModel.getTransaction(member.id_paiement);
-          transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
-          transaction.mois_abonnement = transaction.mois;
-          delete transaction.mois;
-          delete transaction.date_paiement;
-          member.transaction = transaction;
-        } else {
-          const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
-          if (lastTransaction) {
-            member.id_paiement = lastTransaction.id_paiement;
-            lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
-            lastTransaction.mois_abonnement = lastTransaction.mois;
-            delete lastTransaction.mois;
-            delete lastTransaction.date_paiement;
-            member.transaction = lastTransaction;
+          if (member.id_paiement != null) {
+              const transaction = await memberModel.getTransaction(member.id_paiement);
+              transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
+              transaction.mois_abonnement = transaction.mois;
+              delete transaction.mois;
+              delete transaction.date_paiement;
+              member.transaction = transaction;
+          } else {
+              const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
+              if (lastTransaction) {
+                  member.id_paiement = lastTransaction.id_paiement;
+                  lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
+                  lastTransaction.mois_abonnement = lastTransaction.mois;
+                  delete lastTransaction.mois;
+                  delete lastTransaction.date_paiement;
+                  member.transaction = lastTransaction;
+              }
           }
-        }
-        
-        member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
-        member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
-        res.json({ success: true, member });
+
+          // Ajouter le nom du sport pour chaque groupe
+          for (const groupe of member.groupes) {
+              const groupeDetail = await memberModel.getGroupeDetail(groupe.id_groupe);
+              groupe.nom_sport = groupeDetail.nom_sport;
+          }
+
+          member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
+          member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
+
+          res.json({ success: true, member });
       } else {
-        res.json({ success: false, message: 'Membre non trouvé' });
+          res.json({ success: false, message: 'Membre non trouvé' });
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Erreur lors de la récupération du membre :', error);
       res.json({ success: false, message: 'Erreur lors de la récupération du membre' });
-    }
+  }
 }
+
 
 
   async function updateMember(req, res) {
@@ -226,6 +237,37 @@ async function deleteMember(req, res) {
     }
   }
 
+  async function sendQrCodeByEmail(req, res) {
+    try {
+        const memberId = req.params.id;
+        const member = await paymentModel.getMemberById(memberId);
+        if (member) {
+            const text = member.nom + '_' + member.prenom + '_' + memberId;
+            const options = {
+              width: 300,  
+              height: 300  
+            };
+            QRCode.toDataURL(text, options, async (err, qrCodeUrl) => {
+                if (err) {
+                    console.error(err);
+                    res.json({ success: false, message: 'Erreur lors de la génération du code QR' });
+                    return;
+                }
+                // Envoyer le code QR par e-mail ici
+                const parametres = await settingModel.getParametres();
+                await memberModel.sendQrCodeByEmail(member.email , qrCodeUrl, parametres,member.nom,member.prenom);
+                res.json({ success: true, message: 'Code QR envoyé par email avec succès' });
+            });
+        } else {
+            res.json({ success: false, message: 'Membre non trouvé' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi du code QR par email :', error);
+        res.json({ success: false, message: 'Erreur lors de l\'envoi du code QR par email' });
+    }
+}
+
+
 
 
 
@@ -241,5 +283,6 @@ async function deleteMember(req, res) {
     DefinitivelyDeleteMember,
     getAllDeletedMembers,
     restoreMember,
-    DefinitivelyDeleteAllMembers
+    DefinitivelyDeleteAllMembers,
+    sendQrCodeByEmail
 }
