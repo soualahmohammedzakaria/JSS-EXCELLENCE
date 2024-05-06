@@ -17,7 +17,7 @@ const Admins = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showFilterModal, setShowFilterModal] = useState(false);
     const [adminIdToDelete, setAdminIdToDelete] = useState(null);
-    const [selectedRole, setSelectedRole] = useState("Pas de filtre");
+    const [selectedRole, setSelectedRole] = useState("Tous");
     const [selectedNom, setSelectedNom] = useState("Pas de filtre");
     const [selectedPrenom, setSelectedPrenom] = useState("Pas de filtre");
     const [selectedUsername, setSelectedUsername] = useState("Pas de filtre");
@@ -87,7 +87,7 @@ const Admins = () => {
         setSelectedNom("Pas de filtre");
         setSelectedPrenom("Pas de filtre");
         setSelectedUsername("Pas de filtre");
-        setSelectedRole("Pas de filtre");
+        setSelectedRole("Tous");
     };
 
     const filterAdmins = () => {

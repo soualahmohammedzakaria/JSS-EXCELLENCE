@@ -1,5 +1,6 @@
 const mydb=require('../config/database');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 
 function getMemberByName(nom, prenom) {
     return new Promise((resolve, reject) => {
@@ -26,20 +27,6 @@ function addMember(newMember) {
         });
     });    
 }
-
-const assignMemberToGroups = async (memberId, groupIds) => {
-    return new Promise((resolve, reject) => {
-      const values = groupIds.map(groupId => [memberId, groupId]);
-      const query = ` INSERT INTO groupes_a_membres (id_membre, id_groupe) VALUES ? `;
-      mydb.query(query, [values], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    });
-  }
 
 async function isMemberAssignedToGroup(memberId, groupId) {
     return new Promise((resolve, reject) => {
@@ -134,66 +121,40 @@ function getMemberById(memberId) {
     const query =`
     SELECT 
       m.*, 
-      JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) AS groupes,
+      (SELECT JSON_ARRAYAGG(JSON_OBJECT('id_groupe', g.id_groupe, 'nom_groupe', g.nom_groupe)) 
+       FROM groupes_a_membres gm
+       JOIN groupes g ON gm.id_groupe = g.id_groupe
+       WHERE m.id_membre = gm.id_membre) AS groupes,
       CASE 
         WHEN EXISTS (
             SELECT * 
             FROM paiements_membres pm 
             WHERE m.id_membre = pm.id_membre 
             AND pm.mois = DATE_FORMAT(NOW(), '%Y-%m')
-        ) THEN (
-          SELECT 
-            CASE 
-              WHEN pm.mois = DATE_FORMAT(NOW(), '%Y-%m') THEN 'Payé'
-            END
-          FROM paiements_membres pm 
-          WHERE m.id_membre = pm.id_membre 
-          AND pm.mois = DATE_FORMAT(NOW(), '%Y-%m')
-          LIMIT 1
-        )
-        ELSE 'Non payé' -- Si aucun paiement n'est trouvé, l'état de l'abonnement est 'Non payé'
-    END AS etat_abonnement, -- Alias pour l'état de l'abonnement
-    CASE
-      WHEN EXISTS (
-          SELECT * 
-          FROM paiements_membres pm 
-          WHERE m.id_membre = pm.id_membre 
-          AND pm.mois = DATE_FORMAT(NOW(), '%Y-%m')
-      ) THEN (
-        SELECT pm.id_paiement 
-        FROM paiements_membres pm 
-        WHERE m.id_membre = pm.id_membre 
-        AND pm.mois = DATE_FORMAT(NOW(), '%Y-%m')
-        LIMIT 1
-      )
-      ELSE NULL -- Si aucun paiement n'est trouvé, l'id_paiement est NULL
-    END AS id_paiement -- Alias pour l'id_paiement
+        ) THEN 'Payé'
+        ELSE 'Non payé'
+      END AS etat_abonnement
     FROM membres m
-    LEFT JOIN groupes_a_membres gm ON m.id_membre = gm.id_membre
-    LEFT JOIN groupes g ON gm.id_groupe = g.id_groupe
-    LEFT JOIN paiements_membres pm ON m.id_membre = pm.id_membre
     WHERE m.id_membre = ? AND m.supprime = 0
-    GROUP BY m.id_membre;
     `;
     mydb.query(query, [memberId], (error, results) => {
       if (error) {
-        reject(error); // Rejeter la promesse en cas d'erreur
+        reject(error);
       } else {
         if (results.length > 0) {
           const member = {
             ...results[0],
             groupes: results[0].groupes ? JSON.parse(results[0].groupes) : [],
-            etat_abonnement: results[0].etat_abonnement,
-            id_paiement: results[0].id_paiement // Ajouter l'id_paiement au membre
+            etat_abonnement: results[0].etat_abonnement
           };
-          resolve(member); // Résoudre la promesse avec le membre formaté
+          resolve(member);
         } else {
-          resolve(null); // Aucun membre trouvé avec cet ID
+          resolve(null);
         }
       }
     });
   });
-} 
+}
 
 function getGroupeDetail(idGroupe) {
   return new Promise((resolve, reject) => {
@@ -265,19 +226,30 @@ function deleteGroupMember(memberId, groupId) {
   });
 }
 
-function getTransaction(id) {
+function getTransaction(memberId) {
   return new Promise((resolve, reject) => {
-    const query = 'SELECT montant_paye, montant_restant, date_paiement, mois FROM paiements_membres WHERE id_paiement = ?';
-    mydb.query(query, [id], (error, results) => {
+    const currentMonth = moment().format('YYYY-MM'); // Mois courant au format 'YYYY-MM'
+
+    const query = `
+      SELECT *
+      FROM paiements_membres
+      WHERE id_membre = ? AND mois = ?
+      limit 1
+    `;
+
+    mydb.query(query, [memberId, currentMonth], (error, results) => {
       if (error) {
         reject(error);
       } else {
-        resolve(results.length > 0 ? results[0] : undefined);
+        if (results.length > 0) {
+          resolve(results[0]); // Renvoie la première transaction trouvée
+        } else {
+          resolve(null); // Aucune transaction trouvée pour le membre et le mois courant
+        }
       }
     });
   });
 }
-
 
 function getLastTransactionBeforeCurrentMonth(memberId) {
   return new Promise((resolve, reject) => {
@@ -403,7 +375,6 @@ function sendQrCodeByEmail(email, qrCodeUrl, parametres, nom, prenom) {
 module.exports = { 
     getMemberByName, 
     addMember,
-    assignMemberToGroups,
     isMemberAssignedToGroup,
     assignMemberToGroup,
     deleteMemberById,

@@ -231,25 +231,28 @@ const DetailsMembre = () => {
                                     <div className="info-membre">
                                         <h2>Date d'abonnement</h2>
                                         {membre.transaction && membre.transaction.date_abonnement && (
-                                            <p className="info-membre-val">{formatDate(membre.transaction.date_abonnement)}</p>
+                                            <p className="info-membre-val">{membre.id_paiement ? formatDate(membre.transaction.date_abonnement) : "-"}</p>
                                         )}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Mois d'abonnement</h2>
                                         {membre.transaction && membre.transaction.mois_abonnement && (
-                                            <p className="info-membre-val">{formatAnMois(membre.transaction.mois_abonnement)}</p>
+                                            <p className="info-membre-val">{membre.id_paiement ? formatAnMois(membre.transaction.mois_abonnement) : "-"}</p>
                                         )}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Montant Payé</h2>
                                         {membre.transaction && membre.transaction.montant_paye && (
-                                            <p className="info-membre-val">{membre.transaction.montant_paye} DZD</p>
+                                            <p className="info-membre-val">{membre.id_paiement ? membre.transaction.montant_paye : "-"} DZD</p>
                                         )}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Montant Restant</h2>
                                         <p className={`info-membre-val ${membre.transaction && membre.transaction.montant_restant && membre.transaction.montant_restant > 0 ? "danger" : ""}`}>
-                                            {membre.transaction && membre.transaction.montant_restant ? `${membre.transaction.montant_restant} DZD` : "0 DZD"}
+                                            {membre.id_paiement ?
+                                                (membre.transaction && membre.transaction.montant_restant ? `${membre.transaction.montant_restant} DZD` : "0 DZD")
+                                            : "-"
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -262,10 +265,11 @@ const DetailsMembre = () => {
                                 <button className="link pointed" onClick={() => setShowAssignerModal(true)}><span className="material-icons-outlined">control_point</span><span>Assigner à un groupe</span></button>
                             </div>
                             <div className="membre-groupes">
-                                {membre.groupes &&
+                                {membre.groupes && membre.groupes.length > 0 && membre.groupes[0].id_groupe !== null ?
                                     membre.groupes.map(groupe => (
                                         <button onClick={() => handleDeleteMembreGroup(groupe.id_groupe)} key={groupe.id_groupe} className="membre-groupe pointed">{groupe.nom_sport} | {groupe.nom_groupe}</button>
                                     ))
+                                : <h2>Pas de groupes!</h2>
                                 }
                             </div>
                         </div>

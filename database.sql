@@ -28,10 +28,10 @@ CREATE TABLE `absences_membres` (
   `id_absence` int unsigned NOT NULL AUTO_INCREMENT,
   `id_groupe` int unsigned NOT NULL,
   `id_membre` int unsigned NOT NULL,
+  `id_creneau` int unsigned NOT NULL,
   `date` date NOT NULL,
   `justifiee` tinyint NOT NULL,
   `justification` varchar(255) DEFAULT NULL,
-  `id_creneau` int unsigned NOT NULL,
   PRIMARY KEY (`id_absence`),
   UNIQUE KEY `id_absence_UNIQUE` (`id_absence`),
   KEY `fk_absences_membres_groupes1_idx` (`id_groupe`),
@@ -40,7 +40,7 @@ CREATE TABLE `absences_membres` (
   CONSTRAINT `fk_absences_membres_creneaux1` FOREIGN KEY (`id_creneau`) REFERENCES `creneaux` (`id_creneau`) ON DELETE CASCADE,
   CONSTRAINT `fk_absences_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`) ON DELETE CASCADE,
   CONSTRAINT `fk_absences_membres_membres1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE `absences_membres` (
 
 LOCK TABLES `absences_membres` WRITE;
 /*!40000 ALTER TABLE `absences_membres` DISABLE KEYS */;
-INSERT INTO `absences_membres` VALUES (1,2,10,'2024-05-12',1,'Opération medicale',14),(2,2,10,'2024-05-17',0,'',14);
+INSERT INTO `absences_membres` VALUES (7,2,13,14,'2024-05-06',0,NULL);
 /*!40000 ALTER TABLE `absences_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71,7 +71,7 @@ CREATE TABLE `accomplissements` (
   UNIQUE KEY `id_accomp_UNIQUE` (`id_accomp`),
   KEY `fk_accomp_membres` (`id_membre`),
   CONSTRAINT `fk_accomp_membres` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,7 +80,6 @@ CREATE TABLE `accomplissements` (
 
 LOCK TABLES `accomplissements` WRITE;
 /*!40000 ALTER TABLE `accomplissements` DISABLE KEYS */;
-INSERT INTO `accomplissements` VALUES (10,'Coupe d\'algerie - 2022','2024-05-01','foot ball','Premiere place',10);
 /*!40000 ALTER TABLE `accomplissements` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,7 +99,7 @@ CREATE TABLE `administrateurs` (
   `role` enum('Gestionnaire','Administrateur') NOT NULL,
   PRIMARY KEY (`id_admin`),
   UNIQUE KEY `id_admin_UNIQUE` (`id_admin`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,7 +108,7 @@ CREATE TABLE `administrateurs` (
 
 LOCK TABLES `administrateurs` WRITE;
 /*!40000 ALTER TABLE `administrateurs` DISABLE KEYS */;
-INSERT INTO `administrateurs` VALUES (1,'SOUALAH MOHAMMED','Zakaria','zaxy17','7215ee9c7d9dc229d2921a40e899ec5f','Administrateur'),(16,'ZEGHIMI','Zayd Aymen','zzaydou','a341c7080e9c303c1e885ba96e710730','Gestionnaire'),(18,'HEMIMED','Anis','h_anis','25f9e794323b453885f5181f1b624d0b','Gestionnaire'),(19,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(20,'SAHRAOUI','Ramy','ramy18','bc70904109e8f620e4b53c33eaf8b811','Gestionnaire'),(21,'LEHIDANE','Mohammed','m_lehidane','f1d9b0a5ac1ae1811b80ab6fde4f4396','Administrateur'),(28,'BOUKAKIOU','Rayan','bkrayan','25f9e794323b453885f5181f1b624d0b','Gestionnaire'),(30,'BETTAYEB','Yazid','yazidbet','25f9e794323b453885f5181f1b624d0b','Administrateur'),(32,'KOUDRI','Chemsedine','chemso17','b2220407b7e07a6abb7beac457bc679a','Gestionnaire'),(33,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(35,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(36,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(38,'KHALED','Adriane Anis','adralo','798547eb8831c98ae7474f328e3a57c4','Administrateur'),(39,'BETTAYEB','Yazid','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(40,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(41,'KHALED','Adriane Anis','adralow1','25f9e794323b453885f5181f1b624d0b','Administrateur'),(42,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(43,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(44,'BETTAYEB','Yazid','yazzzid','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(45,'BETTAYEB','BETTAYEB','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(47,'KHALED','Adriane Anis','adralow11111111','798547eb8831c98ae7474f328e3a57c4','Administrateur'),(50,'boukakiou','rayan','bkrayano','25f9e794323b453885f5181f1b624d0b','Administrateur'),(51,'soualah mohammed','zakaria','zax','25f9e794323b453885f5181f1b624d0b','Administrateur'),(52,'soualah mohammed','zaky','zaxy19','25f9e794323b453885f5181f1b624d0b','Administrateur');
+INSERT INTO `administrateurs` VALUES (1,'SOUALAH MOHAMMED','Zakaria','zaxy17','7215ee9c7d9dc229d2921a40e899ec5f','Administrateur'),(16,'ZEGHIMI','Zayd Aymen','zzaydou','a341c7080e9c303c1e885ba96e710730','Gestionnaire'),(18,'HEMIMED','Anis','h_anis','25f9e794323b453885f5181f1b624d0b','Gestionnaire'),(19,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(20,'SAHRAOUI','Ramy','ramy18','bc70904109e8f620e4b53c33eaf8b811','Gestionnaire'),(21,'LEHIDANE','Mohammed','m_lehidane','f1d9b0a5ac1ae1811b80ab6fde4f4396','Administrateur'),(28,'BOUKAKIOU','Rayan','bkrayan','25f9e794323b453885f5181f1b624d0b','Gestionnaire'),(30,'BETTAYEB','Yazid','yazidbet','25f9e794323b453885f5181f1b624d0b','Administrateur'),(32,'KOUDRI','Chemsedine','chemso17','b2220407b7e07a6abb7beac457bc679a','Gestionnaire'),(33,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(35,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(36,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(38,'KHALED','Adriane Anis','adralo','798547eb8831c98ae7474f328e3a57c4','Administrateur'),(39,'BETTAYEB','Yazid','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(40,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(41,'KHALED','Adriane Anis','adralow1','25f9e794323b453885f5181f1b624d0b','Administrateur'),(42,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(43,'KHALED','Adriane Anis','adralow','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(44,'BETTAYEB','Yazid','yazzzid','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(45,'BETTAYEB','BETTAYEB','yazidbet','798547eb8831c98ae7474f328e3a57c4','Gestionnaire'),(47,'KHALED','Adriane Anis','adralow11111111','798547eb8831c98ae7474f328e3a57c4','Administrateur'),(50,'boukakiou','rayan','bkrayano','25f9e794323b453885f5181f1b624d0b','Administrateur'),(51,'soualah mohammed','zakaria','zax','25f9e794323b453885f5181f1b624d0b','Administrateur'),(52,'soualah mohammed','zaky','zaxy19','25f9e794323b453885f5181f1b624d0b','Administrateur'),(53,'test','test','test','c23b2ed66eedb321c5bcfb5e3724b978','Gestionnaire');
 /*!40000 ALTER TABLE `administrateurs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -135,7 +134,7 @@ CREATE TABLE `assiduite_membres` (
   CONSTRAINT `fk_assiduite_membres_creneaux1` FOREIGN KEY (`id_creneau`) REFERENCES `creneaux` (`id_creneau`) ON DELETE CASCADE,
   CONSTRAINT `fk_assiduite_membres_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`) ON DELETE CASCADE,
   CONSTRAINT `fk_assiduite_membres_membres1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +143,7 @@ CREATE TABLE `assiduite_membres` (
 
 LOCK TABLES `assiduite_membres` WRITE;
 /*!40000 ALTER TABLE `assiduite_membres` DISABLE KEYS */;
-INSERT INTO `assiduite_membres` VALUES (33,1,10,16,'2024-05-04 00:29:08','2024-05-04 00:29:25'),(34,1,10,16,'2024-05-04 15:06:39','2024-05-04 15:07:08'),(35,1,10,16,'2024-05-04 18:21:56','2024-05-04 18:23:06');
+INSERT INTO `assiduite_membres` VALUES (4,2,10,15,'2024-05-10 15:30:00','2024-05-10 17:30:00'),(9,12,10,24,'2024-05-06 12:54:21','2024-05-06 12:57:43');
 /*!40000 ALTER TABLE `assiduite_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,13 +158,14 @@ CREATE TABLE `coachs` (
   `id_coach` int NOT NULL AUTO_INCREMENT,
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(255) NOT NULL,
+  `photo` varchar(45) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   `date_naissance` date NOT NULL,
   `telephone` varchar(15) NOT NULL,
   `sexe` enum('Homme','Femme') NOT NULL,
   PRIMARY KEY (`id_coach`),
   UNIQUE KEY `id_coach_UNIQUE` (`id_coach`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +174,7 @@ CREATE TABLE `coachs` (
 
 LOCK TABLES `coachs` WRITE;
 /*!40000 ALTER TABLE `coachs` DISABLE KEYS */;
-INSERT INTO `coachs` VALUES (20,'SOUALAH MOHAMMED2','Zakaria','zakaria@gmail.com','2000-05-12','0754326210','Homme'),(23,'Zaxy','Bus','','2000-02-02','0548653201','Homme'),(24,'Zaxy','Bus2','buszaxy@gmail.com','2024-05-02','0548653201','Femme');
+INSERT INTO `coachs` VALUES (14,'soualah','zakaria2',NULL,'mz_zeghimi@esi.dz','2000-12-26','0578219634','Homme'),(15,'zeghimi','zaydoo',NULL,'mz-zeghimi@esi.dz','2010-12-10','0512598765','Homme');
 /*!40000 ALTER TABLE `coachs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,12 +187,12 @@ DROP TABLE IF EXISTS `creneaux`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `creneaux` (
   `id_creneau` int unsigned NOT NULL AUTO_INCREMENT,
-  `numero_salle` int unsigned NOT NULL,
   `id_groupe` int unsigned NOT NULL,
+  `numero_salle` int unsigned NOT NULL,
   `titre` varchar(100) NOT NULL,
   `date_debut` datetime NOT NULL,
   `date_fin` datetime NOT NULL,
-  `type` enum('Evenement','Seance') NOT NULL,
+  `type` enum('Evénement','Séance') NOT NULL,
   `description` text,
   PRIMARY KEY (`id_creneau`),
   UNIQUE KEY `id_creneau_UNIQUE` (`id_creneau`),
@@ -200,7 +200,7 @@ CREATE TABLE `creneaux` (
   KEY `fk_creneaux_salles1_idx` (`numero_salle`),
   CONSTRAINT `fk_creneaux_groupes1` FOREIGN KEY (`id_groupe`) REFERENCES `groupes` (`id_groupe`) ON DELETE CASCADE,
   CONSTRAINT `fk_creneaux_salles1` FOREIGN KEY (`numero_salle`) REFERENCES `salles` (`numero_salle`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -209,7 +209,7 @@ CREATE TABLE `creneaux` (
 
 LOCK TABLES `creneaux` WRITE;
 /*!40000 ALTER TABLE `creneaux` DISABLE KEYS */;
-INSERT INTO `creneaux` VALUES (14,2,2,'Seance Test','2024-05-15 17:00:00','2024-05-15 19:00:00','Seance','blabla'),(15,2,2,'Seance Test 2','2024-05-16 17:00:00','2024-05-16 19:00:00','Seance','blabla'),(16,2,1,'Test Creneau','2024-05-01 20:30:00','2024-05-10 20:30:00','Seance','test'),(17,2,1,'Test Un Creneau','2024-05-04 11:15:00','2024-05-04 12:15:00','Seance',NULL),(18,2,1,'Test Plusieurs Creneaux','2024-05-05 11:15:00','2024-05-05 13:15:00','Seance',NULL),(19,2,1,'Test Plusieurs Creneaux','2024-05-12 11:15:00','2024-05-12 13:15:00','Seance',NULL),(20,2,1,'Test Plusieurs Creneaux','2024-05-19 11:15:00','2024-05-19 13:15:00','Seance',NULL),(21,2,1,'Test Plusieurs Creneaux','2024-05-26 11:15:00','2024-05-26 13:15:00','Seance',NULL),(22,3,11,'Test Plusieurs Creneaux 2','2024-05-06 14:30:00','2024-05-06 16:30:00','Seance',NULL),(23,3,11,'Test Plusieurs Creneaux 2','2024-05-13 14:30:00','2024-05-13 16:30:00','Seance',NULL),(24,3,11,'Test Plusieurs Creneaux 2','2024-05-20 14:30:00','2024-05-20 16:30:00','Seance',NULL),(25,3,11,'Test Plusieurs Creneaux 2','2024-05-27 14:30:00','2024-05-27 16:30:00','Seance',NULL),(26,3,11,'Test creneau 3','2024-05-07 15:10:00','2024-05-07 18:10:00','Seance',NULL),(27,3,11,'Test creneau 3','2024-05-14 15:10:00','2024-05-14 18:10:00','Seance',NULL),(28,3,11,'Test creneau 3','2024-05-21 15:10:00','2024-05-21 18:10:00','Seance',NULL),(29,3,11,'Test creneau 3','2024-05-28 15:10:00','2024-05-28 18:10:00','Seance',NULL);
+INSERT INTO `creneaux` VALUES (14,2,2,'seance karate','2024-05-15 17:00:00','2024-10-15 19:00:00','Séance','blabla'),(15,2,2,'seance judo','2024-05-23 15:59:00','2024-05-02 19:00:00','Séance','blabla'),(16,2,2,'seance kick-boxing','2024-05-03 17:00:00','2024-05-03 18:57:00','Séance',''),(24,12,2,'seance judo','2024-05-06 13:00:00','2024-05-06 17:00:00','Séance','rien a dire'),(25,12,2,'seance judo','2024-05-13 13:00:00','2024-05-13 17:00:00','Séance','rien a dire'),(26,12,2,'seance judo','2024-05-20 13:00:00','2024-05-20 17:00:00','Séance','rien a dire');
 /*!40000 ALTER TABLE `creneaux` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,7 +229,7 @@ CREATE TABLE `depenses` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_depense`),
   UNIQUE KEY `id_transaction_UNIQUE` (`id_depense`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,7 +238,7 @@ CREATE TABLE `depenses` (
 
 LOCK TABLES `depenses` WRITE;
 /*!40000 ALTER TABLE `depenses` DISABLE KEYS */;
-INSERT INTO `depenses` VALUES (3,'nouvelle table','categ1',5000.00,'2023-12-19',NULL),(4,'nouvelle chaise pour la caisse','categ2',10000.00,'2020-09-19',NULL),(5,'Test salle','categ3',2500.00,'2024-05-10',NULL),(6,'Test salle','categ4',5000.00,'2024-04-11',NULL);
+INSERT INTO `depenses` VALUES (3,'nouvelle table','tsshy',5000.00,'2023-12-19','rien a dire'),(4,'nouvelle chaise','tsshy',10000.00,'2020-09-19','iygygygyu'),(5,'corde','equipement',5000.00,'2024-05-15','rien'),(6,'tenu','jcvj',100.00,'2024-05-30','rien'),(7,'table','nc',12000.00,'2024-04-30','rien'),(8,'Zayd','categ3',150000.00,'2024-05-05',NULL);
 /*!40000 ALTER TABLE `depenses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -258,7 +258,7 @@ CREATE TABLE `equipements` (
   UNIQUE KEY `id_equipement_UNIQUE` (`id_equipement`),
   KEY `fk_equipements_salles1_idx` (`numero_salle`),
   CONSTRAINT `fk_equipements_salles1` FOREIGN KEY (`numero_salle`) REFERENCES `salles` (`numero_salle`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -267,7 +267,7 @@ CREATE TABLE `equipements` (
 
 LOCK TABLES `equipements` WRITE;
 /*!40000 ALTER TABLE `equipements` DISABLE KEYS */;
-INSERT INTO `equipements` VALUES (22,'jxhiuvf',15,2),(25,'chaise',15,3);
+INSERT INTO `equipements` VALUES (22,'Haltere 5KG',4,2),(27,'Haltere 10KG',11,2),(30,'Zaxy',40,2),(32,'Zaxy',2,2);
 /*!40000 ALTER TABLE `equipements` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -286,7 +286,7 @@ CREATE TABLE `groupes` (
   UNIQUE KEY `id_sport_UNIQUE` (`id_groupe`),
   KEY `fk_groupes_sports1_idx` (`id_sport`),
   CONSTRAINT `fk_groupes_sports1` FOREIGN KEY (`id_sport`) REFERENCES `sports` (`id_sport`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,7 +295,7 @@ CREATE TABLE `groupes` (
 
 LOCK TABLES `groupes` WRITE;
 /*!40000 ALTER TABLE `groupes` DISABLE KEYS */;
-INSERT INTO `groupes` VALUES (1,1,'Hommes'),(2,1,'Femmes'),(8,4,'U17'),(11,3,'-80kg'),(12,4,'U19');
+INSERT INTO `groupes` VALUES (1,1,'u17 w'),(2,1,'gcxg'),(8,4,'u17'),(11,3,'u17'),(12,1,'U201');
 /*!40000 ALTER TABLE `groupes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -323,7 +323,7 @@ CREATE TABLE `groupes_a_coachs` (
 
 LOCK TABLES `groupes_a_coachs` WRITE;
 /*!40000 ALTER TABLE `groupes_a_coachs` DISABLE KEYS */;
-INSERT INTO `groupes_a_coachs` VALUES (1,20),(2,20),(11,20),(12,20),(12,23),(1,24);
+INSERT INTO `groupes_a_coachs` VALUES (1,14),(8,14),(11,15);
 /*!40000 ALTER TABLE `groupes_a_coachs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -351,7 +351,7 @@ CREATE TABLE `groupes_a_membres` (
 
 LOCK TABLES `groupes_a_membres` WRITE;
 /*!40000 ALTER TABLE `groupes_a_membres` DISABLE KEYS */;
-INSERT INTO `groupes_a_membres` VALUES (2,10),(8,10),(11,10);
+INSERT INTO `groupes_a_membres` VALUES (1,13),(1,23),(2,10),(2,13),(8,10),(8,23),(11,10),(11,13),(12,10),(12,13);
 /*!40000 ALTER TABLE `groupes_a_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -367,6 +367,7 @@ CREATE TABLE `membres` (
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) NOT NULL,
   `sexe` enum('Homme','Femme') NOT NULL,
+  `photo` varchar(45) DEFAULT NULL,
   `date_naissance` date NOT NULL,
   `date_inscription` date NOT NULL,
   `email` varchar(50) NOT NULL,
@@ -378,7 +379,7 @@ CREATE TABLE `membres` (
   `supprime` tinyint NOT NULL,
   PRIMARY KEY (`id_membre`),
   UNIQUE KEY `id_membre_UNIQUE` (`id_membre`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -387,7 +388,7 @@ CREATE TABLE `membres` (
 
 LOCK TABLES `membres` WRITE;
 /*!40000 ALTER TABLE `membres` DISABLE KEYS */;
-INSERT INTO `membres` VALUES (10,'SOUALAH MOHAMMED','Zakaria','Homme','2004-12-08','2024-04-03','mz_soualahmohammed@esi.dz','0578219634','O+','/',70,179,0),(13,'ZEGHIMI','Zayd Aymen','Homme','2004-05-13','2024-05-03','mz_zeghimi@esi.dz','0578219634','O-','/',70,179,0);
+INSERT INTO `membres` VALUES (10,'bouka','rayan','Homme',NULL,'2004-12-08','2024-05-31','mz_soualahmohammed@esi.dz','0578219634','O+','/',70,179,0),(13,'zeghimi','zayd','Homme',NULL,'2004-12-08','2015-05-03','mz_zeghimi@esi.dz','0578219634','O+','/',70,179,0),(23,'haned','bilal','Homme','m_haned_bilal','2004-12-08','2015-05-03','mz_zeghimi@esi.dz','0578219634','O+','/',70,179,0);
 /*!40000 ALTER TABLE `membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -407,9 +408,9 @@ CREATE TABLE `paiements_membres` (
   `mois` varchar(45) NOT NULL,
   PRIMARY KEY (`id_paiement`),
   UNIQUE KEY `id_paiement_UNIQUE` (`id_paiement`),
-  KEY `id_membre` (`id_membre`),
+  KEY `paiements_membres_ibfk_1` (`id_membre`),
   CONSTRAINT `paiements_membres_ibfk_1` FOREIGN KEY (`id_membre`) REFERENCES `membres` (`id_membre`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -418,7 +419,7 @@ CREATE TABLE `paiements_membres` (
 
 LOCK TABLES `paiements_membres` WRITE;
 /*!40000 ALTER TABLE `paiements_membres` DISABLE KEYS */;
-INSERT INTO `paiements_membres` VALUES (21,10,2400.00,100.00,'2024-05-04','2024-07'),(29,10,2500.00,0.00,'2024-05-05','2024-04');
+INSERT INTO `paiements_membres` VALUES (9,10,2500.00,0.00,'2024-04-30','2023-04'),(21,10,2500.00,0.00,'2024-05-06','2024-05'),(22,13,3000.00,0.00,'2024-05-06','2024-05'),(23,13,5000.00,0.00,'2024-05-06','2024-06'),(24,23,5000.00,0.00,'2024-05-06','2024-05');
 /*!40000 ALTER TABLE `paiements_membres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -460,7 +461,7 @@ CREATE TABLE `salles` (
   `nom_salle` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`numero_salle`),
   UNIQUE KEY `numero_UNIQUE` (`numero_salle`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -469,7 +470,7 @@ CREATE TABLE `salles` (
 
 LOCK TABLES `salles` WRITE;
 /*!40000 ALTER TABLE `salles` DISABLE KEYS */;
-INSERT INTO `salles` VALUES (2,20,'Salle Fitness'),(3,10,'Salle Kickboxing'),(7,22,'Stade de foot');
+INSERT INTO `salles` VALUES (2,20,'salle karate'),(4,15,'salle kick boxing');
 /*!40000 ALTER TABLE `salles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -486,7 +487,7 @@ CREATE TABLE `sports` (
   PRIMARY KEY (`id_sport`),
   UNIQUE KEY `id_sport_UNIQUE` (`id_sport`),
   UNIQUE KEY `nom_UNIQUE` (`nom`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -495,7 +496,7 @@ CREATE TABLE `sports` (
 
 LOCK TABLES `sports` WRITE;
 /*!40000 ALTER TABLE `sports` DISABLE KEYS */;
-INSERT INTO `sports` VALUES (1,'Crossfit'),(4,'Football'),(3,'Kickboxing');
+INSERT INTO `sports` VALUES (4,'Football'),(1,'Karate'),(3,'Kickboxing');
 /*!40000 ALTER TABLE `sports` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -508,4 +509,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-05 19:25:31
+-- Dump completed on 2024-05-06 21:31:26

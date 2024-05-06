@@ -27,23 +27,7 @@ async function addMember(req, res){
       if (member) {
       res.json({ success: false, message: 'Nom du membre déjà utilisé' });
       } else {
-      const IdMember = await memberModel.addMember(newMember);
-      
-       // Traitement du téléchargement de la photo  
-    /*upload.single('photo')(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        // Erreur Multer
-        return res.json({ success: false, message: 'Erreur lors du téléchargement de la photo' });
-      } else if (err) {
-        // Autres erreurs
-        return res.json({ success: false, message: err.message });
-    }
-  });*/
-  
-      // Assignation du membre aux groupes
-      if (newMember.groupIds && newMember.groupIds.length > 0) {
-        await memberModel.assignMemberToGroups(IdMember, newMember.groupIds);
-      }
+      await memberModel.addMember(newMember);
       res.json({ success: true, message: 'Membre ajouté avec succès' });
    }
     } catch (error) {
@@ -78,49 +62,51 @@ async function deleteMember(req, res) {
     }
   }
   
-async function getMember(req, res) {
-  try {
+  async function getMember(req, res) {
+    try {
       const memberId = req.params.id;
       const member = await memberModel.getMemberById(memberId);
-
+  
       if (member) {
-          if (member.id_paiement != null) {
-              const transaction = await memberModel.getTransaction(member.id_paiement);
-              transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
-              transaction.mois_abonnement = transaction.mois;
-              delete transaction.mois;
-              delete transaction.date_paiement;
-              member.transaction = transaction;
-          } else {
-              const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
-              if (lastTransaction) {
-                  member.id_paiement = lastTransaction.id_paiement;
-                  lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
-                  lastTransaction.mois_abonnement = lastTransaction.mois;
-                  delete lastTransaction.mois;
-                  delete lastTransaction.date_paiement;
-                  member.transaction = lastTransaction;
-              }
+        if (member.etat_abonnement == 'Payé') {
+          const transaction = await memberModel.getTransaction(memberId);
+          member.id_paiement = transaction.id_paiement;
+          transaction.date_abonnement = moment(transaction.date_paiement).format('YYYY-MM-DD');
+          transaction.mois_abonnement = transaction.mois ;
+          delete transaction.mois;
+          delete transaction.date_paiement;
+          member.transaction = transaction;
+        } else {
+          const lastTransaction = await memberModel.getLastTransactionBeforeCurrentMonth(memberId);
+          if (lastTransaction) {
+            member.id_paiement = lastTransaction.id_paiement;
+            lastTransaction.date_abonnement = moment(lastTransaction.date_paiement).format('YYYY-MM-DD');
+            lastTransaction.mois_abonnement = lastTransaction.mois;
+            delete lastTransaction.mois;
+            delete lastTransaction.date_paiement;
+            member.transaction = lastTransaction;
           }
-
-          // Ajouter le nom du sport pour chaque groupe
-          for (const groupe of member.groupes) {
-              const groupeDetail = await memberModel.getGroupeDetail(groupe.id_groupe);
-              groupe.nom_sport = groupeDetail.nom_sport;
+          else{
+            member.id_paiement = null;
           }
-
-          member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
-          member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
-
-          res.json({ success: true, member });
+        }
+        // Ajouter le nom du sport pour chaque groupe
+        for (const groupe of member.groupes) {
+          const groupeDetail = await memberModel.getGroupeDetail(groupe.id_groupe);
+          groupe.nom_sport = groupeDetail.nom_sport;
+        }
+        member.date_naissance = moment(member.date_naissance).format('YYYY-MM-DD');
+        member.date_inscription = moment(member.date_inscription).format('YYYY-MM-DD');
+  
+        res.json({ success: true, member });
       } else {
-          res.json({ success: false, message: 'Membre non trouvé' });
+        res.json({ success: false, message: 'Membre non trouvé' });
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Erreur lors de la récupération du membre :', error);
       res.json({ success: false, message: 'Erreur lors de la récupération du membre' });
+    }
   }
-}
 
 
 

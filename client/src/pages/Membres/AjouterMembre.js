@@ -35,7 +35,7 @@ const AjouterMembre = () => {
         console.log(formData);
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:4000/user/addUser", formData);
+            const response = await axios.post("http://localhost:4000/member/addMember", formData);
             if(response.data.success){
                 navigate('/membres');
             }else{
@@ -98,7 +98,7 @@ const AjouterMembre = () => {
                                 <div className="add-input">
                                     <span className="material-icons-outlined">height</span>
                                     <label>Taille(Cm)</label>
-                                    <input min={0} type="number" name="taille" step={10} value={formData.taille} onChange={handleChange} required/>
+                                    <input min={0} type="number" name="taille" value={formData.taille} onChange={handleChange} required/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">monitor_weight</span>
