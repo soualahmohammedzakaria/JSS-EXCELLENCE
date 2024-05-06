@@ -15,16 +15,99 @@ const Planning = () => {
     const { authData } = useAuthContext();
     const [timeslots, setTimeslots] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [sportsGroupes, setSportsGroupes] = useState([]);
+    const [salles, setSalles] = useState([]);
+    const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showFilterModal, setShowFilterModal] = useState(false);
+    const [selectedFilters, setSelectedFilters] = useState({
+        salle: "Tous",
+        sport: "Tous",
+        groupe: "Tous"
+    });
 
     useEffect(() => {
         fetchTimeslots();
+        fetchSportsGroupes();
+        fetchSalles();
     }, []);
+
+    const HandleClearFilters = () => {
+        setSelectedFilters({
+            salle: "Tous",
+            sport: "Tous",
+            groupe: "Tous"
+        });
+    };
+
+    const fetchSalles = async () => {
+        axios.get('http://localhost:4000/salle/getAllSalles')
+            .then(response => {
+                if(response.data.success){
+                    setSalles(response.data.salles);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de l\'obtention des salles:', error);
+            });
+    };
+
+    const fetchSportsGroupes = () => {
+        axios.get('http://localhost:4000/sport/getAllSportsGroupes')
+            .then(response => {
+                if(response.data.success){
+                    setSportsGroupes(response.data.sportsGroupes);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de l\'obtention des groupes de sports:', error);
+            });
+    };
+
+    const handleFilter = () => {
+        setShowFilterModal(false);
+        filterTimeSlots();
+    };   
+
+    const filterTimeSlots = () => {
+        let filtered = [...timeslots];
+    
+        if (selectedFilters.salle !== "Tous") {
+            filtered = filtered.filter(creneau => creneau.nom_salle === selectedFilters.salle);
+        }
+    
+        if (selectedFilters.sport !== "Tous") {
+            const sport = sportsGroupes.find(sport => sport.nom === selectedFilters.sport);
+            if (sport) {
+                filtered = filtered.filter(creneau => {
+                    if (selectedFilters.groupe !== "Tous") {
+                        const group = sport.groupes.find(groupe => groupe.nom_groupe === selectedFilters.groupe);
+                        return group && (creneau.id_groupe === group.id_groupe);
+                    }
+                    return sport.groupes.some(group => creneau.groupes.some(m => m.id_groupe === group.id_groupe));
+                });
+            }
+        }
+    
+        setFilteredTimeSlots(filtered);
+    };        
+    
+    const handleSportChange = (e) => {
+        const selectedSport = e.target.value;
+        setSelectedFilters(prevFilters => ({
+            ...prevFilters,
+            sport: selectedSport,
+            groupe: selectedSport === "Tous" ? "Tous" : sportsGroupes.find(sport => sport.nom === selectedSport).groupes[0].nom_groupe
+        }));
+    };
 
     const fetchTimeslots = async () => {
         try {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
-            setTimeslots(response.data.creneaux);
+            if(response.data.success) {
+                setTimeslots(response.data.creneaux);
+                setFilteredTimeSlots(response.data.creneaux);
+            }
         } catch (error) {
             console.error('Erreur lors de l\'obtention des creneaux:', error);
         }
@@ -60,13 +143,20 @@ const Planning = () => {
                 <div>
                     <div className="header">
                         <h1>Planning</h1>
-                        <button className="btn">
-                            {authData.role === 'Administrateur' && (
-                                <Link to="/planning/ajouter" className="link">
-                                    <span className="material-icons-outlined">add</span>
-                                </Link>
-                            )}
-                        </button>
+                        <div>
+                            <button className="btn pointed" style={{ marginRight: "0.5rem" }} onClick={() => setShowFilterModal(true)}>
+                                <span className="link">
+                                    <span className="material-icons-outlined">tune</span>
+                                </span>
+                            </button>
+                            <button className="btn">
+                                {authData.role === 'Administrateur' && (
+                                    <Link to="/planning/ajouter" className="link">
+                                        <span className="material-icons-outlined">add</span>
+                                    </Link>
+                                )}
+                            </button>
+                        </div>
                     </div>
                     <div className="calendar">
                         <FullCalendar
@@ -83,7 +173,7 @@ const Planning = () => {
                                 month: 'Calendrier',
                                 list: 'Liste'
                             }}
-                            events={timeslots}
+                            events={filteredTimeSlots}
                             eventClick={handleEventClick}
                         />
                     </div>
@@ -102,7 +192,7 @@ const Planning = () => {
                             <span><h2>Type:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.type}</p></span>
                             <span><h2>Salle:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.nom_salle}</p></span>
                             <span><h2>Groupe:</h2><p style={{fontSize: "1.3rem"}}>{selectedEvent.nom_groupe}</p></span>
-                            <span><h2>Description:</h2><p className="modal-description" style={{fontSize: "1.3rem"}}>{selectedEvent.description}</p></span>
+                            <span><h2>Description:</h2><p className="modal-description" style={{fontSize: "1.3rem"}}>{selectedEvent.description === "" || selectedEvent.description === null ? "Pas de description" : selectedEvent.description}</p></span>
                         </div>
                         <div className="modal-buttons">
                             <button onClick={closeModal} className="btn pointed"><span className="link"><span className="material-icons-outlined">logout</span></span></button>
@@ -128,6 +218,62 @@ const Planning = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {showFilterModal && (
+                <div className="modal-overlay">
+                <div className="modal-container">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1>Filtrer les résultats</h1>
+                        </div>
+                        <div className="filter-options">
+                                <div className="filter-option">
+                                    <label>Salle</label>
+                                    <select name="salle" value={selectedFilters.salle} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, salle: e.target.value}))}>
+                                        <option value="Tous">Tous</option>
+                                        {salles.map(salle => (
+                                            <option key={salle.numero_salle} value={salle.nom_salle}>{salle.nom_salle}</option>
+                                        ))}
+                                    </select>  
+                                </div>  
+                                <div className="filter-option">
+                                    <label>Sport</label>
+                                    <select name="sport" value={selectedFilters.sport} onChange={handleSportChange}>
+                                        <option value="Tous">Tous</option>
+                                        {sportsGroupes.map(sport => (
+                                            <option key={sport.id_sport} value={sport.nom}>{sport.nom}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="filter-option">
+                                    <label>Groupe</label>
+                                    <select name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
+                                        <option value="Tous">Tous</option>
+                                        {selectedFilters.sport === "Tous" &&
+                                            sportsGroupes.map(sport => (
+                                                sport.groupes.map(groupe => (
+                                                    <option key={groupe.id_groupe} value={groupe.nom_groupe}>{groupe.nom_groupe}</option>
+                                                ))
+                                            ))
+                                        }
+                                        {selectedFilters.sport !== "Tous" &&
+                                            sportsGroupes.find(sport => sport.nom === selectedFilters.sport).groupes.map(groupe => (
+                                                <option key={groupe.id_groupe} value={groupe.nom_groupe}>{groupe.nom_groupe}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            <button onClick={HandleClearFilters} className="btn-reinit pointed">
+                                <span className="link">Réinitialiser les filtres</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="modal-buttons">
+                        <button onClick={handleFilter} className="btn pointed"><span className="link">Filtrer</span></button>
+                        <button onClick={() => setShowFilterModal(false)} className="btn pointed"><span className="link">Retour</span></button>
+                    </div>
+                </div>
+            </div>
             )}
         </>
     );

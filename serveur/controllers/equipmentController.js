@@ -1,13 +1,9 @@
+const e = require('express');
 const equipmentModel = require('../models/equipmentModel');
 
 async function addEquipment(req, res) {
     try {
         const { nom, quantite, numero_salle } = req.body;
-        const equipment = await equipmentModel.getEquipmentByName(nom);
-        if (equipment) {
-        res.json({ success: false, message: 'Equipment deja trouve' });
-        return;
-        }
         await equipmentModel.addEquipement(nom, quantite, numero_salle);
         res.json({ success: true, message: 'Équipement ajouté avec succès' });
     } catch (error) {
@@ -41,10 +37,6 @@ async function updateEquipment(req, res) {
         const equipmentId = req.params.id;
         const newEquipmentData = req.body;
 
-        const equipmentExists = await equipmentModel.checkEquipment(newEquipmentData.nom, equipmentId);
-         if (equipmentExists) {
-           return res.json({ success: false, message: 'Cette equipement existe deja' });
-         }
         await equipmentModel.updateEquipment(equipmentId, newEquipmentData);
         res.json({ success: true, message: 'Equipement modifié avec succès' });
       } catch (error) {
@@ -53,10 +45,24 @@ async function updateEquipment(req, res) {
       }
 }
 
+async function getEquipmentsSalle(req, res) {
+    try {
+        const numero_salle = req.params.id;
+        const equipements = await equipmentModel.getEquipmentsSalle(numero_salle);
+        equipements.forEach(equipement => {
+             delete equipement.numero_salle;
+        });
+        res.json({ success: true, equipements });
+    } catch (error) {
+        res.json({ success: false, message: 'Erreur lors de la récupération des équipements.', error: error.message });
+    }
+}
+
+
 module.exports = { 
     addEquipment,
     deleteEquipment,
     updateEquipment,
-    getAllEquipments
+    getAllEquipments,
+    getEquipmentsSalle
 }
-    

@@ -10,17 +10,15 @@ const AjouterMembre = () => {
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
-        dateNais: '',
+        date_naissance: '',
+        date_inscription: new Date().toISOString().split('T')[0],
         email: '',
         sexe: 'Homme',
         telephone: '',
         taille: 180,
         poids: 70,
-        sang: 'O+',
-        maladies: '',
-        date_abn: '',
-        montant_paye: 0,
-        montant_restant: 0
+        groupe_sanguin: 'O+',
+        maladies: ''
     });
     // État pour les messages d'erreur
     const [errorMessage, setErrorMessage] = useState("");
@@ -34,6 +32,7 @@ const AjouterMembre = () => {
 
     // Soumettre le formulaire
     const handleSubmit = async (event) => {
+        console.log(formData.date_inscription);
         event.preventDefault();
         try {
             const response = await axios.post("http://localhost:4000/user/addUser", formData);
@@ -76,22 +75,18 @@ const AjouterMembre = () => {
                                 <div class="add-input">
                                     <span class="material-icons-outlined">calendar_today</span>
                                     <label>Naissance</label>
-                                    <input type="date" name="dateNais" placeholder="Date de naissance" value={formData.dateNais} onChange={handleChange} required/>
+                                    <input type="date" name="date_naissance" placeholder="Date de naissance" value={formData.date_naissance} onChange={handleChange} required/>
                                 </div>
+                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem"}}>Informations Personelles</h2>
                                 <div class="add-input">
                                     <span class="material-icons-outlined">email</span>
                                     <input type="email" name="email" placeholder="Adresse email" value={formData.email} onChange={handleChange} required/>
                                 </div>
-                                {/* Commenté pour l'ajout ultérieur de la fonctionnalité */}
-                                {/*<div className="add-input">
-                                    <span className="material-icons-outlined">image</span>
-                                    <input type="file" value={formData.photo} onChange={handleChange}/>
-                                </div>*/}
                                 <div class="add-input">
                                     <span class="material-icons-outlined">phone</span>
                                     <input type="text" name="telephone" placeholder="Numéro de télephone" value={formData.telephone} onChange={handleChange} required/>
                                 </div>
-                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Informations Sportives</h2>
+                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Dossier Medical</h2>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">male</span>
                                     <label>Sexe</label>
@@ -110,11 +105,10 @@ const AjouterMembre = () => {
                                     <label>Poids(Kg)</label>
                                     <input min={0} type="number" name="poids" value={formData.poids} onChange={handleChange} required/>
                                 </div>
-                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Dossier Medical</h2>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">bloodtype</span>
                                     <label>Groupe</label>
-                                    <select name="sang" value={formData.sang} onChange={handleChange}>
+                                    <select name="groupe_sanguin" value={formData.groupe_sanguin} onChange={handleChange}>
                                         <option value="O+">O+</option>
                                         <option value="O-">O-</option>
                                         <option value="A+">A+</option>
@@ -129,23 +123,7 @@ const AjouterMembre = () => {
                                 <div class="add-input">
                                     <span className="material-icons-outlined">coronavirus</span>
                                     <label>Maladies</label>
-                                    <input type="text" name="sang" placeholder="Description des maladies" value={formData.maladies} onChange={handleChange} required/>
-                                </div>
-                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Informations de Paiement</h2> 
-                                <div class="add-input">
-                                    <span className="material-icons-outlined">card_membership</span>
-                                    <label>Date de paiement</label>
-                                    <input min={0} type="date" name="date_abn" value={formData.date_abn} onChange={handleChange} required/>
-                                </div>
-                                <div class="add-input">
-                                    <span className="material-icons-outlined">attach_money</span>
-                                    <label>Payé(DZD)</label>
-                                    <input min={0} type="number" name="montant_paye" value={formData.montant_paye} onChange={handleChange} required/>
-                                </div>
-                                <div class="add-input">
-                                    <span className="material-icons-outlined">money_off</span>
-                                    <label>Restant(DZD)</label>
-                                    <input min={0} type="number" name="montant_restant" value={formData.montant_restant} onChange={handleChange} required/>
+                                    <input type="text" name="maladies" placeholder="Description des maladies" value={formData.maladies} onChange={handleChange}/>
                                 </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>

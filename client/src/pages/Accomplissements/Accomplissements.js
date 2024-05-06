@@ -61,12 +61,12 @@ function Accomplissements() {
                         <h1>Accomplissements d'un membre</h1>
                         <div>
                             <button className="btn" style={{ marginRight: "0.5rem" }}>
-                                <Link to="./ajouter" state={{id: location.state.id}} className="link">
+                                <Link to="./ajouter" state={{id: location.state.id, path: location.state.path}} className="link">
                                     <span className="material-icons-outlined">add</span>
                                 </Link>
                             </button>
                             <button className="btn">
-                                <Link to="/membres/details" className="link" state={{id: location.state.id}}>
+                                <Link to={location.state.path} className="link" state={{id: location.state.id, path: location.state.path}}>
                                     <span className="material-icons-outlined">undo</span>
                                 </Link>
                             </button>
@@ -80,7 +80,7 @@ function Accomplissements() {
                                     <h1>{accomplissement.nom_evenement}</h1>
                                     <div>
                                         <button className="btn" style={{ marginRight: "0.5rem" }}>
-                                            <Link to="./modifier" className="link" state={{id_accomplissement: accomplissement.id_accomp, nom_evenement: accomplissement.nom_evenement, discipline: accomplissement.discipline, date_evenement: accomplissement.date_evenement, palmares: accomplissement.palmares, id: location.state.id}}>
+                                            <Link to="./modifier" className="link" state={{id_accomplissement: accomplissement.id_accomp, nom_evenement: accomplissement.nom_evenement, discipline: accomplissement.discipline, date_evenement: accomplissement.date_evenement, palmares: accomplissement.palmares, id: location.state.id, path: location.state.path}}>
                                                 <span className="material-icons-outlined">edit</span>
                                             </Link>
                                         </button>

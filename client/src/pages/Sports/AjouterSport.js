@@ -8,13 +8,7 @@ import axios from "axios";
 const AjouterSport = () => {
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
-        nom: '',
-        capacite: '',
-        titre: '',
-        dateDebut: '',
-        dateFin: '',
-        type: 'Séance',
-        description: ''
+        nom: '' 
     });
     // État pour les messages d'erreur
     const [errorMessage, setErrorMessage] = useState("");
@@ -30,7 +24,7 @@ const AjouterSport = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:4000/sports/add", formData); // Corrected URL for adding time slots
+            const response = await axios.post("http://localhost:4000/sport/addSport", formData);
             if(response.data.success){
                 navigate('/sports');
             }else{
@@ -59,17 +53,10 @@ const AjouterSport = () => {
                         <div className="add-container">
                             <form className="add-form" onSubmit={handleSubmit}>
                                 <div className="add-input">
-                                    <span className="material-icons-outlined">sports_gymnastics</span> 
-                                    <input type="text" name="nom" placeholder="Sport" value={formData.nom} onChange={handleChange} required/>
-                                </div>
+                                    <span className="material-icons-outlined">meeting_room</span> 
+                                    <input type="text" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required/>
+                                </div>                                            
                                 
-                                
-                                 
-                                
-                                <div className="add-input">
-                                    <span className="material-icons-sharp">description</span>
-                                    <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required/>
-                                </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
                             </form>

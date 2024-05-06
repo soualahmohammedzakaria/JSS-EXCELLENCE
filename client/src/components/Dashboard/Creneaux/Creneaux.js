@@ -2,60 +2,7 @@ import React from 'react';
 import './Creneaux.css';
 import { Link } from 'react-router-dom';
 
-function Creneaux() {
-  // Array of creneaux data
-  const creneauxData = [
-    {
-      id_creneau: 1,
-      title: 'Judo pour débutants',
-      description: 'Entraînement régulier de Judo',
-      salle: 'Salle A',
-      groupe: 'Débutants',
-      start: '2024-04-20T09:00:00',
-      end: '2024-04-20T10:00:00',
-      type: 'Séance'
-    },
-    {
-      id_creneau: 5,
-      title: 'Evénement Judo U18',
-      description: 'Entraînement cardio et musculaire',
-      salle: 'Salle C',
-      groupe: 'Tous niveaux',
-      start: '2024-04-21T12:00:00',
-      end: '2024-04-21T13:00:00',
-      type: 'Evénement'
-    },
-    {
-      id_creneau: 2,
-      title: 'Fintess pour tous',
-      description: 'Entraînement cardio et musculaire',
-      salle: 'Salle C',
-      groupe: 'Tous niveaux',
-      start: '2024-04-21T12:00:00',
-      end: '2024-04-21T13:00:00',
-      type: 'Séance'
-    },
-    {
-      id_creneau: 4,
-      title: 'Crossfit enfants',
-      description: 'Entraînement cardio et musculaire',
-      salle: 'Salle C',
-      groupe: 'Tous niveaux',
-      start: '2024-04-21T12:00:00',
-      end: '2024-04-21T13:00:00',
-      type: 'Evénement'
-    },
-    {
-      id_creneau: 3,
-      title: 'Kickboxing -80kg',
-      description: 'Entraînement cardio et musculaire',
-      salle: 'Salle C',
-      groupe: 'Tous niveaux',
-      start: '2024-04-21T12:00:00',
-      end: '2024-04-21T13:00:00',
-      type: 'Séance'
-    }
-  ];
+function Creneaux( { creneauxData }) {
 
   // Function to format the date in "DD MMM YYYY" format
   const formatDate = (dateString) => {
@@ -79,11 +26,11 @@ function Creneaux() {
           <tbody>
             {creneauxData.map((creneau) => (
               <tr className='creneau' key={creneau.id_creneau}>
-                  <td><p>{creneau.type}</p> <h3>{creneau.title}</h3></td>
+                  <td><p>{creneau.type}</p> <h3>{creneau.titre}</h3></td>
                   <td>
                     <div className='date-temps'>
-                      <p>{formatDate(creneau.start)}</p>
-                      <p>{formatTime(creneau.start)}</p>
+                      <p>{formatDate(creneau.date_debut)}</p>
+                      <p>{formatTime(creneau.date_debut)}</p>
                     </div>
                   </td>
               </tr>

@@ -1,43 +1,69 @@
-import React from "react";
-import './Statistiques.css';
+const Statistiques = ({ depensesMois, revenuesMois, nouvMembresMois, abonnementsMois }) => {
 
-const Statistiques = () => {
+    const calculatePercentageChange = (currentValue, previousValue) => {
+        if (previousValue === 0) return 100;
+        return Math.round(((currentValue - previousValue) / previousValue) * 100);
+    };
+
+    const getClassName = (percentage, isDepenses) => {
+        if (isDepenses) {
+            return percentage >= 0 ? 'danger' : 'success'; // Invert class names for depenses
+        }
+        return percentage >= 0 ? 'success' : 'danger';
+    };
+
     return (
         <div className="stats">
             <div>
-                <h3>Dépenses</h3> 
+                <h3>Nouveaux membres</h3> 
                 <div>
-                    <h2>10250 DZD</h2>
-                    <h4 className="success">+2.5%</h4>
-                    <p>Compare avec 10000 DA le dernier mois</p>
+                    <h2>{nouvMembresMois.actuel}</h2>
+                    <h4 className={getClassName(calculatePercentageChange(nouvMembresMois.actuel, nouvMembresMois.precedent))}>
+                        {calculatePercentageChange(nouvMembresMois.actuel, nouvMembresMois.precedent)}%
+                    </h4>
+                    <p>
+                        Compare avec {nouvMembresMois.precedent} le dernier mois
+                    </p>
+                </div>
+            </div>    
+            <div>
+                <h3>Abonnements</h3>
+                <div>
+                    <h2>{abonnementsMois.actuel}</h2>
+                    <h4 className={getClassName(calculatePercentageChange(abonnementsMois.actuel, abonnementsMois.precedent))}>
+                        {calculatePercentageChange(abonnementsMois.actuel, abonnementsMois.precedent)}%
+                    </h4>
+                    <p>
+                        Compare avec {abonnementsMois.precedent} le dernier mois
+                    </p>
                 </div>
             </div>
             <div>
                 <h3>Revenu des abonnements</h3> 
                 <div>
-                    <h2>25000 DZD</h2>
-                    <h4 className="danger">-6%</h4>
-                    <p>Compare avec 27500 DA le dernier mois</p>
+                    <h2>{revenuesMois.actuel} DZD</h2>
+                    <h4 className={getClassName(calculatePercentageChange(revenuesMois.actuel, revenuesMois.precedent))}>
+                        {calculatePercentageChange(revenuesMois.actuel, revenuesMois.precedent)}%
+                    </h4>
+                    <p>
+                        Compare avec {revenuesMois.precedent} DA le dernier mois
+                    </p>
                 </div>
-            </div>
+            </div>   
             <div>
-                <h3>Nouveaux membres</h3> 
+                <h3>Dépenses</h3>
                 <div>
-                    <h2>16</h2>
-                    <h4 className="success">+2.5%</h4>
-                    <p>Compare avec 14 le dernier mois</p>
-                </div>
-            </div>
-            <div>
-                <h3>Dépenses</h3> 
-                <div>
-                    <h2>10250 DZD</h2>
-                    <h4 className="danger">-1%</h4>
-                    <p>Compare avec 10000 DA le dernier mois</p>
+                    <h2>{depensesMois.actuel} DZD</h2>
+                    <h4 className={getClassName(calculatePercentageChange(depensesMois.actuel, depensesMois.precedent), true)}>
+                        {calculatePercentageChange(depensesMois.actuel, depensesMois.precedent)}%
+                    </h4>
+                    <p>
+                        Compare avec {depensesMois.precedent} DA le dernier mois
+                    </p>
                 </div>
             </div>
         </div>
     )
 }
 
-export default Statistiques
+export default Statistiques;

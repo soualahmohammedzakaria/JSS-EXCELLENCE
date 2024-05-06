@@ -11,8 +11,7 @@ const AjouterAdmin = () => {
         prenom: '',
         role: 'Gestionnaire',
         username: '',
-        password: '',
-        photo: null
+        password: ''
     });
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -23,11 +22,6 @@ const AjouterAdmin = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setFormData({ ...formData, photo: file });
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (formData.password !== confirmPassword || !formData.password) {
@@ -35,27 +29,10 @@ const AjouterAdmin = () => {
             return;
         }
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('nom', formData.nom);
-            formDataToSend.append('prenom', formData.prenom);
-            formDataToSend.append('role', formData.role);
-            formDataToSend.append('username', formData.username);
-            formDataToSend.append('password', formData.password);
-            formDataToSend.append('photo', formData.photo);
-
-            const response = await axios.post("http://localhost:4000/user/addUser", formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data' // Ensure correct content type for FormData
-                }
-            });
+            const response = await axios.post("http://localhost:4000/user/addUser", formData);
             if (response.data.success) {
                 setFormData({
-                    nom: '',
-                    prenom: '',
-                    role: 'Gestionnaire',
-                    username: '',
-                    password: '',
-                    photo: null
+                    password: ''
                 });
                 setConfirmPassword("");
                 navigate('/admins');
@@ -91,10 +68,6 @@ const AjouterAdmin = () => {
                                 <div className="add-input">
                                     <span className="material-icons-outlined">badge</span>
                                     <input type="text" name="prenom" placeholder="Prénom" value={formData.prenom} onChange={handleChange} required/>
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">image</span>
-                                    <input type="file" accept="image/*" onChange={handleImageChange}/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">admin_panel_settings</span>

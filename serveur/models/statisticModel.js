@@ -24,6 +24,20 @@ async function getDistribution() {
     });
 }
 
+async function getTotalEquipments() {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT SUM(quantite) AS totalEquipments FROM equipements';
+        mydb.query(query, [], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results[0].totalEquipments || 0); // Assurez-vous de renvoyer 0 si aucun résultat n'est trouvé
+            }
+        });
+    });
+}
+
+
 async function getDistributionBySport() {
     return new Promise((resolve, reject) => {
         const query = `
@@ -234,6 +248,7 @@ async function getNextCreneaux() {
 
 module.exports = {
     getDistribution,
+    getTotalEquipments,
     getDistributionBySport,
     getCoachCount,
     getCurrentMonthExpenses,

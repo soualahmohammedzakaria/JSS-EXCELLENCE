@@ -1,64 +1,66 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
-const Sports = () => {
+const Equipements = () => {
     const { paramsData } = useParamsContext();
+    const location = useLocation();
     const [searchQuery, setSearchQuery] = useState("");
-    const [sports, setSports] = useState([]);
-    const [filteredSports, setFilteredSports] = useState([]);
+    const [equipements, setEquipements] = useState([]);
+    const [filteredEquipements, setFilteredEquipements] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showFilterModal, setShowFilterModal] = useState(false);
-    const [sportIdToDelete, setSportIdToDelete] = useState(null);
-    const [showGroupesModal, setShowGroupesModal] = useState(false);
-    const [selectedSport, setSelectedSport] = useState(null);
+    const [equipementIdToDelete, setEquipementIdToDelete] = useState(null);
     const [selectedNom, setSelectedNom] = useState("Pas de filtre");
+    const [selectedQuantite, setSelectedQuantite] = useState("Tous");
    
     const [currInd, setCurrInd] = useState(1);
 
     useEffect(() => {
-        fetchSportsGroupes();
+        fetchEquipements();
     }, []);
 
-    const fetchSportsGroupes = () => {
-        axios.get("http://localhost:4000/sport/getAllSportsGroupes")
-            .then(response => {
+    const fetchEquipements = () => {
+        axios
+            .get(`http://localhost:4000/equipment/getEquipmentsSalle/${location.state.numero_salle}`)
+            .then((response) => {
                 if (response.data.success) {
-                    setSports(response.data.sportsGroupes);
-                    setFilteredSports(response.data.sportsGroupes);
+                    const equipements = response.data.equipements || [];
+                    setEquipements(equipements);
+                    setFilteredEquipements(equipements);
                 }
             })
-            .catch(error => {
-                console.error('Erreur de l\'obtention des sports et groupes:', error);
+            .catch((error) => {
+                console.error("Erreur de l'obtention des equipements:", error);
             });
     };
 
-    const nbItems = paramsData.grandes_tables || 7;
-    const nbPages = Math.ceil(filteredSports.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7;
+    const nbPages = Math.ceil(filteredEquipements.length / nbItems);
 
     // Ensure indices are within valid bounds
     const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, filteredSports.length); // End index
+    const finInd = Math.min(debInd + nbItems, filteredEquipements.length); // End index
 
-    const sportsParPage = filteredSports.slice(debInd, finInd);
+    const equipementsParPage = filteredEquipements.slice(debInd, finInd);
 
-    const handleDeleteSport = (id) => {
-        setSportIdToDelete(id);
+    const handleDeleteEquipement = (id) => {
+        setEquipementIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteSport = async () => {
+    const confirmDeleteEquipement = async () => {
         try {
-            await axios.delete(`http://localhost:4000/sport/deleteSport/${sportIdToDelete}`);
+            await axios.delete(`http://localhost:4000/equipment/deleteEquipment/${equipementIdToDelete}`);
             setShowDeleteModal(false);
-            fetchSportsGroupes();
+            fetchEquipements();
             setCurrInd(1);
         } catch (error) {
-            console.error("Erreur lors de la suppression de la sport:", error);
+            console.error("Erreur lors de la suppression de la salle:", error);
         }
     };
 
@@ -70,7 +72,7 @@ const Sports = () => {
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
-        filterSports();
+        filterEquipements();
     };
 
     const handleFilterModal = () => {
@@ -79,16 +81,16 @@ const Sports = () => {
 
     const HandleClearFilters = () => {
         setSelectedNom("Pas de filtre");
-    
+        setSelectedQuantite("Tous");
     };
 
-    const filterSports = () => {
-        let filtered = sports;
+    const filterEquipements = () => {
+        let filtered = equipements;
     
         // Filter by search query
         if (searchQuery.trim() !== "") {
-            filtered = filtered.filter((sport) => {
-                const name = sport.nom.toLowerCase();
+            filtered = filtered.filter((equipement) => {
+                const name = equipement.nom.toLowerCase();
                 return name.includes(searchQuery.toLowerCase());
             });
         }
@@ -104,52 +106,76 @@ const Sports = () => {
                 return 0;
             });
         }
-        setFilteredSports(filtered);
+    
+        if (selectedQuantite !== "Tous") {
+            filtered = filtered.filter((equipement) => {
+                if (selectedQuantite === "-5 unités") {
+                    return equipement.quantite <= 5;
+                } else if (selectedQuantite === "-10 unités") {
+                    return equipement.quantite > 5 && equipement.quantite <= 10;
+                } else if (selectedQuantite === "+10 unités") {
+                    return equipement.quantite > 10;
+                }
+                return true;
+            });
+        }
+    
+        setFilteredEquipements(filtered);
     };    
 
     const handleFilter = () => {
         setShowFilterModal(false);
-        filterSports();
+        filterEquipements();
     };
 
     return (
         <>
             <Navbar></Navbar>
             <main>
-                <Sidebar currPage="/sports"></Sidebar>
+                <Sidebar currPage="/salles"></Sidebar>
                 <div className="top-container">
                     <div className="header">
-                        <h1>Sports</h1>
-                        <button className="btn">
-                            <Link to="/sports/ajouter" className="link">
-                            <span class="material-icons-outlined">add</span>
-                            </Link>
-                        </button>
+                        <h1>Equipements</h1>
+                        <div>
+                            <button className="btn" style={{ marginRight: "0.5rem" }}>
+                                <Link to="./ajouter" state={{numero_salle: location.state.numero_salle}} className="link">
+                                    <span className="material-icons-outlined">add</span>
+                                </Link>
+                            </button>
+                            <button className="btn">
+                                <Link to="/salles" className="link" state={{numero_salle: location.state.numero_salle}}>
+                                    <span className="material-icons-outlined">undo</span>
+                                </Link>
+                            </button>
+                        </div>
                     </div>
                     <Searchbar handleSearch={handleSearch} handleFilterModal={handleFilterModal}/>
                     <div>
-                        {sportsParPage.length === 0 ? (
-                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de sports!</h1>
+                        {equipementsParPage.length === 0 ? (
+                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas d'equipement!</h1>
                             ) : (
                             <table className="table-profiles">
                                 <thead>
                                 <tr>
+                                    <th>Identifiant</th>
                                     <th>Nom</th>
-                                    <th>Liste des groupes</th>
+                                    <th>Quantité</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    {sportsParPage.map((sport) => (
-                                        <tr key={sport.id_sport}>
-                                            <th>{sport.nom}</th>                                      
-                                            <th><button className="link" onClick={() => { setShowGroupesModal(true); setSelectedSport(sport) }}><span className="material-icons-outlined pointed">group</span></button></th>     
+                                    {equipementsParPage.map((equipement) => (
+                                        <tr key={equipement.id_equipement}>
+                                            <th>{equipement.id_equipement}</th>
+                                            <th>{equipement.nom}</th>
+                                            <th>{equipement.quantite}</th>           
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_sport: sport.id_sport, nom: sport.nom}}><span className="material-icons-outlined pointed">edit</span></Link>
-                                                <button className="link" onClick={() => handleDeleteSport(sport.id_sport)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                <Link className="link" to="./modifier" state={{id_equipement: equipement.id_equipement, nom: equipement.nom, quantite: equipement.quantite, numero_salle: location.state.numero_salle}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <button className="link" onClick={() => handleDeleteEquipement(equipement.id_equipement)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>
                                     ))}
+                                   
                                 </tbody>
                             </table>
                         )}
@@ -171,10 +197,10 @@ const Sports = () => {
                             <div className="modal-overlay">
                                 <div className="modal-container">
                                     <div className="modal-content">
-                                        <h3>Etes-vous sûr de vouloir supprimer ce sport?</h3>
+                                        <h3>Etes-vous sûr de vouloir supprimer cet equipement?</h3>
                                     </div>
                                     <div className="modal-buttons">
-                                        <button onClick={confirmDeleteSport} className="btn pointed"><span className="link">Confirmer</span></button>
+                                        <button onClick={confirmDeleteEquipement} className="btn pointed"><span className="link">Confirmer</span></button>
                                         <button onClick={() => setShowDeleteModal(false)} className="btn pointed"><span className="link">Retourner</span></button>
                                     </div>
                                 </div>
@@ -195,8 +221,16 @@ const Sports = () => {
                                                     <option value="Ascendant">Ascendant</option>
                                                     <option value="Descendant">Descendant</option>
                                                 </select>
-                                            </div>                                 
-        
+                                            </div>
+                                            <div className="filter-option">
+                                                <label>Quantité</label>
+                                                <select name="quantite" id="quantite" value={selectedQuantite} onChange={(e) => setSelectedQuantite(e.target.value)}>
+                                                    <option value="Tous">Tous</option>
+                                                    <option value="-5 unités">-5 unités</option>
+                                                    <option value="-10 unités">-10 unités</option>
+                                                    <option value="+10 unités">+10 unités</option>
+                                                </select>
+                                            </div>
                                             <button onClick={HandleClearFilters} className="btn-reinit pointed">
                                                 <span className="link">Réinitialiser les filtres</span>
                                             </button>
@@ -209,36 +243,6 @@ const Sports = () => {
                                 </div>
                             </div>
                         )}
-                        {showGroupesModal && (
-                            <div className="modal-overlay">
-                                <div className="modal-container">
-                                    <div className="coach-groupes-header">
-                                        <span className="material-icons-outlined">group</span>
-                                        <h1>Groupes</h1>
-                                    </div>
-                                    <div>
-                                        <div className="coach-groupes">
-                                            {selectedSport && selectedSport.groupes && selectedSport.groupes.length > 0 ? (
-                                                selectedSport.groupes.map(groupe => (
-                                                    (groupe.id_groupe !== null && groupe.nom_groupe !== null) ? 
-                                                        <span key={groupe.id_groupe} className="coach-groupe pointed">
-                                                            {groupe.nom_groupe}
-                                                        </span>
-                                                    : <h2 style={{textAlign: "center"}}>Pas de groupes!</h2>
-                                                ))
-                                            ) : (
-                                                <h2 style={{textAlign: "center"}}>Pas de groupes!</h2>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="modal-buttons">
-                                        <button onClick={() => setShowGroupesModal(false)} className="btn pointed">
-                                            <span className="link">Retourner</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </main>
@@ -246,4 +250,4 @@ const Sports = () => {
     )
 }
 
-export default Sports;
+export default Equipements;

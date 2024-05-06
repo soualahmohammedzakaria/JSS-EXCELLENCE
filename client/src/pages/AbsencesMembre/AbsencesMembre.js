@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import { formatDate } from "../../utils/datesUtils";
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Absences = () => {
+    const { paramsData } = useParamsContext();
     const location = useLocation();
+    const navigate = useNavigate();
     const [absences, setAbsences] = useState([]);
     const [supprimerModal, setSupprimerModal] = useState(false);
     const [justificationModal, setJustificationModal] = useState(false);
@@ -33,7 +36,7 @@ const Absences = () => {
             });
     };
 
-    const nbItems = 7;
+    const nbItems = paramsData.petites_tables || 7;
     const nbPages = Math.ceil(absences.length / nbItems);
 
     const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
@@ -78,12 +81,12 @@ const Absences = () => {
                         <h1>Absences d'un membre</h1>
                         <div>
                             <button className="btn" style={{ marginRight: "0.5rem" }}>
-                                <Link to="./ajouter" state={{id: location.state.id}} className="link">
+                                <Link to="./ajouter" state={{id: location.state.id, path: location.state.path}} className="link">
                                     <span className="material-icons-outlined">add</span>
                                 </Link>
                             </button>
                             <button className="btn">
-                                <Link to="/membres/details" className="link" state={{id: location.state.id}}>
+                                <Link to={location.state.path} className="link" state={{id: location.state.id, path: location.state.path}}>
                                     <span className="material-icons-outlined">undo</span>
                                 </Link>
                             </button>
@@ -113,7 +116,7 @@ const Absences = () => {
                                             <th>{absence.justifiee === 0 ? "Non" : "Oui"}</th>       
                                             <th><button disabled={absence.justifiee === 0} className={absence.justifiee === 0 ? "disabled-button" : "link"} onClick={() => handleJustification(absence.justification)}><span className={`material-icons-outlined ${absence.justifiee !== 0 ? "pointed" : ""}`}>info</span></button></th>      
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_absence: absence.id_absence, id: location.state.id, date: absence.date, justifiee: absence.justifiee, justification: absence.justification, id_groupe: absence.id_groupe, id_creneau: absence.id_creneau}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id_absence: absence.id_absence, id: location.state.id, date: absence.date, justifiee: absence.justifiee, justification: absence.justification, id_groupe: absence.id_groupe, id_creneau: absence.id_creneau, path: location.state.path}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleSupprimerAbsence(absence.id_absence)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

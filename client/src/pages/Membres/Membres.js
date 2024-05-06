@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import './Membres.css';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from 'axios';
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import PhotoStandard from '../../assets/images/photoprofilestandard.png';
 import { formatDate, calculerAge } from "../../utils/datesUtils";
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Membres = () => {
+    const location = useLocation();
+    const { paramsData } = useParamsContext();
     const [searchQuery, setSearchQuery] = useState("");
     const [membres, setMembres] = useState([]);
     const [filteredMembres, setFilteredMembres] = useState([]);
@@ -23,15 +26,22 @@ const Membres = () => {
         etat: "Tous",
         sexe: "Tous",
         groupeSanguin: "Tous",
-        sport: "Tous",
-        groupe: "Tous"
+        sport: location.state?.sport || "Tous",
+        groupe: location.state?.groupe || "Tous"
     });
+    
     const [sportsGroupes, setSportsGroupes] = useState([]);
 
     useEffect(() => {
         fetchMembres(); 
         fetchSportsGroupes();
     }, []);
+
+    useEffect(() => {
+        if (sportsGroupes.length > 0 && membres.length > 0 && selectedFilters.groupe !== "Tous" && selectedFilters.sport !== "Tous" && !showFilterModal) {
+            filterMembres();
+        }
+    }, [sportsGroupes, membres, selectedFilters.groupe, selectedFilters.sport]);
 
     const fetchMembres = () => {
         axios.get('http://localhost:4000/member/getAllMembers')
@@ -58,7 +68,7 @@ const Membres = () => {
             });
     };
 
-    const nbItems = 5;
+    const nbItems = paramsData.grandes_tables || 5;
     const [currInd, setCurrInd] = useState(1);
 
     const nbPages = Math.ceil(filteredMembres.length / nbItems);
@@ -120,12 +130,14 @@ const Membres = () => {
 
     const filterMembres = () => {
         let filtered = [...membres];
-    
-        filtered = filtered.filter(membre => {
-            const fullName = `${membre.nom} ${membre.prenom}`.toLowerCase();
-            const email = membre.email.toLowerCase();
-            return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
-        });
+        
+        if (searchQuery.trim() !== ""){
+            filtered = filtered.filter(membre => {
+                const fullName = `${membre.nom} ${membre.prenom}`.toLowerCase();
+                const email = membre.email.toLowerCase();
+                return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
+            });
+        }
     
         if (selectedFilters.sexe !== "Tous") {
             filtered = filtered.filter(membre => membre.sexe === selectedFilters.sexe);
@@ -146,7 +158,6 @@ const Membres = () => {
         if (selectedFilters.categorie !== "Tous") {
             filtered = filtered.filter(membre => {
                 const age = calculerAge(membre.date_naissance);
-                console.log(membre, age);
                 if (selectedFilters.categorie === "Enfants") {
                     return age < 13;
                 } else if (selectedFilters.categorie === "Adolescents") {
@@ -225,11 +236,18 @@ const Membres = () => {
                 <div className="top-container">
                     <div className="header">
                         <h1>Membres</h1>
-                        <button className="btn">
-                            <Link to="/membres/ajouter" className="link">
-                                <span className="material-icons-outlined">add</span>
-                            </Link>
-                        </button>
+                        <div>
+                            <button className="btn" style={{ marginRight: "0.5rem" }}>
+                                <Link to="/membres/supprimes" className="link">
+                                    <span className="material-icons-outlined">folder_delete</span>
+                                </Link>
+                            </button>
+                            <button className="btn">
+                                <Link to="/membres/ajouter" className="link">
+                                    <span className="material-icons-outlined">add</span>
+                                </Link>
+                            </button>
+                        </div>
                     </div>
                     <Searchbar handleSearch={handleSearch} handleFilterModal={handleFilterModal}/>
                     <div>
@@ -387,7 +405,7 @@ const Membres = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Groupe</label>
-                                        <select name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
+                                        <select disabled={selectedFilters.sport === "Tous" ? true : false} name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             {selectedFilters.sport === "Tous" &&
                                                 sportsGroupes.map(sport => (

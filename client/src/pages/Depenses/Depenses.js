@@ -5,8 +5,10 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import { formatDate } from "../../utils/datesUtils";
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Depenses = () => {
+    const { paramsData } = useParamsContext();
     const [searchQuery, setSearchQuery] = useState("");
     const [depenses, setDepenses] = useState([]);
     const [filteredDepenses, setFilteredDepenses] = useState([]);
@@ -37,7 +39,7 @@ const Depenses = () => {
             });
     };
 
-    const nbItems = 7;
+    const nbItems = paramsData.petites_tables || 7;
     const nbPages = Math.ceil(filteredDepenses.length / nbItems);
 
     // Ensure indices are within valid bounds
@@ -58,7 +60,7 @@ const Depenses = () => {
             fetchDepense();
             setCurrInd(1);
         } catch (error) {
-            console.error("Erreur lors de la suppression du dépense:", error);
+            console.error("Erreur lors de la suppression de la dépense:", error);
         }
     };
 
@@ -187,8 +189,7 @@ const Depenses = () => {
                                             <th>{depense.nom}</th>
                                             <th>{depense.type}</th>
                                             <th>{depense.montant} DZD</th>
-                                            <th>{formatDate(depense.date)}</th>
-                                            
+                                            <th>{formatDate(depense.date)}</th>            
                                             <th>
                                                 <Link className="link" to="./modifier" state={{id: depense.id_depense, nom: depense.nom, montant:depense.montant, type: depense.type, date: depense.date}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleDeleteDepense(depense.id_depense)}><span className="material-icons-outlined pointed">delete</span></button>

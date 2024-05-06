@@ -4,8 +4,10 @@ import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import { formatDateHeure } from "../../utils/datesUtils";
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Presences = () => {
+    const { paramsData } = useParamsContext();
     const location = useLocation();
     const [presences, setPresences] = useState([]);
     const [supprimerModal, setSupprimerModal] = useState(false);
@@ -31,7 +33,7 @@ const Presences = () => {
             });
     };
 
-    const nbItems = 7;
+    const nbItems = paramsData.petites_tables || 7;
     const nbPages = Math.ceil(presences.length / nbItems);
 
     const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
@@ -71,12 +73,12 @@ const Presences = () => {
                         <h1>Présences d'un membre</h1>
                         <div>
                             <button className="btn" style={{ marginRight: "0.5rem" }}>
-                                <Link to="./ajouter" state={{id: location.state.id}} className="link">
+                                <Link to="./ajouter" state={{id: location.state.id, path: location.state.path}} className="link">
                                     <span className="material-icons-outlined">add</span>
                                 </Link>
                             </button>
                             <button className="btn">
-                                <Link to="/membres/details" className="link" state={{id: location.state.id}}>
+                                <Link to={location.state.path} className="link" state={{id: location.state.id, path: location.state.path}}>
                                     <span className="material-icons-outlined">undo</span>
                                 </Link>
                             </button>
@@ -104,7 +106,7 @@ const Presences = () => {
                                             <th>{presence.nom_groupe}</th>
                                             <th>{presence.titre}</th>                    
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_presence: presence.id_assiduite, id: location.state.id, date_entree: presence.date_entree, date_sortie: presence.date_sortie, id_groupe: presence.id_groupe, id_creneau: presence.id_creneau}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id_presence: presence.id_assiduite, id: location.state.id, date_entree: presence.date_entree, date_sortie: presence.date_sortie, id_groupe: presence.id_groupe, id_creneau: presence.id_creneau, path: location.state.path}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleSupprimerPresence(presence.id_assiduite)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

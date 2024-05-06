@@ -40,7 +40,7 @@ async function updateSalle(req, res) {
         res.json({ success: true, message: 'Salle modifiée avec succès' });
     } catch (error) {
         console.error('Erreur lors de la modification de la salle :', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de la modification de la salle' });
+        res.json({ success: false, message: 'Erreur lors de la modification de la salle' });
     }
 }
 
@@ -61,17 +61,26 @@ async function deleteSalle(req, res) {
         res.json({ success: true, message: 'Salle supprimée avec succès' });
     } catch (error) {
         console.error('Erreur lors de la suppression de la salle :', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de la suppression de la salle' });
+        res.json({ success: false, message: 'Erreur lors de la suppression de la salle' });
     }
 }
 
+async function getSalle(req, res) {
+    try {
+        const id = req.params.id;
+        const salle = await salleModel.getSalle(id);
+        res.json({ success: true, salle });
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la salle :', error);
+        res.json({ success: false, message: 'Erreur lors de la récupération de la salle' });
+    }
+}
 
 module.exports = {    
     addSalle, 
     getAllSalles, 
     updateSalle,  
     deleteSalle,
-    getNomIdSalles
-   
+    getNomIdSalles,
+    getSalle  
 }
-    

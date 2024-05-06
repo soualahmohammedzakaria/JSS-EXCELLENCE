@@ -47,7 +47,7 @@ const ModifierAccomplissement = () => {
         try {
             const response = await axios.put(`http://localhost:4000/achievement/updateAchievement/${location.state.id_accomplissement}`, formData);
             if(response.data.success){
-                navigate('/membres/details/accomplissements', { state: { id: location.state.id }});
+                navigate('/membres/details/accomplissements', { state: { id: location.state.id, path: location.state.path }});
             } else {
                 setErrorMessage(response.data.message);
             }
@@ -66,7 +66,7 @@ const ModifierAccomplissement = () => {
                     <div className="header">
                         <h1>Modifier un accomplissement</h1>
                         <button className="btn">
-                            <Link to="/membres/details/accomplissements" className="link" state={{ id: location.state.id }}>
+                            <Link to="/membres/details/accomplissements" className="link" state={{ id: location.state.id, path: location.state.path }}>
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>

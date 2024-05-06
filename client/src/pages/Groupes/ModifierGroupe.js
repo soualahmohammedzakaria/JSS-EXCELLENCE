@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const AjouterGroupe = () => {
+const ModifierGroupe = () => {
+    const location = useLocation();
     const [sports, setSports] = useState([]);
     const [selectedSport, setSelectedSport] = useState(null);
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
-        nom_groupe:'',
-        id_sport: null
+        nom_groupe:location.state.nom_groupe,
+        id_sport: location.state.id_sport
         
     });
     // État pour les messages d'erreur
@@ -61,7 +62,7 @@ const AjouterGroupe = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:4000/group/addGroup", formData); // Corrected URL for adding time slots
+            const response = await axios.put(`http://localhost:4000/group/updateGroup/${location.state.id_groupe}`, formData); // Corrected URL for adding time slots
             if(response.data.success){
                 navigate('/groupes');
             }else{
@@ -79,7 +80,7 @@ const AjouterGroupe = () => {
                 <Sidebar currPage="/groupes"/>
                 <div className="top-container">
                     <div className="header">
-                        <h1>Ajouter un groupe</h1>
+                        <h1>Modifier un groupe</h1>
                         <button className="btn">
                             <Link to="/groupes" className="link">
                                 <span className="material-icons-outlined">undo</span>
@@ -91,6 +92,7 @@ const AjouterGroupe = () => {
                             <form className="add-form" onSubmit={handleSubmit}>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">group</span> 
+                                    <label>Nom</label>
                                     <input type="text" name="nom_groupe" placeholder="Nom du groupe" value={formData.nom_groupe} onChange={handleChange} required/>
                                 </div>
                                     <div className="add-input">
@@ -115,4 +117,4 @@ const AjouterGroupe = () => {
     );
 };
 
-export default AjouterGroupe;
+export default ModifierGroupe;

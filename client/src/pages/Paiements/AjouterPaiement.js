@@ -12,7 +12,8 @@ const AjouterPaiement = () => {
         id_membre: location.state.id,
         montant_paye: 0,
         montant_restant: 0,
-        mois: actMois[1]
+        mois: actMois[1],
+        envoi: location.state.email !== null && location.state.email !== "" ? 1 : 0,
     });
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ const AjouterPaiement = () => {
             formData.mois = `${actMois[0]}-${formatMois(oldMois)}`;
             const response = await axios.post("http://localhost:4000/transaction/addTransaction", formData);
             if (response.data.success) {
-                navigate('/membres/details/paiements', { state: { id: location.state.id } });
+                navigate('/membres/details/paiements', { state: { id: location.state.id, path: location.state.path } });
             } else {
                 formData.mois = oldMois;
                 setErrorMessage(response.data.message);
@@ -49,7 +50,7 @@ const AjouterPaiement = () => {
                     <div className="header">
                         <h1>Ajouter un paiement</h1>
                         <button className="btn">
-                            <Link to="/membres/details/paiements" state={{ id: location.state.id }} className="link">
+                            <Link to="/membres/details/paiements" state={{ id: location.state.id, path: location.state.path }} className="link">
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>

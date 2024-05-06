@@ -71,7 +71,7 @@ const AjouterAbsence = () => {
         try {
             const response = await axios.post("http://localhost:4000/attendance/addAbsenceMember", formData);
             if (response.data.success) {
-                navigate('/membres/details/absences', {state: {id: location.state.id}});
+                navigate('/membres/details/absences', {state: {id: location.state.id, path: location.state.path}});
             } else {
                 setErrorMessage(response.data.message);
             }
@@ -130,7 +130,7 @@ const AjouterAbsence = () => {
                     <div className="header">
                         <h1>Ajouter une absence</h1>
                         <button className="btn">
-                            <Link to="/membres/details/absences" state={{id: location.state.id}} className="link">
+                            <Link to="/membres/details/absences" state={{id: location.state.id, path: location.state.path}} className="link">
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>

@@ -13,7 +13,7 @@
     color: var(--color-white);
     padding: 1rem 2rem;
     font-family: "Poppins", sans-serif;
-    border-radius: var(--card-border-radius);
+    border-radius: var(--border-radius-1);
     font-size: 1.2rem;
     margin-bottom: 1%;
 }

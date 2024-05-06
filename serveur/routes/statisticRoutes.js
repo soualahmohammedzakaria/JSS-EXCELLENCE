@@ -12,4 +12,5 @@ router.get('/getMonthSubscriptions', statisticController.getMonthSubscriptions);
 router.get('/getNextCreneaux', statisticController.getNextCreneaux);
 
 
+
 module.exports = router;

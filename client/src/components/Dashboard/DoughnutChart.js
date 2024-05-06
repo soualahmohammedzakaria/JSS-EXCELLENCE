@@ -2,18 +2,13 @@ import React from "react";
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 
-const nbMembres = [
-    {"sexe": "Homme", "nb": 44},
-    {"sexe": "Femme", "nb": 30}
-];
-
-const DoughnutChart = () => {
+const DoughnutChart = ({ doughnut }) => {
     return (
         <div className="charts">
             <Doughnut data={{
-                labels: nbMembres.map((data) => data.sexe),
+                labels: doughnut.map((data) => data.sexe),
                 datasets: [{
-                    data: nbMembres.map((data) => data.nb),
+                    data: doughnut.map((data) => data.nb),
                     backgroundColor: [
                         '#2c4771',
                         'rgb(255, 99, 132)'

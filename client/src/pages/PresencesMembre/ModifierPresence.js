@@ -77,7 +77,7 @@ const ModifierPresence = () => {
         try {
             const response = await axios.put(`http://localhost:4000/attendance/updatePresenceMember/${location.state.id_presence}`, formData);
             if (response.data.success) {
-                navigate('/membres/details/presences', {state: {id: location.state.id}});
+                navigate('/membres/details/presences', {state: {id: location.state.id, path: location.state.path}});
             } else {
                 setErrorMessage(response.data.message);
             }
@@ -143,7 +143,7 @@ const ModifierPresence = () => {
                     <div className="header">
                         <h1>Modifier une présence</h1>
                         <button className="btn">
-                            <Link to="/membres/details/presences" state={{id: location.state.id}} className="link">
+                            <Link to="/membres/details/presences" state={{id: location.state.id, path: location.state.path}} className="link">
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>

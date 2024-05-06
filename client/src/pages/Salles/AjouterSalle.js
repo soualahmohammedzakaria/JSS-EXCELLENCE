@@ -8,13 +8,8 @@ import axios from "axios";
 const AjouterSalle = () => {
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
-        nom: '',
-        capacite: '',
-        titre: '',
-        dateDebut: '',
-        dateFin: '',
-        type: 'Séance',
-        description: ''
+        nom_salle: '',
+        capacite: 0
     });
     // État pour les messages d'erreur
     const [errorMessage, setErrorMessage] = useState("");
@@ -30,7 +25,7 @@ const AjouterSalle = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:4000/salles/add", formData); // Corrected URL for adding time slots
+            const response = await axios.post("http://localhost:4000/salle/addSalle", formData);
             if(response.data.success){
                 navigate('/salles');
             }else{
@@ -60,17 +55,13 @@ const AjouterSalle = () => {
                             <form className="add-form" onSubmit={handleSubmit}>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">meeting_room</span> 
-                                    <input type="text" name="nom" placeholder="Nom de la salle" value={formData.nom} onChange={handleChange} required/>
-                                </div>
-                                
-                                
-                                 
-                                
+                                    <input type="text" name="nom_salle" placeholder="Nom" value={formData.nom_salle} onChange={handleChange} required/>
+                                </div>                                            
                                 <div className="add-input">
                                     <span className="material-icons-sharp">groups</span>
-                                    <input type="text" name="capacite" placeholder="Capacité" value={formData.capacite} onChange={handleChange} required/>
+                                    <label>Capacité</label>
+                                    <input type="number" name="capacite" value={formData.capacite} onChange={handleChange} required/>
                                 </div>
-
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
                             </form>

@@ -9,13 +9,13 @@ const Sidebar = ({ currPage }) => {
     const pages = [
         {page: "Accueil", icon: "dashboard", to: "/dashboard"},
         {page: "Membres", icon: "person", to: "/membres"},
+        {page: "Assiduité", icon: "star", to: "/assiduite"},
         {page: "Planning", icon: "calendar_month", to: "/planning"},
         {page: "Coachs", icon: "sports", to: "/coachs"},
         {page: "Sports", icon: "sports_gymnastics", to: "/sports"},
         {page: "Groupes", icon: "group", to: "/groupes"},
         {page: "Salles", icon: "meeting_room", to: "/salles"},
         {page: "Personnel", icon: "local_police", to: "/admins"},
-        {page: "Assiduité", icon: "star", to: "/assiduite"},
         {page: "Dépenses", icon: "account_balance_wallet", to: "/depenses"},
         {page: "Paramètres", icon: "settings", to: "/params"}
     ];

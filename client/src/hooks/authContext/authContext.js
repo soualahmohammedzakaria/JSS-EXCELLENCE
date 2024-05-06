@@ -8,8 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [authData, setAuthData] = useState({
     nom: '',
     role: '',
-    id: 0,
-    photo: null
+    id: 0
   });
 
   const updateAuthData = (newData) => {

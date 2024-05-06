@@ -47,7 +47,7 @@ const AjouterAccomplissement = () => {
         try {
             const response = await axios.post("http://localhost:4000/achievement/addAchievement", formData);
             if(response.data.success){
-                navigate('/membres/details/accomplissements', {state: {id: location.state.id}});
+                navigate('/membres/details/accomplissements', {state: {id: location.state.id, path: location.state.path}});
             }else{
                 setErrorMessage(response.data.message);
             }
@@ -65,7 +65,7 @@ const AjouterAccomplissement = () => {
                     <div className="header">
                         <h1>Ajouter un accomplissement</h1>
                         <button className="btn">
-                            <Link to="/membres/details/accomplissements" state={{id: location.state.id}} className="link">
+                            <Link to="/membres/details/accomplissements" state={{id: location.state.id, path: location.state.path}} className="link">
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>

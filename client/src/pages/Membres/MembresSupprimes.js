@@ -1,147 +1,99 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import './Membres.css';
+import { Link } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from 'axios';
-import './Coachs.css';
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import PhotoStandard from '../../assets/images/photoprofilestandard.png';
-import { formatDate } from "../../utils/datesUtils";
-import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
+import { formatDate, calculerAge } from "../../utils/datesUtils";
 
-
-const Coachs = () => {
-    const location = useLocation();
-    const { paramsData } = useParamsContext();
+const MembresSupprimes = () => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [coachs, setCoachs] = useState([]);
-    const [filteredCoachs, setFilteredCoachs] = useState([]);
-    const [showDeleteCoach, setShowDeleteCoach] = useState(false);
-    const [showDeleteCoachGroupe, setShowDeleteCoachGroupe] = useState(false);
-    const [showAssignerModal, setShowAssignerModal] = useState(false);
-    const [selectedSport, setSelectedSport] = useState(null);
-    const [selectedGroup, setSelectedGroup] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [groupToDelete, setGroupToDelete] = useState(null);
+    const [membres, setMembres] = useState([]);
+    const [filteredMembres, setFilteredMembres] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
     const [showFilterModal, setShowFilterModal] = useState(false);
-    const [showGroupesModal, setShowGroupesModal] = useState(false);
-    const [coachIdToDelete, setCoachIdToDelete] = useState(null);
-    const [selectedCoach, setSelectedCoach] = useState(null);
+    const [membreIdToDelete, setMembreIdToDelete] = useState(null);
     const [selectedFilters, setSelectedFilters] = useState({
         nom: "Pas de filtre",
         prenom: "Pas de filtre",
         email: "Pas de filtre",
+        categorie: "Tous",
+        etat: "Tous",
         sexe: "Tous",
-        sport: location.state?.sport || "Tous",
-        groupe: location.state?.groupe || "Tous"
+        groupeSanguin: "Tous",
+        sport: "Tous",
+        groupe: "Tous"
     });
+    const [sportsGroupes, setSportsGroupes] = useState([]);
 
     useEffect(() => {
-        fetchCoachs();
+        fetchMembres(); 
         fetchSportsGroupes();
     }, []);
 
-    useEffect(() => {
-        if (sportsGroupes.length > 0 && coachs.length > 0 && selectedFilters.groupe !== "Tous" && selectedFilters.sport !== "Tous" && !showFilterModal) {
-            filterCoachs();
-        }
-    }, [sportsGroupes, coachs, selectedFilters.groupe, selectedFilters.sport]);
+    const fetchMembres = () => {
+        axios.get('http://localhost:4000/member/getAllDeletedMembers')
+            .then(response => {
+                if(response.data.success){
+                    setMembres(response.data.members);
+                    setFilteredMembres(response.data.members);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de l\'obtention des membres:', error);
+            });
+    };
 
     const fetchSportsGroupes = () => {
-        axios.get("http://localhost:4000/sport/getAllSportsGroupes")
+        axios.get('http://localhost:4000/sport/getAllSportsGroupes')
             .then(response => {
-                if (response.data.success) {
-                    const defaultSport = response.data.sportsGroupes[0];
-                    const defaultGroup = defaultSport.groupes[0];
-                    setSelectedSport(defaultSport);
-                    setSelectedGroup(defaultGroup);
+                if(response.data.success){
                     setSportsGroupes(response.data.sportsGroupes);
                 }
             })
             .catch(error => {
-                console.error('Erreur de l\'obtention des sports et groupes:', error);
-            });
-    };
-  
-    const fetchCoachs = () => {
-        axios.get('http://localhost:4000/coach/getAllCoachs')
-            .then(response => {
-                if(response.data.success){
-                    setCoachs(response.data.coachs);
-                    setFilteredCoachs(response.data.coachs);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur de l\'obtention des coachs:', error);
+                console.error('Erreur de l\'obtention des groupes de sports:', error);
             });
     };
 
-    const nbItems = paramsData.grandes_tables || 5;
+    const nbItems = 5;
     const [currInd, setCurrInd] = useState(1);
 
-    const nbPages = Math.ceil(filteredCoachs.length / nbItems);
+    const nbPages = Math.ceil(filteredMembres.length / nbItems);
 
     const debInd = (currInd - 1) * nbItems;
     const finInd = debInd + nbItems;
 
-    const coachsParPage = filteredCoachs.slice(debInd, finInd);
+    const membresParPage = filteredMembres.slice(debInd, finInd);
 
-    const handleSportChange = (e) => {
-        const sportId = parseInt(e.target.value);
-        const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
-        setSelectedSport(selectedSport);
-        setSelectedGroup(selectedSport.groupes[0]);
+    const handleDeleteMembre = async (id) => {
+        setMembreIdToDelete(id);
+        setShowDeleteModal(true);
     };
 
-    const handleGroupChange = (e) => {
-        const groupId = parseInt(e.target.value);
-        const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId);
-        setSelectedGroup(selectedGroup);
-    };
-
-    const handleSportChangeFilters = (e) => {
-        const sportId = parseInt(e.target.value);
-        const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
-        if (selectedSport) {
-            setSelectedSport(selectedSport);
-            setSelectedGroup(selectedSport.groupes[0]);
-        }
-    };
-    
-
-    const handleAssignerGroupe = async () => {
+    const handleRestoreMembre = async (id) => {
         try {
-            const response = await axios.post(`http://localhost:4000/coach/assignCoachToGroup/${selectedCoach.id_coach}`, { groupId: selectedGroup.id_groupe });
-            if(response.data.success){
-                setShowAssignerModal(false);
-                setShowGroupesModal(false);
-                fetchCoachs();
-                setErrorMessage("");
-            }else {   
-                setErrorMessage(response.data.message);
-            }
-        } catch (error) {
-            setErrorMessage("Désolé, une erreur s'est produite!");
-        }
-    };
-
-    const handleDeleteCoach = async (id) => {
-        setCoachIdToDelete(id);
-        setShowDeleteCoach(true);
-    };
-    
-    const confirmDeleteCoach = async () => {
-        try {
-            await axios.delete(`http://localhost:4000/Coach/deleteCoach/${coachIdToDelete}`);
-            setShowDeleteCoach(false);
-            fetchCoachs();
+            await axios.patch(`http://localhost:4000/member/restoreMember/${id}`);
+            fetchMembres();
             setCurrInd(1);
         } catch (error) {
-            console.error('Erreur lors de la suppression du coach:', error);
+            console.error('Erreur lors de la restauration du membre:', error);
         }
     };
-    
+
+    const confirmDeleteMembre = async () => {
+        try {
+            await axios.delete(`http://localhost:4000/member/DefinitivelyDeleteMember/${membreIdToDelete}`);
+            setShowDeleteModal(false);
+            fetchMembres();
+            setCurrInd(1);
+        } catch (error) {
+            console.error('Erreur lors de la suppression du membre:', error);
+        }
+    };
 
     const handlePageChange = (ind) => {
         if (ind === 1) {
@@ -156,7 +108,7 @@ const Coachs = () => {
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
         setCurrInd(1);
-        filterCoachs();
+        filterMembres();
     };
 
     const handleFilterModal = () => {
@@ -168,20 +120,54 @@ const Coachs = () => {
             nom: "Pas de filtre",
             prenom: "Pas de filtre",
             email: "Pas de filtre",
+            categorie: "Tous",
+            etat: "Tous",
             sexe: "Tous",
-            
+            groupeSanguin: "Tous",
+            sport: "Tous",
+            groupe: "Tous"
         });
     };
 
-    const filterCoachs = () => {
-        let filtered = [...coachs];
+    const filterMembres = () => {
+        let filtered = [...membres];
     
-        filtered = filtered.filter(coach => {
-            const fullName = `${coach.nom} ${coach.prenom}`.toLowerCase();
-            const email = coach.email.toLowerCase();
+        filtered = filtered.filter(membre => {
+            const fullName = `${membre.nom} ${membre.prenom}`.toLowerCase();
+            const email = membre.email.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
         });
-
+    
+        if (selectedFilters.sexe !== "Tous") {
+            filtered = filtered.filter(membre => membre.sexe === selectedFilters.sexe);
+        }
+    
+        if (selectedFilters.groupeSanguin !== "Tous") {
+            filtered = filtered.filter(membre => membre.groupe_sanguin === selectedFilters.groupeSanguin);
+        }
+    
+        if (selectedFilters.etat !== "Tous") {
+            if (selectedFilters.etat === "Payé") {
+                filtered = filtered.filter(membre => membre.etat_abonnement === "Payé");
+            } else if (selectedFilters.etat === "Non payé") {
+                filtered = filtered.filter(membre => membre.etat_abonnement === "Non payé");
+            }
+        }
+    
+        if (selectedFilters.categorie !== "Tous") {
+            filtered = filtered.filter(membre => {
+                const age = calculerAge(membre.date_naissance);
+                if (selectedFilters.categorie === "Enfants") {
+                    return age < 13;
+                } else if (selectedFilters.categorie === "Adolescents") {
+                    return (age >= 13 && age < 19);
+                } else if (selectedFilters.categorie === "Adultes") {
+                    return age >= 19;
+                }
+                return true;
+            });
+        }
+    
         if (selectedFilters.sport !== "Tous") {
             const sport = sportsGroupes.find(sport => sport.nom === selectedFilters.sport);
             if (sport) {
@@ -195,11 +181,6 @@ const Coachs = () => {
             }
         }
     
-        // Apply selected filters
-        if (selectedFilters.sexe !== "Tous") {
-            filtered = filtered.filter(coach => coach.sexe === selectedFilters.sexe);
-        }
- 
         if (selectedFilters.nom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedFilters.nom === "Ascendant") {
@@ -229,58 +210,56 @@ const Coachs = () => {
             });
         }
     
-        setFilteredCoachs(filtered);
-    };   
-    
-    const getNomSport = (groupId) => {
-        for (const sport of sportsGroupes) {
-            const group = sport.groupes.find(g => g.id_groupe === groupId);
-            if (group) {
-                return sport.nom;
-            }
-        }
-        return "Nom iconnu";
-    };
-    
+        setFilteredMembres(filtered);
+    };      
 
     const handleFilter = () => {
         setShowFilterModal(false);
-        filterCoachs();
+        filterMembres();
     };   
     
-    const handleDeleteCoachGroup = async (id) => {
-        setGroupToDelete(id);
-        setShowDeleteCoachGroupe(true);
+    const handleSportChange = (e) => {
+        const selectedSport = e.target.value;
+        setSelectedFilters(prevFilters => ({
+            ...prevFilters,
+            sport: selectedSport,
+            groupe: selectedSport === "Tous" ? "Tous" : sportsGroupes.find(sport => sport.nom === selectedSport).groupes[0].nom_groupe
+        }));
     };
 
-    const confirmDeleteCoachGroupe = async () => {
+    const confirmDeleteAllMembres = async () => {
         try {
-            await axios.delete(`http://localhost:4000/coach/deleteGroupCoach/${selectedCoach.id_coach}`, { data: { groupId: groupToDelete } });
-            fetchCoachs();
-            setShowGroupesModal(false);
-            setShowDeleteCoachGroupe(false);
+            await axios.delete('http://localhost:4000/member/DefinitivelyDeleteAllMembers');
+            setShowDeleteAllModal(false);
+            fetchMembres();
+            setCurrInd(1);
         } catch (error) {
-            console.error('Erreur lors de la suppression du coach du groupe:', error);
+            console.error('Erreur lors de la suppression de tous les membres:', error);
         }
-    };
+    }
 
     return (
         <>
             <Navbar />
             <main>
-                <Sidebar currPage="/coachs" />
+                <Sidebar currPage="/membres" />
                 <div className="top-container">
                     <div className="header">
-                        <h1>Coachs</h1>
-                        <button className="btn">
-                            <Link to="/coachs/ajouter" className="link">
-                                <span className="material-icons-outlined">add</span>
-                            </Link>
-                        </button>
+                        <h1>Membres Supprimés</h1>
+                        <div>
+                            <button className="btn" style={{ marginRight: "0.5rem" }} onClick={() => setShowDeleteAllModal(true)}>
+                                <span className="link pointed"><span className="material-icons-outlined">delete</span></span>
+                            </button>
+                            <button className="btn">
+                                <Link to="/membres" className="link">
+                                    <span className="material-icons-outlined">undo</span>
+                                </Link>
+                            </button>
+                        </div>
                     </div>
                     <Searchbar handleSearch={handleSearch} handleFilterModal={handleFilterModal}/>
                     <div>
-                        {coachsParPage.length === 0 ? (
+                        {membresParPage.length === 0 ? (
                                 <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de profils!</h1>
                             ) : (
                             <table className="table-profiles">
@@ -292,23 +271,23 @@ const Coachs = () => {
                                     <th>Email</th>
                                     <th>Date de naissance</th>
                                     <th>Sexe</th>
-                                    <th>Groupes</th>
+                                    <th>Date d'inscription</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    {coachsParPage.map((coach) => (
-                                        <tr key={coach.id_coach}>
+                                    {membresParPage.map((membre) => (
+                                        <tr key={membre.id_membre}>
                                             <th><img src={PhotoStandard} alt=""/></th>
-                                            <th>{coach.nom} {coach.prenom}</th>
-                                            <th>{coach.telephone}</th>
-                                            <th>{coach.email === "" ? "Pas d'adresse" : coach.email}</th>
-                                            <th>{formatDate(coach.date_naissance)}</th>
-                                            <th>{coach.sexe}</th>
-                                            <th><button className="link" onClick={() => { setShowGroupesModal(true); setSelectedCoach(coach) }}><span className="material-icons-outlined pointed">group</span></button></th>
+                                            <th>{membre.nom} {membre.prenom}</th>
+                                            <th>{membre.telephone}</th>
+                                            <th>{membre.email}</th>
+                                            <th>{formatDate(membre.date_naissance)}</th>
+                                            <th>{membre.sexe}</th>
+                                            <th>{formatDate(membre.date_inscription)}</th>
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id: coach.id_coach, nom: coach.nom, prenom: coach.prenom, email: coach.email, dateNaissance: coach.date_naissance, sexe: coach.sexe, telephone: coach.telephone, age: coach.age, taille: coach.taille, poids: coach.poids, sang: coach.sang, maladies: coach.maladies, date_inscription: coach.date_inscription, montantPaye: coach.montantPaye, montantRestant: coach.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>
-                                                <button className="link" onClick={() => handleDeleteCoach(coach.id_coach)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                <button className="link" onClick={() => handleRestoreMembre(membre.id_membre)}><span class="material-icons-outlined pointed">settings_backup_restore</span></button>
+                                                <button className="link" onClick={() => handleDeleteMembre(membre.id_membre)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>
                                     ))}
@@ -332,48 +311,28 @@ const Coachs = () => {
                     </div>
                 </div>
             </main>
-            {showGroupesModal && (
+            {showDeleteModal && (
                 <div className="modal-overlay">
                     <div className="modal-container">
-                        <div className="coach-groupes-header">
-                            <span className="material-icons-outlined">group</span>
-                            <h1>Groupes</h1>
-                            <button className="link pointed" onClick={() => setShowAssignerModal(true)}>
-                                <span className="material-icons-outlined">control_point</span>
-                            </button>
-                        </div>
-                        <div>
-                            <div className="coach-groupes">
-                                {selectedCoach && selectedCoach.groupes && selectedCoach.groupes.length > 0 ? (
-                                    selectedCoach.groupes.map(groupe => (
-                                        (groupe.id_groupe !== null && groupe.nom_groupe !== null) ? 
-                                            <button onClick={() => handleDeleteCoachGroup(groupe.id_groupe)} key={groupe.id_groupe} className="coach-groupe pointed">
-                                                {`${getNomSport(groupe.id_groupe)} | ${groupe.nom_groupe}`}
-                                            </button>
-                                        : <h2 style={{textAlign: "center"}}>Pas de groupes!</h2>
-                                    ))
-                                ) : (
-                                    <h2 style={{textAlign: "center"}}>Pas de groupes!</h2>
-                                )}
-                            </div>
+                        <div className="modal-content">
+                            <h3>Etes-vous sûr de vouloir supprimer ce membre?</h3>
                         </div>
                         <div className="modal-buttons">
-                            <button onClick={() => setShowGroupesModal(false)} className="btn pointed">
-                                <span className="link">Retourner</span>
-                            </button>
+                            <button onClick={confirmDeleteMembre} className="btn pointed"><span className="link">Confirmer</span></button>
+                            <button onClick={() => setShowDeleteModal(false)} className="btn pointed"><span className="link">Retourner</span></button>
                         </div>
                     </div>
                 </div>
             )}
-            {showDeleteCoach && (
+            {showDeleteAllModal && (
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-content">
-                            <h3>Etes-vous sûr de vouloir supprimer ce coach?</h3>
+                            <h3>Etes-vous sûr de vouloir supprimer définitivement tous les membres supprimés logiquement?</h3>
                         </div>
                         <div className="modal-buttons">
-                            <button onClick={confirmDeleteCoach} className="btn pointed"><span className="link">Confirmer</span></button>
-                            <button onClick={() => setShowDeleteCoach(false)} className="btn pointed"><span className="link">Retourner</span></button>
+                            <button onClick={confirmDeleteAllMembres} className="btn pointed"><span className="link">Confirmer</span></button>
+                            <button onClick={() => setShowDeleteAllModal(false)} className="btn pointed"><span className="link">Retourner</span></button>
                         </div>
                     </div>
                 </div>
@@ -412,11 +371,45 @@ const Coachs = () => {
                                         </select>
                                     </div>
                                     <div className="filter-option">
+                                        <label>Etat</label>
+                                        <select name="etat" value={selectedFilters.etat} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, etat: e.target.value}))}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Payé">Payé</option>
+                                            <option value="Non payé">Non payé</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Age</label>
+                                        <select name="categorie" value={selectedFilters.categorie} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, categorie: e.target.value}))}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="Enfants">Enfants</option>
+                                            <option value="Adolescents">Adolescents</option>
+                                            <option value="Adultes">Adultes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="filter-options">
+                                    <div className="filter-option">
                                         <label>Sexe</label>
                                         <select name="sexe" value={selectedFilters.sexe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, sexe: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             <option value="Homme">Homme</option>
                                             <option value="Femme">Femme</option>
+                                        </select>
+                                    </div>
+                                    <div className="filter-option">
+                                        <label>Groupe sanguin</label>
+                                        <select name="groupesanguin" value={selectedFilters.groupeSanguin} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupeSanguin: e.target.value}))}>
+                                            <option value="Tous">Tous</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="Autre">Autre</option>
                                         </select>
                                     </div>
                                     <div className="filter-option">
@@ -430,7 +423,7 @@ const Coachs = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Groupe</label>
-                                        <select disabled={selectedFilters.sport === "Tous" ? true : false} name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
+                                        <select name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             {selectedFilters.sport === "Tous" &&
                                                 sportsGroupes.map(sport => (
@@ -449,7 +442,7 @@ const Coachs = () => {
                                     <button onClick={HandleClearFilters} className="btn-reinit pointed">
                                         <span className="link">Réinitialiser</span>
                                     </button>
-                                  </div>
+                                </div>
                             </div>
                         </div>
                         <div className="modal-buttons">
@@ -459,61 +452,8 @@ const Coachs = () => {
                     </div>
                 </div>
             )}
-            {showDeleteCoachGroupe && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
-                        <div className="modal-content">
-                            <h3>Etes-vous sûr de vouloir supprimer ce coach du groupe?</h3>
-                        </div>
-                        <div className="modal-buttons">
-                            <button onClick={confirmDeleteCoachGroupe} className="btn pointed"><span className="link">Confirmer</span></button>
-                            <button onClick={() => {setShowDeleteCoachGroupe(false); setGroupToDelete(null)}} className="btn pointed"><span className="link">Retourner</span></button>
-                        </div>
-                    </div>
-                </div>
-            )}  
-            {showAssignerModal && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1>Assigner le coach</h1>
-                            </div>
-                            <div className="filters-body">
-                                <div className="filter-options">
-                                    <div className="filter-option">
-                                        <label>Sport</label>
-                                        <select name="sport" value={selectedSport?.id_sport} onChange={handleSportChange}>
-                                        {sportsGroupes.map(sport => (
-                                            <option key={sport.id_sport} value={sport.id_sport}>
-                                                {sport.nom}
-                                            </option>
-                                        ))}
-                                        </select>
-                                    </div>
-                                    <div className="filter-option">
-                                        <label>Groupe</label>
-                                        <select name="id_groupe" value={selectedGroup?.id_groupe} onChange={handleGroupChange}>
-                                        {selectedSport?.groupes.map(group => (
-                                            <option key={group.id_groupe} value={group.id_groupe}>
-                                                {group.nom_groupe}
-                                            </option>
-                                        ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="modal-buttons">
-                            <button onClick={handleAssignerGroupe} className="btn pointed"><span className="link">Confirmer</span></button>
-                            <button onClick={() => { setShowAssignerModal(false); setErrorMessage(""); }} className="btn pointed"><span className="link">Retourner</span></button>
-                        </div>
-                        {errorMessage && <p style={{ marginTop: "1rem", textAlign: "center" }} className="danger">{errorMessage}</p>}
-                    </div>
-                </div>
-            )}   
         </>
     )
 }
 
-export default Coachs;
+export default MembresSupprimes;

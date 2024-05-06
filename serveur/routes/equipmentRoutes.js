@@ -7,6 +7,7 @@ router.post('/addEquipment', equipmentController.addEquipment);
 router.delete('/deleteEquipment/:id', equipmentController.deleteEquipment);
 router.put('/updateEquipment/:id', equipmentController.updateEquipment);
 router.get('/getAllEquipments', equipmentController.getAllEquipments);
+router.get('/getEquipmentsSalle/:id', equipmentController.getEquipmentsSalle);
 
  
 

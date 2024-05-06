@@ -127,7 +127,6 @@ const ModifierCreneau = () => {
                         </button>
                     </div>
                     <div className="add-form-group">
-                        <h2>Modifications des informations du compte</h2>
                         <div className="add-container">
                             <form className="add-form" onSubmit={handleSubmit}>
                                 <div className="add-input">
@@ -189,7 +188,7 @@ const ModifierCreneau = () => {
                                 <div className="add-input">
                                     <span className="material-icons-sharp">description</span>
                                     <label>Description</label>
-                                    <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required/>
+                                    <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange}/>
                                 </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
                                 <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>

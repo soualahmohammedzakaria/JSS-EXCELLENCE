@@ -15,6 +15,7 @@ const sportRoutes = require('./routes/sportRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const statisticRoutes = require('./routes/statisticRoutes');
+const settingRoutes = require('./routes/settingRoutes');
  
 const app=express();
 app.use(cors());
@@ -38,6 +39,7 @@ app.use('/sport', sportRoutes);
 app.use('/transaction', paymentRoutes);
 app.use('/attendance', attendanceRoutes);
 app.use('/statistic', statisticRoutes);
+app.use('/setting', settingRoutes);
 
 
 app.listen(PORT,()=>{

@@ -5,10 +5,11 @@ import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import axios from 'axios';
-import PhotoStandard from '../../assets/images/photoprofilestandard.png';
 import { useAuthContext } from '../../hooks/authContext/authContext';
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Admins = () => {
+    const { paramsData } = useParamsContext();
     const { authData } = useAuthContext();
     const [searchQuery, setSearchQuery] = useState("");
     const [admins, setAdmins] = useState([]);
@@ -36,7 +37,7 @@ const Admins = () => {
             });
     };
 
-    const nbItems = 5;
+    const nbItems = paramsData.petites_tables || 5;
     const [currInd, setCurrInd] = useState(1);
 
     const nbPages = Math.ceil(filteredAdmins.length / nbItems);
@@ -92,11 +93,13 @@ const Admins = () => {
     const filterAdmins = () => {
         let filtered = [...admins];
         
-        filtered = filtered.filter(admin => {
-            const fullName = `${admin.nom} ${admin.prenom}`.toLowerCase();
-            const username = admin.username.toLowerCase();
-            return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
-        });
+        if (searchQuery.trim() !== ""){
+            filtered = filtered.filter(admin => {
+                const fullName = `${admin.nom} ${admin.prenom}`.toLowerCase();
+                const username = admin.username.toLowerCase();
+                return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
+            });
+        }       
 
         if (selectedRole !== "Tous") {
             filtered = filtered.filter(admin => admin.role === selectedRole);
@@ -159,7 +162,6 @@ const Admins = () => {
                             <table className="table-profiles">
                                 <thead>
                                     <tr>
-                                        <th>Photo</th>
                                         <th>Nom</th>
                                         <th>Nom d'utilisateur</th>
                                         <th>Rôle</th>
@@ -169,7 +171,6 @@ const Admins = () => {
                                 <tbody>
                                     {adminsParPage.map(admin => (
                                         <tr key={admin.id_admin}>
-                                            <th><img src={admin.photo ? admin.photo : PhotoStandard} alt="" /></th>
                                             <th>{admin.nom} {admin.prenom}</th>
                                             <th>{admin.username}</th>
                                             <th className={admin.role}>{admin.role}</th>

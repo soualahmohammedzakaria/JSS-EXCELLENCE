@@ -4,13 +4,12 @@ import Check from '../../assets/animated/Check.json';
 import Cross from '../../assets/animated/Cross.json';
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function ResultatSignalement() {
     const location = useLocation();
 
     return (
-        console.log(location.state),
         <>
             <Navbar/>
             <main>
@@ -21,16 +20,32 @@ function ResultatSignalement() {
                     </div>
                     <div className="resultat-container">
                         {location.state.reponse.success ? (
-                            <div style={{height: "200px", width: "200px"}} className="">
+                            <div className="resultat-assiduite">
                                 <Animator animationData={Check} loop/>
-                                <p className="resultat">Le signalement de l'entrée a été effectué avec succès</p>
+                                {location.state.type === `Entrée` ? (
+                                    <h2>Le signalement de l'entrée a été effectué avec succès</h2>
+                                ) : (
+                                    <h2>Le signalement de la sortie a été effectué avec succès</h2>
+                                )}
                             </div>
                         ) : (
-                            <div style={{height: "200px", width: "200px"}} className="">
-                                <Animator animationData={Check} loop/>
-                                <p>Le signalement de l'entrée n'a pas pu être effectué</p>
+                            <div className="resultat-assiduite">
+                                <Animator animationData={Cross} loop/>
+                                {location.state.type === `Entrée` ? (
+                                    <h2>Pas de creneau pour le groupe sélectionné!</h2>
+                                ) : (
+                                    <h2>Pas de creneau pour le groupe sélectionné!</h2>
+                                )}
                             </div>
                         )}
+                        <div className="revenir-boutton">    
+                            <button className="revenir-btn btn pointed">
+                                <Link to="/assiduite" className="link">
+                                    <span className="material-icons-sharp">undo</span>
+                                    <span>Retour</span>
+                                </Link>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </main>       

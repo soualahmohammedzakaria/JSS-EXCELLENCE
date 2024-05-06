@@ -8,6 +8,18 @@ import axios from "axios";
 const AjouterCreneau = () => {
     const [salles, setSalles] = useState([]);
     const [sportsGroupes, setSportsGroupes] = useState([]);
+    const [formDataMultiple, setFormDataMultiple] = useState({
+        id_groupe: null,
+        numero_salle: null,
+        titre: '',
+        jour: 0,
+        date_debut: '',
+        date_fin: '',
+        heure_debut: '',
+        heure_fin: '',
+        type: 'Séance',
+        description: null
+    });
     const [formData, setFormData] = useState({
         id_groupe: null,
         numero_salle: null,
@@ -15,11 +27,12 @@ const AjouterCreneau = () => {
         date_debut: '',
         date_fin: '',
         type: 'Séance',
-        description: ''
+        description: null
     });
     const [selectedSport, setSelectedSport] = useState(null);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessageMultiple, setErrorMessageMultiple] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,6 +47,10 @@ const AjouterCreneau = () => {
             if (response.data.salles.length > 0) {
                 setFormData(prevFormData => ({
                     ...prevFormData,
+                    numero_salle: response.data.salles[0].numero_salle
+                }));
+                setFormDataMultiple(prevFormDataMultiple => ({
+                    ...prevFormDataMultiple,
                     numero_salle: response.data.salles[0].numero_salle
                 }));
             }
@@ -56,6 +73,10 @@ const AjouterCreneau = () => {
                     ...prevFormData,
                     id_groupe: defaultGroup.id_groupe
                 }));
+                setFormDataMultiple(prevFormDataMultiple => ({
+                    ...prevFormDataMultiple,
+                    id_groupe: defaultGroup.id_groupe
+                }));
             }
         } catch (error) {
             console.error("Error fetching sports with groups:", error);
@@ -71,6 +92,11 @@ const AjouterCreneau = () => {
             ...prevFormData,
             id_groupe: selectedSport.groupes[0].id_groupe
         }));
+        
+        setFormDataMultiple(prevFormDataMultiple => ({
+            ...prevFormDataMultiple,
+            id_groupe: selectedSport.groupes[0].id_groupe
+        }));
     };
 
     const handleGroupChange = (e) => {
@@ -81,11 +107,27 @@ const AjouterCreneau = () => {
             ...prevFormData,
             id_groupe: groupId
         }));
+
+        setFormDataMultiple(prevFormDataMultiple => ({
+            ...prevFormDataMultiple,
+            id_groupe: groupId
+        }));
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            [name]: value
+        }));
+    };
+    
+    const handleMultipleChange = (e) => {
+        const { name, value } = e.target;
+        setFormDataMultiple(prevFormDataMultiple => ({
+            ...prevFormDataMultiple,
+            [name]: value
+        }));
     };
 
     const handleSubmit = async (event) => {
@@ -102,6 +144,20 @@ const AjouterCreneau = () => {
         }
     };
 
+    const handleSubmitMultiple = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await axios.post("http://localhost:4000/planning/addCreneaux", formDataMultiple);
+            if(response.data.success){
+                navigate('/planning');
+            } else {
+                setErrorMessageMultiple(response.data.message);
+            }
+        } catch (error) {
+            setErrorMessageMultiple("Désolé, une erreur s'est produite!");
+        }
+    };
+
     return (
         <>
             <Navbar/>
@@ -109,81 +165,176 @@ const AjouterCreneau = () => {
                 <Sidebar currPage="/planning"/>
                 <div className="top-container">
                     <div className="header">
-                        <h1>Ajouter un créneau horaire</h1>
+                        <h1>Ajouter des créneaux horaires</h1>
                         <button className="btn">
                             <Link to="/planning" className="link">
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
                     </div>
-                    <div className="add-form-group">
-                        <div className="add-container">
-                            <form className="add-form" onSubmit={handleSubmit}>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">subtitles</span> 
-                                    <input type="text" name="titre" placeholder="Titre" value={formData.titre} onChange={handleChange} required/>
-                                </div>                                
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">timer</span>
-                                    <label>Début</label>
-                                    <input type="datetime-local" name="date_debut" value={formData.date_debut} onChange={handleChange} required/>
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">timer_off</span>
-                                    <label>Fin</label>
-                                    <input type="datetime-local" name="date_fin" value={formData.date_fin} onChange={handleChange} required/>
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">drag_indicator</span>
-                                    <label>Type</label>
-                                    <select name="type" value={formData.type} onChange={handleChange}>
-                                        <option value="Séance">Séance</option>
-                                        <option value="Evénement">Evénement</option>                        
-                                    </select>
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">meeting_room</span>
-                                    <label>Salle</label>
-                                    <select name="numero_salle" value={formData.numero_salle} onChange={handleChange}>
-                                        {salles.map(salle => (
-                                            <option key={salle.numero_salle} value={salle.numero_salle}>
-                                                {salle.nom_salle}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">sports_gymnastics</span>
-                                    <label>Sport</label>
-                                    <select name="sport" value={selectedSport?.id_sport} onChange={handleSportChange}>
-                                        {sportsGroupes.map(sport => (
-                                            <option key={sport.id_sport} value={sport.id_sport}>
-                                                {sport.nom}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div> 
-                                <div className="add-input">
-                                    <span className="material-icons-outlined">group</span>
-                                    <label>Groupe</label>
-                                    <select name="id_groupe" value={selectedGroup?.id_groupe} onChange={handleGroupChange}>
-                                        {selectedSport?.groupes.map(group => (
-                                            <option key={group.id_groupe} value={group.id_groupe}>
-                                                {group.nom_groupe}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="add-input">
-                                    <span className="material-icons-sharp">description</span>
-                                    <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required/>
-                                </div>
-                                {errorMessage && <p className="danger">{errorMessage}</p>}
-                                <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
-                            </form>
+                    <div className="scroll-form">
+                        <div className="add-form-group">
+                            <h2>Ajout d'un seul créneau horaire</h2>
+                            <div className="add-container">
+                                <form className="add-form" onSubmit={handleSubmit}>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">subtitles</span> 
+                                        <input type="text" name="titre" placeholder="Titre" value={formData.titre} onChange={handleChange} required/>
+                                    </div>                                
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">timer</span>
+                                        <label>Début</label>
+                                        <input type="datetime-local" name="date_debut" value={formData.date_debut} onChange={handleChange} required/>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">timer_off</span>
+                                        <label>Fin</label>
+                                        <input type="datetime-local" name="date_fin" value={formData.date_fin} onChange={handleChange} required/>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">drag_indicator</span>
+                                        <label>Type</label>
+                                        <select name="type" value={formData.type} onChange={handleChange}>
+                                            <option value="Séance">Séance</option>
+                                            <option value="Evénement">Evénement</option>                        
+                                        </select>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">meeting_room</span>
+                                        <label>Salle</label>
+                                        <select name="numero_salle" value={formData.numero_salle} onChange={handleChange}>
+                                            {salles.map(salle => (
+                                                <option key={salle.numero_salle} value={salle.numero_salle}>
+                                                    {salle.nom_salle}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">sports_gymnastics</span>
+                                        <label>Sport</label>
+                                        <select name="sport" value={selectedSport?.id_sport} onChange={handleSportChange}>
+                                            {sportsGroupes.map(sport => (
+                                                <option key={sport.id_sport} value={sport.id_sport}>
+                                                    {sport.nom}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div> 
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">group</span>
+                                        <label>Groupe</label>
+                                        <select name="id_groupe" value={selectedGroup?.id_groupe} onChange={handleGroupChange}>
+                                            {selectedSport?.groupes.map(group => (
+                                                <option key={group.id_groupe} value={group.id_groupe}>
+                                                    {group.nom_groupe}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-sharp">description</span>
+                                        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange}/>
+                                    </div>
+                                    {errorMessage && <p className="danger">{errorMessage}</p>}
+                                    <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
+                                </form>
+                            </div>
+                        </div>
+                        <div className="add-form-group">
+                            <h2>Ajout de plusieurs créneaux horaires</h2>
+                            <div className="add-container">
+                                <form className="add-form" onSubmit={handleSubmitMultiple}>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">subtitles</span> 
+                                        <input type="text" name="titre" placeholder="Titre" value={formDataMultiple.titre} onChange={handleMultipleChange} required/>
+                                    </div>       
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">date_range</span>
+                                        <label>Jour</label>
+                                        <select name="jour" value={formDataMultiple.jour} onChange={handleMultipleChange}>
+                                            <option value={0}>Dimanche</option>
+                                            <option value={1}>Lundi</option>
+                                            <option value={2}>Mardi</option>
+                                            <option value={3}>Mercredi</option>
+                                            <option value={4}>Jeudi</option>
+                                            <option value={5}>Vendredi</option>
+                                            <option value={6}>Samedi</option>
+                                        </select>
+                                    </div>                         
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">hourglass_empty</span>
+                                        <label>Début</label>
+                                        <input type="date" name="date_debut" value={formDataMultiple.date_debut} onChange={handleMultipleChange} required/>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">hourglass_disabled</span>
+                                        <label>Fin</label>
+                                        <input type="date" name="date_fin" value={formDataMultiple.date_fin} onChange={handleMultipleChange} required/>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">timer</span>
+                                        <label>Début</label>
+                                        <input type="time" name="heure_debut" value={formDataMultiple.heure_debut} onChange={handleMultipleChange} required/>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">timer</span>
+                                        <label>Fin</label>
+                                        <input type="time" name="heure_fin" value={formDataMultiple.heure_fin} onChange={handleMultipleChange} required/>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">drag_indicator</span>
+                                        <label>Type</label>
+                                        <select name="type" value={formDataMultiple.type} onChange={handleMultipleChange}>
+                                            <option value="Séance">Séance</option>
+                                            <option value="Evénement">Evénement</option>                        
+                                        </select>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">meeting_room</span>
+                                        <label>Salle</label>
+                                        <select name="numero_salle" value={formDataMultiple.numero_salle} onChange={handleMultipleChange}>
+                                            {salles.map(salle => (
+                                                <option key={salle.numero_salle} value={salle.numero_salle}>
+                                                    {salle.nom_salle}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">sports_gymnastics</span>
+                                        <label>Sport</label>
+                                        <select name="sport" value={selectedSport?.id_sport} onChange={handleSportChange}>
+                                            {sportsGroupes.map(sport => (
+                                                <option key={sport.id_sport} value={sport.id_sport}>
+                                                    {sport.nom}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div> 
+                                    <div className="add-input">
+                                        <span className="material-icons-outlined">group</span>
+                                        <label>Groupe</label>
+                                        <select name="id_groupe" value={selectedGroup?.id_groupe} onChange={handleGroupChange}>
+                                            {selectedSport?.groupes.map(group => (
+                                                <option key={group.id_groupe} value={group.id_groupe}>
+                                                    {group.nom_groupe}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="add-input">
+                                        <span className="material-icons-sharp">description</span>
+                                        <input type="text" name="description" placeholder="Description" value={formDataMultiple.description} onChange={handleMultipleChange}/>
+                                    </div>
+                                    {errorMessageMultiple && <p className="danger">{errorMessageMultiple}</p>}
+                                    <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
             </main>
         </>
     );

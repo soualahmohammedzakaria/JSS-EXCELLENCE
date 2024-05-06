@@ -15,8 +15,7 @@ const ModifierAdmin = () => {
         nom: location.state.nom,
         prenom: location.state.prenom,
         username: location.state.username,
-        role: location.state.role,
-        photo: "",
+        role: location.state.role
     });
     const [passwordFormData, setPasswordFormData] = useState({
         password: "",
@@ -114,11 +113,6 @@ const ModifierAdmin = () => {
                                     <label>Prénom</label>
                                     <input type="text" name="prenom" placeholder="Prénom" value={infoFormData.prenom} onChange={handleInfoChange} required/>
                                 </div>
-                                {/* Commenté pour l'ajout ultérieur de la fonctionnalité */}
-                                {/*<div className="add-input">
-                                    <span className="material-icons-outlined">image</span>
-                                    <input type="file" value={infoFormData.photo} onChange={handleInfoChange}/>
-                                </div>*/}
                                 <div className="add-input">
                                     <span className="material-icons-outlined">admin_panel_settings</span>
                                     <label>Rôle</label>

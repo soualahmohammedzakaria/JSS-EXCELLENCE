@@ -4,8 +4,10 @@ import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import { formatDate, formatAnMois } from "../../utils/datesUtils";
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Paiements = () => {
+    const { paramsData } = useParamsContext();
     const location = useLocation();
     const [paiements, setPaiements] = useState([]);
     const [afficherSupprimerPaiement, setSupprimerModal] = useState(false);
@@ -31,7 +33,7 @@ const Paiements = () => {
             });
     };
 
-    const nbItems = 7;
+    const nbItems = paramsData.petites_tables || 7;
     const nbPages = Math.ceil(paiements.length / nbItems);
 
     // Ensure indices are within valid bounds
@@ -72,12 +74,12 @@ const Paiements = () => {
                         <h1>Paiements d'un membre</h1>
                         <div>
                             <button className="btn" style={{ marginRight: "0.5rem" }}>
-                                <Link to="./ajouter" state={{id: location.state.id}} className="link">
+                                <Link to="./ajouter" state={{id: location.state.id, email: location.state.email, path: location.state.path}} className="link">
                                     <span className="material-icons-outlined">add</span>
                                 </Link>
                             </button>
                             <button className="btn">
-                                <Link to="/membres/details" className="link" state={{id: location.state.id}}>
+                                <Link to={location.state.path} className="link" state={{id: location.state.id, path: location.state.path}}>
                                     <span className="material-icons-outlined">undo</span>
                                 </Link>
                             </button>
@@ -107,7 +109,7 @@ const Paiements = () => {
                                             <th>{paiement.montant_paye} DZD</th>
                                             <th>{paiement.montant_restant} DZD</th>                             
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_paiement: paiement.id_paiement, id_membre: location.state.id, date_abonnement: paiement.date_abonnement, mois: paiement.mois_abonnement, montant_paye: paiement.montant_paye, montant_restant: paiement.montant_restant}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id_paiement: paiement.id_paiement, id_membre: location.state.id, date_abonnement: paiement.date_abonnement, mois: paiement.mois_abonnement, montant_paye: paiement.montant_paye, montant_restant: paiement.montant_restant, path: location.state.path}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleSupprimerPaiement(paiement.id_paiement)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

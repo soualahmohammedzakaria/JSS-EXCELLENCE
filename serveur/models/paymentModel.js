@@ -114,7 +114,8 @@ function getTransactions(memberId) {
 
 // Fonction pour générer la facture au format PDF s'une transaction d'id_paiement = id1 , id_abonnement = id3 
 function generateInvoice(data) {
-  return new Promise((resolve, reject) => {  
+  return new Promise((resolve, reject) => { 
+    const currentYear = new Date().getFullYear(); 
   // code HTML de la facture
   const html = `
   <!DOCTYPE html>
@@ -213,7 +214,7 @@ function generateInvoice(data) {
             </table>
         </div>
         <div class="footer">
-            <p>© 2024 JSS EXCELLENCE. Tous droits réservés.</p>
+            <p>© ${currentYear} JSS EXCELLENCE. Tous droits réservés.</p>
         </div>
     </div>
 </body>
@@ -234,20 +235,19 @@ function generateInvoice(data) {
 )}
 
 // Fonction pour envoyer la facture d'une transaction 
-function sendInvoiceByEmail(invoice,email) {
+function sendInvoiceByEmail(invoice,email,parametres) {
   return new Promise((resolve, reject) => {
-    console.log(process.env.PORT);
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'ghackcourrier@gmail.com', 
-        pass: 'azyq rfmp mkzi botf'  
+        user: parametres.email, 
+        pass: parametres.password
       }
     });
 
     const mailOptions = {
-      from: 'ghackcourrier@gmail.com',  
-      to: email,
+      from:  parametres.email,  
+      to:  email,
       subject: 'JSS Excellence :  Facture de votre abonnement',
       text: 'Veuillez trouver ci-joint votre facture.',
       attachments: [{
@@ -268,7 +268,7 @@ function sendInvoiceByEmail(invoice,email) {
 
 function getMemberById(id) {
   return new Promise((resolve, reject) => {
-    const query = 'SELECT nom, prenom, email, date_inscription, date_naissance FROM membres WHERE id_membre = ?';
+    const query = 'SELECT nom, prenom, email, date_inscription FROM membres WHERE id_membre = ?';
     mydb.query(query, [id], (error, results) => {
       if (error) {
         reject(error);

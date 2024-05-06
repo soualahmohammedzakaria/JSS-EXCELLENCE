@@ -20,7 +20,6 @@ const Navbar = () => {
                             <h5>{authData.role}</h5>
                         </div>
                         <div className="profile-photo">
-                            <img src={authData.photo ? authData.photo : PhotoStandard} alt=""/>
                         </div>
                     </div>
                 </div>

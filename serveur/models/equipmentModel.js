@@ -1,19 +1,5 @@
 const mydb=require('../config/database');
 
-
-function getEquipmentByName(nom) {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM equipements WHERE nom = ? ';
-        mydb.query(query, [nom], (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results.length > 0 ? results[0] : undefined);
-            }
-        });
-    });
-}
-
 function addEquipement(nom, quantite, numero_salle) {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO equipements (nom, quantite, numero_salle) VALUES (?, ?, ?)';
@@ -70,15 +56,14 @@ function updateEquipment(id, newEquipmentData) {
     });
 }
 
-function checkEquipment(nom, equipmentId) {
+function getEquipmentsSalle(id) {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT COUNT(*) AS count FROM equipements WHERE nom = ? AND id_equipement != ?';
-        mydb.query(query, [nom, equipmentId], (error, results) => {
+        const query = 'SELECT * FROM equipements WHERE numero_salle = ?';
+        mydb.query(query, [id], (error, results) => {
             if (error) {
                 reject(error);
             } else {
-                const count = results[0].count;
-                resolve(count > 0);
+                resolve(results);
             }
         });
     });
@@ -87,10 +72,9 @@ function checkEquipment(nom, equipmentId) {
 
 
 module.exports = { 
-    getEquipmentByName,
     addEquipement,
     deleteEquipmentById,
     getAllEquipments,
     updateEquipment,
-    checkEquipment
+    getEquipmentsSalle
 };

@@ -27,7 +27,7 @@ function addSalle(nom_salle, capacite) {
     });
 }
 
-function getAllSalles() {
+/*function getAllSalles() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM salles';
         mydb.query(query, (error, results) => {
@@ -38,7 +38,31 @@ function getAllSalles() {
             }
         });
     });
+}*/
+
+async function getAllSalles() {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT 
+                s.*,
+                (CASE WHEN COUNT(e.id_equipement) > 0 THEN TRUE ELSE FALSE END) AS equipe
+            FROM 
+                salles s
+            LEFT JOIN 
+                equipements e ON s.numero_salle = e.numero_salle
+            GROUP BY 
+                s.numero_salle`;
+        
+        mydb.query(query, (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
 }
+
 
 function checkSalle(nom_salle, numero_salle) {
     return new Promise((resolve, reject) => {
@@ -92,6 +116,35 @@ function getNomIdSalles() {
         });
     }
 
+    function getSalle(salleId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT s.*, 
+                JSON_ARRAYAGG(JSON_OBJECT('id_equipement', e.id_equipement, 'nom', e.nom, 'quantite', e.quantite)) AS equipementss
+                FROM salles s
+                LEFT JOIN equipements e ON s.numero_salle = e.numero_salle
+                WHERE s.numero_salle = ?
+                GROUP BY s.numero_salle
+            `;
+            mydb.query(query, [salleId], (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    if (results.length > 0) {
+                        const salle = {
+                            ...results[0],
+                            equipementss: JSON.parse(results[0].equipements) // Analyser la chaîne JSON encodée en un objet JavaScript
+                        };
+                        resolve(salle);
+                    } else {
+                        resolve(null);
+                    }
+                }
+            });
+        });
+    }
+    
+
 
   module.exports = {  
     getSalleByNom,
@@ -100,7 +153,8 @@ function getNomIdSalles() {
     checkSalle,
     updateSalle,
     getNomIdSalles,
-    deleteSalle
+    deleteSalle,
+    getSalle
     
      
  };

@@ -29,7 +29,7 @@ const ModifierPaiement = () => {
             formData.mois = `${extraireAnnee(location.state.mois)}-${formatMois(oldMois)}`;
             const response = await axios.put(`http://localhost:4000/transaction/updateTransaction/${location.state.id_paiement}`, formData);
             if (response.data.success) {
-                navigate('/membres/details/paiements', { state: { id: location.state.id_membre } });
+                navigate('/membres/details/paiements', { state: { id: location.state.id_membre, path: location.state.path } });
             } else {
                 formData.mois = oldMois;
                 setErrorMessage(response.data.message);
@@ -49,7 +49,7 @@ const ModifierPaiement = () => {
                     <div className="header">
                         <h1>Modifier un paiement</h1>
                         <button className="btn">
-                            <Link to="/membres/details/paiements" state={{ id: location.state.id_membre }} className="link">
+                            <Link to="/membres/details/paiements" state={{ id: location.state.id_membre, path: location.state.path }} className="link">
                                 <span className="material-icons-outlined">undo</span>
                             </Link>
                         </button>
