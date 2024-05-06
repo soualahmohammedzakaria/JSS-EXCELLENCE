@@ -68,13 +68,13 @@ const ModifierMembre = () => {
                                     <input type="text" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required/>
                                 </div>
                                 {/* Other input fields */}
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">calendar_today</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">calendar_today</span>
                                     <label>Naissance</label>
                                     <input type="date" name="dateNais" placeholder="Date de naissance" value={formData.dateNais} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">email</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">email</span>
                                     <input type="email" name="email" placeholder="Adresse email" value={formData.email} onChange={handleChange} required/>
                                 </div>
                                 {/* Commented out for future functionality */}
@@ -82,8 +82,8 @@ const ModifierMembre = () => {
                                     <span className="material-icons-outlined">image</span>
                                     <input type="file" value={formData.photo} onChange={handleChange}/>
                                 </div> */}
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">phone</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">phone</span>
                                     <input type="text" name="telephone" placeholder="Numéro de télephone" value={formData.telephone} onChange={handleChange} required/>
                                 </div>
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Informations Sportives</h2>
@@ -99,7 +99,7 @@ const ModifierMembre = () => {
                                 {/* Other input fields */}
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Dossier Medical</h2>
                                 {/* Corrected name attribute */}
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">bloodtype</span>
                                     <label>Groupe</label>
                                     <select name="sang" value={formData.sang} onChange={handleChange}>
@@ -115,26 +115,26 @@ const ModifierMembre = () => {
                                     </select>
                                 </div>
                                 {/* Corrected name attribute */}
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">coronavirus</span>
                                     <label>Maladies</label>
                                     <input type="text" name="maladies" placeholder="Description des maladies" value={formData.maladies} onChange={handleChange} required/>
                                 </div>
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Informations de Paiement</h2> 
                                 {/* Corrected name attribute */}
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">card_membership</span>
                                     <label>Date de paiement</label>
                                     <input min={0} type="date" name="dateAbn" value={formData.dateAbn} onChange={handleChange} required/>
                                 </div>
                                 {/* Corrected name attribute */}
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">attach_money</span>
                                     <label>Payé(DZD)</label>
                                     <input min={0} type="number" name="montantPaye" value={formData.montantPaye} onChange={handleChange} required/>
                                 </div>
                                 {/* Corrected name attribute */}
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">money_off</span>
                                     <label>Restant(DZD)</label>
                                     <input min={0} type="number" name="montantRestant" value={formData.montantRestant} onChange={handleChange} required/>

@@ -67,17 +67,17 @@ const AjouterCoach = () => {
                                     <span className="material-icons-outlined">badge</span> 
                                     <input type="text" name="prenom" placeholder="Prénom" value={formData.prenom} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">calendar_today</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">calendar_today</span>
                                     <label>Naissance</label>
                                     <input type="date" name="dateNaissance" placeholder="Date de naissance" value={formData.dateNaissance} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">email</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">email</span>
                                     <input type="email" name="email" placeholder="Adresse email" value={formData.email} onChange={handleChange}/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">phone</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">phone</span>
                                     <input type="text" name="telephone" placeholder="Numéro de télephone" value={formData.telephone} onChange={handleChange} required/>
                                 </div>
                                

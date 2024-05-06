@@ -122,7 +122,7 @@ const Sports = () => {
                         <h1>Sports</h1>
                         <button className="btn">
                             <Link to="/sports/ajouter" className="link">
-                            <span class="material-icons-outlined">add</span>
+                            <span className="material-icons-outlined">add</span>
                             </Link>
                         </button>
                     </div>

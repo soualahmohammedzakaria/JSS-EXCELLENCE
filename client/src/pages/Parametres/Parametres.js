@@ -56,25 +56,25 @@ const Parametres = () => {
                                 {authData.role === 'Administrateur' &&
                                     <>
                                         <h2 style={{alignSelf: "start", marginLeft: "1.5rem"}}>Informations d'emailing</h2>
-                                        <div class="add-input">
-                                            <span class="material-icons-outlined">email</span>
+                                        <div className="add-input">
+                                            <span className="material-icons-outlined">email</span>
                                             <label className="params-label">Adresse email</label>
                                             <input type="email" name="email" placeholder="Votre adresse" value={formData.email} onChange={handleChange} required/>
                                         </div>                      
-                                        <div class="add-input">
-                                            <span class="material-icons-outlined">password</span>
+                                        <div className="add-input">
+                                            <span className="material-icons-outlined">password</span>
                                             <label className="params-label">Code confidentiel</label>
                                             <input type="password" name="password" placeholder="Votre mot secret" value={formData.password} onChange={handleChange} required/>
                                         </div>
                                     </>
                                 }
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Paramètres de l'application</h2>
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">layers</span>
                                     <label className="params-label">Elements des grandes tables</label>
                                     <input min={3} type="number" name="grandes_tables" value={formData.grandes_tables} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">layers</span>
                                     <label className="params-label">Elements des petites tables</label>
                                     <input min={3} type="number" name="petites_tables" value={formData.petites_tables} onChange={handleChange} required/>

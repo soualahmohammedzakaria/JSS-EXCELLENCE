@@ -32,7 +32,7 @@ const AjouterMembre = () => {
 
     // Soumettre le formulaire
     const handleSubmit = async (event) => {
-        console.log(formData.date_inscription);
+        console.log(formData);
         event.preventDefault();
         try {
             const response = await axios.post("http://localhost:4000/user/addUser", formData);
@@ -72,18 +72,18 @@ const AjouterMembre = () => {
                                     <span className="material-icons-outlined">badge</span> 
                                     <input type="text" name="prenom" placeholder="Prénom" value={formData.prenom} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">calendar_today</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">calendar_today</span>
                                     <label>Naissance</label>
                                     <input type="date" name="date_naissance" placeholder="Date de naissance" value={formData.date_naissance} onChange={handleChange} required/>
                                 </div>
-                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem"}}>Informations Personelles</h2>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">email</span>
+                                <h2 style={{alignSelf: "start", marginLeft: "1.5rem"}}>Informations de Contact</h2>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">email</span>
                                     <input type="email" name="email" placeholder="Adresse email" value={formData.email} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">phone</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">phone</span>
                                     <input type="text" name="telephone" placeholder="Numéro de télephone" value={formData.telephone} onChange={handleChange} required/>
                                 </div>
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem", marginTop: "0.5rem"}}>Dossier Medical</h2>
@@ -95,13 +95,13 @@ const AjouterMembre = () => {
                                         <option value="Femme">Femme</option>                            
                                     </select>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">height</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">height</span>
                                     <label>Taille(Cm)</label>
                                     <input min={0} type="number" name="taille" step={10} value={formData.taille} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
-                                    <span class="material-icons-outlined">monitor_weight</span>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">monitor_weight</span>
                                     <label>Poids(Kg)</label>
                                     <input min={0} type="number" name="poids" value={formData.poids} onChange={handleChange} required/>
                                 </div>
@@ -120,7 +120,7 @@ const AjouterMembre = () => {
                                         <option value="Autre">Autre</option>                        
                                     </select>
                                 </div>
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">coronavirus</span>
                                     <label>Maladies</label>
                                     <input type="text" name="maladies" placeholder="Description des maladies" value={formData.maladies} onChange={handleChange}/>

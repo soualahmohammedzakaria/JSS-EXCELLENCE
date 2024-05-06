@@ -65,7 +65,7 @@ const ModifierDepense = () => {
                                     <label>Date</label>
                                     <input type="date" name="date" value={formData.date} onChange={handleChange} required/>
                                 </div>
-                                <div class="add-input">
+                                <div className="add-input">
                                     <span className="material-icons-outlined">attach_money</span>
                                     <label>Montant(DZD)</label>
                                     <input min={0} type="number" name="montant" value={formData.montant} onChange={handleChange} required/>

@@ -286,7 +286,7 @@ const MembresSupprimes = () => {
                                             <th>{membre.sexe}</th>
                                             <th>{formatDate(membre.date_inscription)}</th>
                                             <th>
-                                                <button className="link" onClick={() => handleRestoreMembre(membre.id_membre)}><span class="material-icons-outlined pointed">settings_backup_restore</span></button>
+                                                <button className="link" onClick={() => handleRestoreMembre(membre.id_membre)}><span className="material-icons-outlined pointed">settings_backup_restore</span></button>
                                                 <button className="link" onClick={() => handleDeleteMembre(membre.id_membre)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

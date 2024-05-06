@@ -149,7 +149,7 @@ const Salles= () => {
                         <h1>Salles</h1>
                         <button className="btn">
                             <Link to="/salles/ajouter" className="link">
-                            <span class="material-icons-outlined">add</span>
+                            <span className="material-icons-outlined">add</span>
                             </Link>
                         </button>
                     </div>

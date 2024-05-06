@@ -7,7 +7,7 @@ const Statistiques = ({ depensesMois, revenuesMois, nouvMembresMois, abonnements
 
     const getClassName = (percentage, isDepenses) => {
         if (isDepenses) {
-            return percentage >= 0 ? 'danger' : 'success'; // Invert class names for depenses
+            return percentage >= 0 ? 'danger' : 'success';
         }
         return percentage >= 0 ? 'success' : 'danger';
     };
