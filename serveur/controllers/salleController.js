@@ -1,6 +1,6 @@
 const salleModel = require('../models/salleModel');
 
-
+// Ajout d'une salle
 async function addSalle(req, res) {
     try {
         const { capacite, nom_salle } = req.body;
@@ -9,7 +9,7 @@ async function addSalle(req, res) {
             res.json({ success: false, message: 'Salle déjà trouvée' });
             return;
         }
-        await salleModel.addSalle( nom_salle,capacite);
+        await salleModel.addSalle(nom_salle, capacite);
         res.json({ success: true, message: 'Salle ajoutée avec succès' });
     } catch (error) {
         console.error('Erreur lors de l\'ajout d\'une salle :', error);
@@ -17,6 +17,7 @@ async function addSalle(req, res) {
     }
 }
 
+// Récupération de toutes les salles
 async function getAllSalles(req, res) {
     try {
         const salles = await salleModel.getAllSalles();
@@ -27,11 +28,11 @@ async function getAllSalles(req, res) {
     }
 }
 
+// Mise à jour d'une salle
 async function updateSalle(req, res) {
     try {
         const salleId = req.params.id;
         const newSalleData = req.body;
-
         const salleExists = await salleModel.checkSalle(newSalleData.nom_salle, salleId);
         if (salleExists) {
             return res.json({ success: false, message: 'Cette salle existe déjà' });
@@ -44,9 +45,10 @@ async function updateSalle(req, res) {
     }
 }
 
+// Récupération des noms et des id des salles
 async function getNomIdSalles(req, res) {
     try {
-        const salles = await salleModel.getNomIdSalles();         
+        const salles = await salleModel.getNomIdSalles();
         res.json({ success: true, salles });
     } catch (error) {
         console.error('Erreur lors de la récupération des salles :', error);
@@ -54,6 +56,7 @@ async function getNomIdSalles(req, res) {
     }
 }
 
+// Suppression d'une salle
 async function deleteSalle(req, res) {
     try {
         const id = req.params.id;
@@ -65,6 +68,7 @@ async function deleteSalle(req, res) {
     }
 }
 
+// Récupération d'une salle
 async function getSalle(req, res) {
     try {
         const id = req.params.id;
@@ -76,11 +80,11 @@ async function getSalle(req, res) {
     }
 }
 
-module.exports = {    
-    addSalle, 
-    getAllSalles, 
-    updateSalle,  
+module.exports = {
+    addSalle,
+    getAllSalles,
+    updateSalle,
     deleteSalle,
     getNomIdSalles,
-    getSalle  
+    getSalle
 }

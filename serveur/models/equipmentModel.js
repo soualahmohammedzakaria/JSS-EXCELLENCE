@@ -1,5 +1,6 @@
-const mydb=require('../config/database');
+const mydb = require('../config/database');
 
+// Ajouter un équipement
 function addEquipement(nom, quantite, numero_salle) {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO equipements (nom, quantite, numero_salle) VALUES (?, ?, ?)';
@@ -13,6 +14,7 @@ function addEquipement(nom, quantite, numero_salle) {
     });
 }
 
+// Supprimer un équipement par son ID
 function deleteEquipmentById(id) {
     return new Promise((resolve, reject) => {
         const query = 'DELETE FROM equipements WHERE id_equipement = ?';
@@ -26,23 +28,7 @@ function deleteEquipmentById(id) {
     });
 }
 
-function getAllEquipments() {
-    return new Promise((resolve, reject) => {
-        const query = `
-        SELECT e.*, s.nom_salle  
-        FROM equipements e
-        LEFT JOIN salles s ON e.numero_salle = s.numero_salle;
-        `
-        mydb.query(query, (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results);
-            }
-        });
-    });
-}
-
+// Mettre à jour un équipement
 function updateEquipment(id, newEquipmentData) {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE equipements SET ? WHERE id_equipement = ?';
@@ -56,6 +42,7 @@ function updateEquipment(id, newEquipmentData) {
     });
 }
 
+// Récupérer les équipements d'une salle
 function getEquipmentsSalle(id) {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM equipements WHERE numero_salle = ?';
@@ -69,12 +56,9 @@ function getEquipmentsSalle(id) {
     });
 }
 
-
-
-module.exports = { 
+module.exports = {
     addEquipement,
     deleteEquipmentById,
-    getAllEquipments,
     updateEquipment,
     getEquipmentsSalle
 };

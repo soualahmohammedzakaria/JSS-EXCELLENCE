@@ -1,6 +1,7 @@
 const statisticModel = require('../models/statisticModel');
 const moment = require('moment-timezone');
 
+// Récupération des statistiques
 async function getDistribution(req, res) {
     try {
         const Statistics = await statisticModel.getDistribution();
@@ -15,6 +16,7 @@ async function getDistribution(req, res) {
     }
 }
 
+// Récupération des statistiques par sport
 async function getDistributionBySport(req, res) {
     try {
         const sportStatistics = await statisticModel.getDistributionBySport();
@@ -25,6 +27,7 @@ async function getDistributionBySport(req, res) {
     }
 }
 
+// Récupération des dépenses du mois en cours
 async function getMonthExpenses(req, res) {
     try {
         const currentMonthExpenses = await statisticModel.getCurrentMonthExpenses();
@@ -40,10 +43,11 @@ async function getMonthExpenses(req, res) {
     }
 }
 
+// Récupération des revenus du mois en cours
 async function getMonthIncome(req, res) {
     try {
         const currentMonthIncome = await statisticModel.getCurrentMonthIncome();
-        const previousMonthIncome = await statisticModel.getPreviousMonthIncome();        
+        const previousMonthIncome = await statisticModel.getPreviousMonthIncome();
         const monthIncome = {
             currentMonthIncome,
             previousMonthIncome
@@ -55,12 +59,12 @@ async function getMonthIncome(req, res) {
     }
 }
 
-
+// Récupération des nouveaux membres du mois en cours
 async function getMonthNewMembers(req, res) {
     try {
-        const currentMonthNewMembers= await statisticModel.getCurrentMonthNewMembers();
-        const previousMonthNewMembers = await statisticModel.getPreviousMonthNewMembers();        
-        const MonthNewMembers= {
+        const currentMonthNewMembers = await statisticModel.getCurrentMonthNewMembers();
+        const previousMonthNewMembers = await statisticModel.getPreviousMonthNewMembers();
+        const MonthNewMembers = {
             currentMonthNewMembers,
             previousMonthNewMembers
         };
@@ -71,28 +75,30 @@ async function getMonthNewMembers(req, res) {
     }
 }
 
+// Récupération des abonnements du mois en cours
 async function getMonthSubscriptions(req, res) {
     try {
-        const currentMonthSubscriptions= await statisticModel.getCurrentMonthSubscriptions();
-        const previousMonthSubscriptions = await statisticModel.getPreviousMonthSubscriptions();        
-        const MonthSubscriptions= {
+        const currentMonthSubscriptions = await statisticModel.getCurrentMonthSubscriptions();
+        const previousMonthSubscriptions = await statisticModel.getPreviousMonthSubscriptions();
+        const MonthSubscriptions = {
             currentMonthSubscriptions,
             previousMonthSubscriptions
         };
-        res.json({ success: true, MonthSubscriptions }); 
+        res.json({ success: true, MonthSubscriptions });
     } catch (error) {
         console.error('Erreur lors de la récupération du nombre des abonnements du mois en cours :', error);
         res.json({ success: false, message: 'Erreur lors de la récupération du nombre des abonnements du mois en cours' });
     }
 }
 
+// Récupération des prochains créneaux
 async function getNextCreneaux(req, res) {
     try {
         const NextCreneaux = await statisticModel.getNextCreneaux();
-        NextCreneaux.forEach(NextCreneau => {            
+        NextCreneaux.forEach(NextCreneau => {
             NextCreneau.date_debut = moment(NextCreneau.date_debut).format('YYYY-MM-DD HH:mm:ss');
             NextCreneau.date_fin = moment(NextCreneau.date_fin).format('YYYY-MM-DD HH:mm:ss');
-        }); 
+        });
         res.json({ success: true, NextCreneaux });
     } catch (error) {
         console.error('Erreur lors de la récupération des  prochains créneaux :', error);
@@ -100,7 +106,22 @@ async function getNextCreneaux(req, res) {
     }
 }
 
-
+// Récupération des membres actifs et non actifs par mois
+async function getMembershipStatusByMonth(req, res) {
+    try {
+        const membershipStatus = [];
+        for (let i = 0; i < 12; i++) {
+            const currentMonth = moment().subtract(i, 'months').format('YYYY-MM');
+            const membershipStatusByMonth = await statisticModel.getMembershipStatusByMonth(currentMonth);
+            membershipStatusByMonth.mois = currentMonth;
+            membershipStatus.push(membershipStatusByMonth);
+        }
+        res.json({ success: true, membershipStatus });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des membres actifs et non actifs par mois :', error);
+        res.json({ success: false, message: 'Erreur lors de la récupération des données des membres' });
+    }
+}
 
 
 module.exports = {
@@ -110,6 +131,7 @@ module.exports = {
     getMonthIncome,
     getMonthNewMembers,
     getMonthSubscriptions,
-    getNextCreneaux
-    
+    getNextCreneaux,
+    getMembershipStatusByMonth
+
 }

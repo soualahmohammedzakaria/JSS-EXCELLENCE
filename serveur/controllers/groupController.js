@@ -1,5 +1,6 @@
 const groupModel = require('../models/groupModel');
 
+// Récupération des noms et des id des groupes
 async function getNomIdGroups(req, res) {
     try {
         const groupes = await groupModel.getNomIdGroups();
@@ -10,6 +11,7 @@ async function getNomIdGroups(req, res) {
     }
 }
 
+// Ajout d'un groupe
 async function addGroup(req, res) {
     try {
         const { id_sport, nom_groupe } = req.body;
@@ -17,8 +19,8 @@ async function addGroup(req, res) {
         if (group) {
             res.json({ success: false, message: 'Ce groupe existe deja' });
         } else {
-        await groupModel.addGroup(id_sport, nom_groupe);
-        res.json({ success: true, message: 'Groupe ajouté avec succès' });
+            await groupModel.addGroup(id_sport, nom_groupe);
+            res.json({ success: true, message: 'Groupe ajouté avec succès' });
         }
     } catch (error) {
         console.error('Erreur lors de l\'ajout du groupe :', error);
@@ -26,6 +28,7 @@ async function addGroup(req, res) {
     }
 }
 
+// Suppression d'un groupe
 async function deleteGroup(req, res) {
     try {
         const groupId = req.params.id;
@@ -37,27 +40,27 @@ async function deleteGroup(req, res) {
     }
 }
 
+// Mise à jour d'un groupe
 async function updateGroup(req, res) {
     try {
-      const id_groupe = req.params.id;
-      const newGroupData = req.body;
-  
-      // on verifie si un groupe existe
-      const GroupExists = await groupModel.checkGroup(newGroupData.id_sport, newGroupData.nom_groupe, id_groupe);
-      if (GroupExists) {
-        res.json({ success: false, message: 'Le groupe existe deja' });
-      } 
-      else{ 
-      await groupModel.updateGroup(id_groupe, newGroupData);
-      res.json({ success: true, message: 'Groupe modifié avec succès' });
-      }
+        const id_groupe = req.params.id;
+        const newGroupData = req.body;
+        // on verifie si un groupe existe
+        const GroupExists = await groupModel.checkGroup(newGroupData.id_sport, newGroupData.nom_groupe, id_groupe);
+        if (GroupExists) {
+            res.json({ success: false, message: 'Le groupe existe deja' });
+        }
+        else {
+            await groupModel.updateGroup(id_groupe, newGroupData);
+            res.json({ success: true, message: 'Groupe modifié avec succès' });
+        }
     } catch (error) {
-      console.error('Erreur lors de la modification du groupe :', error);
-      res.json({ success: false, message: 'Erreur lors de la modification du group' });
+        console.error('Erreur lors de la modification du groupe :', error);
+        res.json({ success: false, message: 'Erreur lors de la modification du group' });
     }
-  }
+}
 
- 
+// Récupération de tous les groupes
 async function getAllGroups(req, res) {
     try {
         const groupes = await groupModel.getAllGroups();
@@ -70,7 +73,7 @@ async function getAllGroups(req, res) {
 
 
 
-module.exports = {     
+module.exports = {
     getNomIdGroups,
     addGroup,
     deleteGroup,

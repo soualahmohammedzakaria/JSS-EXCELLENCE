@@ -1,6 +1,7 @@
-const mydb=require('../config/database');
+const mydb = require('../config/database');
 const { format, subMonths } = require('date-fns');
 
+// Fonction pour obtenir la distribution des membres
 async function getDistribution() {
     return new Promise((resolve, reject) => {
         const query = `
@@ -24,6 +25,7 @@ async function getDistribution() {
     });
 }
 
+// Fonction pour obtenir le nombre total d'équipements
 async function getTotalEquipments() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT SUM(quantite) AS totalEquipments FROM equipements';
@@ -37,7 +39,7 @@ async function getTotalEquipments() {
     });
 }
 
-
+// Fonction pour obtenir la distribution des membres par sport
 async function getDistributionBySport() {
     return new Promise((resolve, reject) => {
         const query = `
@@ -47,8 +49,7 @@ async function getDistributionBySport() {
         INNER JOIN groupes_a_membres gam ON g.id_groupe = gam.id_groupe
         INNER JOIN membres m ON gam.id_membre = m.id_membre
         WHERE m.supprime = 0
-        GROUP BY s.nom;
-        
+        GROUP BY s.nom;        
         `;
         mydb.query(query, (error, results) => {
             if (error) {
@@ -60,6 +61,7 @@ async function getDistributionBySport() {
     });
 }
 
+// Fonction pour obtenir le nombre de coachs
 async function getCoachCount() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT COUNT(*) AS coachCount FROM coachs';
@@ -73,6 +75,7 @@ async function getCoachCount() {
     });
 }
 
+// Fonction pour obtenir les dépenses du mois en cours
 async function getCurrentMonthExpenses() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
@@ -89,6 +92,7 @@ async function getCurrentMonthExpenses() {
     });
 }
 
+// Fonction pour obtenir les dépenses du mois précédent
 async function getPreviousMonthExpenses() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
@@ -105,18 +109,17 @@ async function getPreviousMonthExpenses() {
     });
 }
 
+// Fonction pour obtenir les revenus du mois en cours
 async function getCurrentMonthIncome() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-        
         const query = `
             SELECT SUM(montant_paye) AS total_income
             FROM paiements_membres
             WHERE date_paiement BETWEEN ? AND ?
         `;
-        
         mydb.query(query, [format(firstDayOfMonth, 'yyyy-MM-dd'), format(lastDayOfMonth, 'yyyy-MM-dd')], (error, results) => {
             if (error) {
                 reject(error);
@@ -127,18 +130,17 @@ async function getCurrentMonthIncome() {
     });
 }
 
+// Fonction pour obtenir les revenus du mois précédent
 async function getPreviousMonthIncome() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
         const firstDayOfPreviousMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
         const lastDayOfPreviousMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
-        
         const query = `
             SELECT SUM(montant_paye) AS total_income
             FROM paiements_membres
             WHERE date_paiement BETWEEN ? AND ?
         `;
-        
         mydb.query(query, [format(firstDayOfPreviousMonth, 'yyyy-MM-dd'), format(lastDayOfPreviousMonth, 'yyyy-MM-dd')], (error, results) => {
             if (error) {
                 reject(error);
@@ -148,7 +150,8 @@ async function getPreviousMonthIncome() {
         });
     });
 }
- 
+
+// Fonction pour obtenir le nombre de nouveaux membres du mois en cours
 async function getCurrentMonthNewMembers() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
@@ -169,6 +172,7 @@ async function getCurrentMonthNewMembers() {
     });
 }
 
+// Fonction pour obtenir le nombre de nouveaux membres du mois précédent
 async function getPreviousMonthNewMembers() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
@@ -189,6 +193,7 @@ async function getPreviousMonthNewMembers() {
     });
 }
 
+// Fonction pour obtenir le nombre d'abonnements du mois en cours
 async function getCurrentMonthSubscriptions() {
     return new Promise((resolve, reject) => {
         const currentDate = new Date();
@@ -208,6 +213,7 @@ async function getCurrentMonthSubscriptions() {
     });
 }
 
+// Fonction pour obtenir le nombre d'abonnements du mois précédent
 async function getPreviousMonthSubscriptions() {
     return new Promise((resolve, reject) => {
         const previousMonth = format(subMonths(new Date(), 1), 'yyyy-MM');
@@ -226,6 +232,7 @@ async function getPreviousMonthSubscriptions() {
     });
 }
 
+// Fonction pour obtenir les 5 prochains créneaux
 async function getNextCreneaux() {
     return new Promise((resolve, reject) => {
         const currentDate = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
@@ -246,6 +253,28 @@ async function getNextCreneaux() {
     });
 }
 
+// Fonction pour obtenir le statut des membres pour le mois donné
+function getMembershipStatusByMonth(currentMonth) {
+    return new Promise((resolve, reject) => {
+        // Requête SQL pour compter les paiements pour le mois en cours
+        const query = `
+        SELECT 
+        COUNT(DISTINCT pm.id_membre) AS membres_actifs,
+        ((SELECT COUNT(*) FROM membres WHERE date_inscription <= '${currentMonth}-01') - COUNT(DISTINCT pm.id_membre)) AS membres_non_actifs
+    FROM 
+        paiements_membres pm
+    WHERE
+        pm.mois = '${currentMonth}';`;
+        mydb.query(query, [], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results[0]);
+            }
+        });
+    });
+}
+
 module.exports = {
     getDistribution,
     getTotalEquipments,
@@ -259,6 +288,6 @@ module.exports = {
     getPreviousMonthNewMembers,
     getCurrentMonthSubscriptions,
     getPreviousMonthSubscriptions,
-    getNextCreneaux
-
+    getNextCreneaux,
+    getMembershipStatusByMonth
 };

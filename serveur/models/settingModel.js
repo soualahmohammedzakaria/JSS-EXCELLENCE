@@ -1,5 +1,6 @@
 const mydb = require('../config/database');
 
+// Récupérer les paramètres
 function getParametres() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM parametres LIMIT 1';
@@ -17,6 +18,7 @@ function getParametres() {
     });
 }
 
+// Mettre à jour les paramètres
 function updateParametres(email, password, petites_tables, grandes_tables) {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE parametres SET email = ?, password = ?, petites_tables = ?, grandes_tables = ?';

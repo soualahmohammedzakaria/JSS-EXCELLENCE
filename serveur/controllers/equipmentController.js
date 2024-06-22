@@ -1,6 +1,7 @@
 const e = require('express');
 const equipmentModel = require('../models/equipmentModel');
 
+// Ajout d'un équipement
 async function addEquipment(req, res) {
     try {
         const { nom, quantite, numero_salle } = req.body;
@@ -12,6 +13,7 @@ async function addEquipment(req, res) {
     }
 }
 
+// Suppression d'un équipement
 async function deleteEquipment(req, res) {
     try {
         const id = req.params.id;  
@@ -23,20 +25,11 @@ async function deleteEquipment(req, res) {
       }
 }
 
-async function getAllEquipments(req, res) {
-    try {
-        const equipements = await equipmentModel.getAllEquipments();
-        res.json({ success: true, equipements });
-    } catch (error) {
-        res.json({ success: false, message: 'Erreur lors de la récupération des équipements.', error: error.message });
-    }
-}
-
+//  Modification d'un équipement
 async function updateEquipment(req, res) {
     try {
         const equipmentId = req.params.id;
         const newEquipmentData = req.body;
-
         await equipmentModel.updateEquipment(equipmentId, newEquipmentData);
         res.json({ success: true, message: 'Equipement modifié avec succès' });
       } catch (error) {
@@ -45,6 +38,7 @@ async function updateEquipment(req, res) {
       }
 }
 
+// Récupération des équipements d'une salle
 async function getEquipmentsSalle(req, res) {
     try {
         const numero_salle = req.params.id;
@@ -63,6 +57,5 @@ module.exports = {
     addEquipment,
     deleteEquipment,
     updateEquipment,
-    getAllEquipments,
     getEquipmentsSalle
 }

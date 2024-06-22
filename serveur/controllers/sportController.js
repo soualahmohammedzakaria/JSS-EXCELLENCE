@@ -1,11 +1,9 @@
 const sportModel = require('../models/sportModel');
 
-
-
+// Ajout d'un sport
 async function addSport(req, res) {
     try {
         const { nom } = req.body;
-
         const sport = await sportModel.getSportByName(nom);
         if (sport) {
             res.json({ success: false, message: 'Nom du sport déjà utilisé' });
@@ -19,24 +17,25 @@ async function addSport(req, res) {
     }
 }
 
+// Modification d'un sport
 async function updateSport(req, res) {
     try {
         const id = req.params.id;
         const { nom } = req.body;
-
-        const sportExists = await sportModel.checkSport(nom,id);
+        const sportExists = await sportModel.checkSport(nom, id);
         if (sportExists) {
-          return res.json({ success: false, message: 'ce sport existe deja' });
-        }   
+            return res.json({ success: false, message: 'ce sport existe deja' });
+        }
         await sportModel.updateSport(id, nom);
         res.json({ success: true, message: 'Sport modifié avec succès' });
-        
+
     } catch (error) {
         console.error('Erreur lors de la modification d\'un sport :', error);
         res.json({ success: false, message: 'Erreur lors de la modification d\'un sport' });
     }
 }
 
+// Suppression d'un sport
 async function deleteSport(req, res) {
     try {
         const id = req.params.id;
@@ -48,6 +47,7 @@ async function deleteSport(req, res) {
     }
 }
 
+// Récupération de tous les sports
 async function getAllSports(req, res) {
     try {
         const sports = await sportModel.getAllSports();
@@ -58,6 +58,7 @@ async function getAllSports(req, res) {
     }
 }
 
+// Récupération de tous les sportsGroupes
 async function getAllSportsGroupes(req, res) {
     try {
         const sportsGroupes = await sportModel.getAllSportsGroupes();
@@ -67,15 +68,14 @@ async function getAllSportsGroupes(req, res) {
         res.json({ success: false, message: 'Erreur lors de la récupération des sportsGroupes' });
     }
 }
- 
- 
+
+
 
 module.exports = {
-    addSport,    
+    addSport,
     updateSport,
     deleteSport,
-    getAllSports, 
+    getAllSports,
     getAllSportsGroupes
-   
+
 }
-    

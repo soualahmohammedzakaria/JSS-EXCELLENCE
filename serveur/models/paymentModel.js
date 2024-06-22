@@ -1,59 +1,58 @@
-const mydb=require('../config/database');
-const utils = require('../utils'); 
+const mydb = require('../config/database');
+const utils = require('../utils');
 const pdf = require('html-pdf');
 const nodemailer = require('nodemailer');
- 
+
 
 // Fonction pour obtenir une transaction par id
 async function getTransactionById(id) {
   return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM paiements_membres WHERE id_paiement = ?';
-      mydb.query(query, [id], (error, results) => {
-          if (error) {
-              reject(error);
-          } else {
-              resolve(results[0]);
-          }
-      });
+    const query = 'SELECT * FROM paiements_membres WHERE id_paiement = ?';
+    mydb.query(query, [id], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results[0]);
+      }
+    });
   });
 }
 
 // Fonction pour obtenir une transaction par membre et mois
 async function getTransactionByMemberAndMonth(id_membre, mois) {
   return new Promise((resolve, reject) => {
-      const query = `
+    const query = `
           SELECT * FROM paiements_membres 
           WHERE id_membre = ? AND mois = ?;
       `;
-      mydb.query(query, [id_membre, mois], (error, results) => {
-          if (error) {
-              reject(error);
-          } else {
-              resolve(results[0]);
-          }
-      });
+    mydb.query(query, [id_membre, mois], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results[0]);
+      }
+    });
   });
 }
 
 // Fonction pour ajouter une transaction  
 async function addTransaction(id_membre, montant_paye, montant_restant, date_paiement, mois) {
   return new Promise((resolve, reject) => {
-      const query = `
+    const query = `
           INSERT INTO paiements_membres (id_membre, montant_paye, montant_restant, date_paiement, mois) 
           VALUES (?, ?, ?, ?, ?);
       `;
-      mydb.query(query, [id_membre, montant_paye, montant_restant, date_paiement, mois], (error, results) => {
-          if (error) {
-              reject(error);
-          } else {
-              resolve(results.insertId);
-          }
-      });
+    mydb.query(query, [id_membre, montant_paye, montant_restant, date_paiement, mois], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results.insertId);
+      }
+    });
   });
 }
 
-
-
+// Fonction pour supprimer une transaction par son ID
 async function deleteTransactionById(id) {
   return new Promise((resolve, reject) => {
     const query = 'DELETE FROM paiements_membres WHERE id_paiement = ?';
@@ -67,6 +66,7 @@ async function deleteTransactionById(id) {
   });
 }
 
+// Fonction pour vérifier si une transaction existe déjà
 function checkTransaction(id_membre, mois, TransactionId) {
   return new Promise((resolve, reject) => {
     const query = 'SELECT COUNT(*) AS count FROM paiements_membres WHERE id_membre = ? AND mois = ? AND id_paiement != ?';
@@ -75,26 +75,27 @@ function checkTransaction(id_membre, mois, TransactionId) {
         reject(error);
       } else {
         const count = results[0].count;
-        resolve(count > 0);  
+        resolve(count > 0);
       }
     });
   });
 }
 
+// Fonction pour mettre à jour une transaction
 function updateTransactionById(transactionId, newTransactionData) {
   return new Promise(async (resolve, reject) => {
-    
-      const query = 'UPDATE paiements_membres SET ? WHERE id_paiement = ?';
-      mydb.query(query, [newTransactionData, transactionId], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });     
+    const query = 'UPDATE paiements_membres SET ? WHERE id_paiement = ?';
+    mydb.query(query, [newTransactionData, transactionId], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
     });
+  });
 }
 
+// Fonction pour obtenir toutes les transactions d'un membre
 function getTransactions(memberId) {
   return new Promise((resolve, reject) => {
     const query = 'SELECT * FROM paiements_membres WHERE id_membre = ?';
@@ -108,16 +109,12 @@ function getTransactions(memberId) {
   });
 }
 
-  
- 
-
-
 // Fonction pour générer la facture au format PDF s'une transaction d'id_paiement = id1 , id_abonnement = id3 
 function generateInvoice(data) {
-  return new Promise((resolve, reject) => { 
-    const currentYear = new Date().getFullYear(); 
-  // code HTML de la facture
-  const html = `
+  return new Promise((resolve, reject) => {
+    const currentYear = new Date().getFullYear();
+    // code HTML de la facture
+    const html = `
   <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -220,34 +217,35 @@ function generateInvoice(data) {
 </body>
 </html>
   `;
-  // Options pour la conversion en PDF
-  const options = { format: 'A4' };
-  // Générer le PDF
-  pdf.create(html, options).toBuffer(function(err, buffer) {
-    if (err) {
-      reject(error);
-    } else {
-      resolve(buffer);
-      
-    }
-  });
+    // Options pour la conversion en PDF
+    const options = { format: 'A4' };
+    // Générer le PDF
+    pdf.create(html, options).toBuffer(function (err, buffer) {
+      if (err) {
+        reject(error);
+      } else {
+        resolve(buffer);
+
+      }
+    });
+  }
+  )
 }
-)}
 
 // Fonction pour envoyer la facture d'une transaction 
-function sendInvoiceByEmail(invoice,email,parametres) {
+function sendInvoiceByEmail(invoice, email, parametres) {
   return new Promise((resolve, reject) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: parametres.email, 
+        user: parametres.email,
         pass: parametres.password
       }
     });
 
     const mailOptions = {
-      from:  parametres.email,  
-      to:  email,
+      from: parametres.email,
+      to: email,
       subject: 'JSS Excellence :  Facture de votre abonnement',
       text: 'Veuillez trouver ci-joint votre facture.',
       attachments: [{
@@ -256,7 +254,7 @@ function sendInvoiceByEmail(invoice,email,parametres) {
       }]
     };
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         reject(error);
       } else {
@@ -266,6 +264,7 @@ function sendInvoiceByEmail(invoice,email,parametres) {
   });
 }
 
+// Fonction pour obtenir un membre par son ID
 function getMemberById(id) {
   return new Promise((resolve, reject) => {
     const query = 'SELECT nom, prenom, email, date_inscription FROM membres WHERE id_membre = ?';
@@ -279,7 +278,7 @@ function getMemberById(id) {
   });
 }
 
- 
+
 module.exports = {
   getTransactionById,
   getMemberById,
