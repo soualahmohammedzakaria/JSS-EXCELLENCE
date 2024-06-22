@@ -1,17 +1,9 @@
 import React from "react";
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { formatAnMois } from '../../utils/datesUtils';
 
-const nbMembres = [
-    {"mois": "Jan", "nbActifs": 74, "nbNon": 4},
-    {"mois": "Fev", "nbActifs": 70, "nbNon": 5},
-    {"mois": "Mar", "nbActifs": 72, "nbNon": 5},
-    {"mois": "Avr", "nbActifs": 67, "nbNon": 9},
-    {"mois": "Mai", "nbActifs": 69, "nbNon": 8},
-    {"mois": "Jun", "nbActifs": 74, "nbNon": 4},
-];
-
-const LineChart = () => {
+const LineChart = ( {nbMembres} ) => {
     return (
         <div className="charts">
             <Line data={{
@@ -19,7 +11,7 @@ const LineChart = () => {
                 datasets: [
                     {
                         label: "Nombre de membres actifs",
-                        data: nbMembres.map((data) => data.nbActifs),
+                        data: nbMembres.map((data) => data.membres_actifs),
                         borderColor: '#2c4771',
                         backgroundColor: '#2c4771',
                         borderWidth: 3,
@@ -27,7 +19,7 @@ const LineChart = () => {
                     },
                     {   
                         label: 'Nombre de membres non actifs',
-                        data: nbMembres.map((data) => data.nbNon),
+                        data: nbMembres.map((data) => data.membres_non_actifs),
                         borderColor: 'rgb(255, 99, 132)',
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderWidth: 3,

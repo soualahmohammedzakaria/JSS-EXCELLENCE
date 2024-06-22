@@ -7,31 +7,31 @@ import { formatDateHeure } from "../../utils/datesUtils";
 import axios from "axios";
 
 const ModifierPresence = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [creneaux, setCreneaux] = useState([]);
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [formData, setFormData] = useState({
+    const navigate = useNavigate(); // Hook pour la navigation
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [creneaux, setCreneaux] = useState([]); // État pour les créneaux
+    const [sportsGroupes, setSportsGroupes] = useState([]); // État pour les groupes de sports
+    const [formData, setFormData] = useState({ // Les données du formulaire
         id_membre: location.state.id,
         date_entree: location.state.date_entree,
         date_sortie: location.state.date_sortie == "Invalid date" ? null : location.state.date_sortie,
         id_groupe: location.state.id_groupe,
         id_creneau: location.state.id_creneau
     });
-    const [selectedGroupe, setSelectedGroupe] = useState(null);
-    const [selectedCreneau, setSelectedCreneau] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [selectedGroupe, setSelectedGroupe] = useState(null); // État pour le groupe sélectionné
+    const [selectedCreneau, setSelectedCreneau] = useState(null); // État pour le créneau sélectionné
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
     
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les créneaux et les groupes de sports lors du chargement du composant
         fetchSportsGroupes();
         fetchCreneaux();
     }, []);
 
-    useEffect(() => {
-        initializeSelectedValues();
+    useEffect(() => { // Pour initialiser les valeurs sélectionnées
+        initializeSelectedValues(); 
     }, [sportsGroupes, creneaux]);
 
-    const fetchCreneaux = async () => {
+    const fetchCreneaux = async () => { // Fonction pour obtenir les créneaux
         try {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
             if (response.data.success) setCreneaux(response.data.creneaux);
@@ -40,7 +40,7 @@ const ModifierPresence = () => {
         }
     };
 
-    const fetchSportsGroupes = async () => {
+    const fetchSportsGroupes = async () => { // Fonction pour obtenir les groupes de sports
         try {
             const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
             setSportsGroupes(response.data.sportsGroupes);
@@ -50,7 +50,7 @@ const ModifierPresence = () => {
     };
 
     const initializeSelectedValues = () => {
-        // Find the selected group based on location.state.id_groupe
+        // Trouver le groupe sélectionné en fonction de location.state.id_groupe
         const groupWithId = sportsGroupes
             .flatMap(sport => sport.groupes)
             .find(group => group.id_groupe === location.state.id_groupe);
@@ -59,7 +59,7 @@ const ModifierPresence = () => {
             setSelectedGroupe(groupWithId);
         }
 
-        // Find the selected creneau based on location.state.id_creneau
+        // Trouver le créneau sélectionné en fonction de location.state.id_creneau
         const creneauWithId = creneaux.find(creneau => creneau.id_creneau === location.state.id_creneau);
 
         if (creneauWithId) {
@@ -67,12 +67,12 @@ const ModifierPresence = () => {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         try {
             const response = await axios.put(`http://localhost:4000/attendance/updatePresenceMember/${location.state.id_presence}`, formData);
@@ -86,10 +86,10 @@ const ModifierPresence = () => {
         }
     };
 
-    const handleGroupChange = (e) => {
+    const handleGroupChange = (e) => { // Fonction pour gérer le changement de groupe
         const groupId = parseInt(e.target.value);
         
-        // Find the selected group directly from the sportsGroupes state
+        // Trouver le groupe sélectionné en fonction de l'ID du groupe
         const selectedGroupe = sportsGroupes
             .flatMap(sport => sport.groupes)
             .find(group => group.id_groupe === groupId);
@@ -97,33 +97,32 @@ const ModifierPresence = () => {
         if (selectedGroupe) {
             setSelectedGroupe(selectedGroupe);
             
-            // Reset selected creneau when group changes
+            // Reinitialize selectedCreneau
             setSelectedCreneau(null);
             
-            // Find the first creneau of the newly selected group
+            // Trouver le premier creneau du groupe sélectionné
             const firstCreneau = creneaux.find(creneau => creneau.id_groupe === groupId);
         
-            // Update formData based on whether the group has creneaux or not
+            // Mettre à jour les données du formulaire
             if (firstCreneau) {
-                // If the selected group has at least one creneau
                 setSelectedCreneau(firstCreneau.id_creneau);
                 setFormData(prevFormData => ({
                     ...prevFormData,
                     id_groupe: groupId,
-                    id_creneau: firstCreneau.id_creneau // Set id_creneau to the ID of the first creneau
+                    id_creneau: firstCreneau.id_creneau
                 }));
             } else {
-                // If the selected group has no creneaux
+                // Si le groupe sélectionné n'a pas de créneaux
                 setFormData(prevFormData => ({
                     ...prevFormData,
                     id_groupe: groupId,
-                    id_creneau: null // Set id_creneau to null
+                    id_creneau: null // Set id_creneau a null
                 }));
             }
         }
     };
 
-    const handleCreneauChange = (e) => {
+    const handleCreneauChange = (e) => { // Fonction pour gérer le changement de créneau
         const creneauId = parseInt(e.target.value);
         setSelectedCreneau(creneauId);
         setFormData(prevFormData => ({
@@ -132,7 +131,7 @@ const ModifierPresence = () => {
         }));
     };
 
-    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe);
+    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe); // Filtrer les créneaux par groupe
 
     return (
         <>

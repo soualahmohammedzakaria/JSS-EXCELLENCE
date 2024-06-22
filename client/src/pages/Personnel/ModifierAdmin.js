@@ -7,8 +7,8 @@ import axios from "axios";
 import { useAuthContext } from '../../hooks/authContext/authContext';
 
 const ModifierAdmin = () => {
-    const location = useLocation();
-    const { authData } = useAuthContext();
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const { authData } = useAuthContext(); // Obtenir les données de l'utilisateur authentifié
 
     // États pour les données des formulaires
     const [infoFormData, setInfoFormData] = useState({
@@ -17,7 +17,7 @@ const ModifierAdmin = () => {
         username: location.state.username,
         role: location.state.role
     });
-    const [passwordFormData, setPasswordFormData] = useState({
+    const [passwordFormData, setPasswordFormData] = useState({ // Les données du formulaire de mot de passe
         password: "",
         confirmPassword: "",
     });
@@ -100,7 +100,7 @@ const ModifierAdmin = () => {
                         </button>
                     </div>
                     <div className="add-form-group">
-                        <h2>Modifications des informations du compte</h2>
+                        <h2>Modification des informations du compte</h2>
                         <div className="add-container">
                             <form className="add-form" onSubmit={handleInfoSubmit}>
                                 <div className="add-input">

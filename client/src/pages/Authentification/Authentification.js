@@ -8,18 +8,18 @@ import { useAuthContext } from '../../hooks/authContext/authContext';
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Authentification = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
-    const { updateAuthData } = useAuthContext();
-    const { updateParamsData } = useParamsContext();
+    const [username, setUsername] = useState(""); // Nom d'utilisateur
+    const [password, setPassword] = useState(""); // Mot de passe
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const navigate = useNavigate(); // Hook pour la navigation
+    const { updateAuthData } = useAuthContext(); // Mettre à jour les données de l'utilisateur
+    const { updateParamsData } = useParamsContext(); // Mettre à jour les paramètres
 
-    const getParametres = async () => {
+    const getParametres = async () => { // Fonction pour obtenir les paramètres
         try {
-            const response = await axios.get("http://localhost:4000/setting/getSettings");
-            if(response.data.success){
-                updateParamsData({
+            const response = await axios.get("http://localhost:4000/setting/getSettings"); // Obtenir les paramètres
+            if(response.data.success){ // Si la requête s'est bien passée
+                updateParamsData({ // Mettre à jour les paramètres
                     email: response.data.parametres.email,
                     password: response.data.parametres.password,
                     grandes_tables: response.data.parametres.grandes_tables,
@@ -27,28 +27,29 @@ const Authentification = () => {
                 });
             }
         } catch (error) {
-            console.error('Erreur lors de l\'obtention des paramètres:', error);
+            console.error('Erreur lors de l\'obtention des paramètres:', error); // Gérer les erreurs
         }
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Empêcher le rechargement de la page
         try{
-            const response = await axios.post("http://localhost:4000/auth/login", { username, password });
+            const response = await axios.post("http://localhost:4000/auth/login", { username, password }); // Se connecter
             if(response.data.success){
-                updateAuthData({
+                updateAuthData({ // Mettre à jour les données de l'utilisateur
                     id: response.data.id,
                     nom: `${response.data.nom} ${response.data.prenom}`,
                     role: response.data.role
                 });
-                getParametres();
-                navigate('/dashboard');
+                getParametres(); // Obtenir les paramètres
+                navigate('/dashboard'); // Naviguer vers le tableau de bord
             }else{
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         }catch(error){
-            setErrorMessage("Désolé, une erreur s'est produite!");
+            setErrorMessage("Désolé, une erreur s'est produite!"); // Afficher un message d'erreur
         }
+        // Réinitialiser les champs
         setUsername("");
         setPassword("");
     }

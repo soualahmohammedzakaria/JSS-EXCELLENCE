@@ -5,9 +5,12 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
+import { useAuthContext } from '../../hooks/authContext/authContext';
 
 const Salles= () => {
-    const { paramsData } = useParamsContext();
+    const { authData } = useAuthContext(); // Obtenir les données d'authentification
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+    // Variables d'état
     const [searchQuery, setSearchQuery] = useState("");
     const [salles, setSalles] = useState([]);
     const [filteredSalles, setFilteredSalles] = useState([]);
@@ -17,13 +20,14 @@ const Salles= () => {
     const [selectedNom, setSelectedNom] = useState("Pas de filtre");
     const [selectedCapacite, setSelectedCapacite] = useState("Tous");
     const [selectedEquipement, setSelectedEquipement] = useState("Tous");
-    const [currInd, setCurrInd] = useState(1);
 
-    useEffect(() => {
-        fetchSalles();
+    const [currInd, setCurrInd] = useState(1); // Index de la page actuelle
+
+    useEffect(() => { // Pour obtenir les salles lors du chargement du composant
+        fetchSalles();  
     }, []);
 
-    const fetchSalles = () => {
+    const fetchSalles = () => { // Fonction pour obtenir les salles
         axios
             .get("http://localhost:4000/salle/getAllSalles")
             .then((response) => {
@@ -37,22 +41,21 @@ const Salles= () => {
                 console.error("Erreur de l'obtention des salles:", error);
             });
     };
+ 
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(filteredSalles.length / nbItems); // Nombre de pages
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(filteredSalles.length / nbItems);
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, filteredSalles.length); // Index de fin
 
-    // Ensure indices are within valid bounds
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, filteredSalles.length); // End index
+    const sallesParPage = filteredSalles.slice(debInd, finInd); // Salles par page
 
-    const sallesParPage = filteredSalles.slice(debInd, finInd);
-
-    const handleDeleteSalle = (id) => {
+    const handleDeleteSalle = (id) => { // Fonction pour gérer la suppression d'une salle
         setSalleIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteSalle = async () => {
+    const confirmDeleteSalle = async () => { // Fonction pour confirmer la suppression d'une salle
         try {
             await axios.delete(`http://localhost:4000/salle/deleteSalle/${salleIdToDelete}`);
             setShowDeleteModal(false);
@@ -63,31 +66,36 @@ const Salles= () => {
         }
     };
 
-    const handlePageChange = (newInd) => {
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }
     };
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        filterSalles();
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
     };
+    
+    useEffect(() => { // Pour filtrer les salles lors de la recherche
+        setCurrInd(1);
+        filterSalles();
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher le modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedNom("Pas de filtre");
         setSelectedEquipement("Tous");
         setSelectedCapacite("Tous");
     };
 
-    const filterSalles = () => {
+    const filterSalles = () => { // Fonction pour filtrer les salles
         let filtered = salles;
     
-        // Filter by search query
+        // Filtrer par recherche
         if (searchQuery.trim() !== "") {
             filtered = filtered.filter((salle) => {
                 const name = salle.nom_salle.toLowerCase();
@@ -95,7 +103,7 @@ const Salles= () => {
             });
         }
     
-        // Filter by selected criteria
+        // Filtrer par nom
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
@@ -107,7 +115,7 @@ const Salles= () => {
             });
         }
     
-        if (selectedCapacite !== "Tous") {
+        if (selectedCapacite !== "Tous") { // Filtrer par capacité
             filtered = filtered.filter((salle) => {
                 if (selectedCapacite === "-15 adhérents") {
                     return salle.capacite <= 15;
@@ -120,7 +128,7 @@ const Salles= () => {
             });
         }
     
-        if (selectedEquipement !== "Tous") {
+        if (selectedEquipement !== "Tous") { // Filtrer par équipement
             filtered = filtered.filter((salle) => {
                 if (selectedEquipement === "Oui") {
                     return salle.equipe === 1;
@@ -131,12 +139,13 @@ const Salles= () => {
             });
         }
     
-        setFilteredSalles(filtered);
+        setFilteredSalles(filtered); // Mettre à jour les salles filtrées
     };    
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour gérer le filtre
         setShowFilterModal(false);
         filterSalles();
+        setCurrInd(1);
     };
 
     return (
@@ -166,7 +175,7 @@ const Salles= () => {
                                     <th>Capacité</th>
                                     <th>Equipée</th>
                                     <th>Equipement</th>
-                                    <th>Actions</th>
+                                    {authData.role === 'Administrateur' && <th>Actions</th>}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -178,8 +187,12 @@ const Salles= () => {
                                             <th>{salle.equipe === 1 ? "Oui" : "Non"}</th>
                                             <th><Link className="link" to="./equipements" state={{numero_salle: salle.numero_salle}}><span className="material-icons-outlined pointed">fitness_center</span></Link></th>
                                             <th>
-                                                <Link className="link" to="./modifier" state={{numero_salle: salle.numero_salle, nom_salle: salle.nom_salle, capacite: salle.capacite}}><span className="material-icons-outlined pointed">edit</span></Link>
-                                                <button className="link" onClick={() => handleDeleteSalle(salle.numero_salle)}><span className="material-icons-outlined pointed">delete</span></button>
+                                            {authData.role === 'Administrateur' &&
+                                                <>
+                                                    <Link className="link" to="./modifier" state={{numero_salle: salle.numero_salle, nom_salle: salle.nom_salle, capacite: salle.capacite}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                    <button className="link" onClick={() => handleDeleteSalle(salle.numero_salle)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                </>
+                                            }
                                             </th>
                                         </tr>
                                     ))}

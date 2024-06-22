@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const AjouterGroupe = () => {
-    const [sports, setSports] = useState([]);
-    const [selectedSport, setSelectedSport] = useState(null);
+    const [sports, setSports] = useState([]); // Pour stocker les sports
+    const [selectedSport, setSelectedSport] = useState(null); // Pour stocker le sport sélectionné
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
         nom_groupe:'',
@@ -18,13 +18,13 @@ const AjouterGroupe = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useEffect(() => { // Récupérer les sports lors du chargement du composant
         fetchSports();
     }, []);
 
-    const fetchSports = () => {
+    const fetchSports = () => { // Fonction pour récupérer les sports
         axios
-            .get("http://localhost:4000/sport/getAllSports")
+            .get("http://localhost:4000/sport/getAllSports") // Récupérer les sports
             .then((response) => {
                 if (response.data.success) {
                     const fetchedSports = response.data.sports || [];
@@ -41,7 +41,7 @@ const AjouterGroupe = () => {
             });
     };
 
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const sportId = parseInt(e.target.value);
         const selectedSport = sports.find(sport => sport.id_sport === sportId);
         setSelectedSport(selectedSport);

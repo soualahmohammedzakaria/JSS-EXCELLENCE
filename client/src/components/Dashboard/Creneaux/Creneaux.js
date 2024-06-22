@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 
 function Creneaux( { creneauxData }) {
 
-  // Function to format the date in "DD MMM YYYY" format
+  // Fonction pour formater la date en format "JJ MMM AAAA"
   const formatDate = (dateString) => {
     const options = { day: '2-digit', month: 'short', year: 'numeric' };
     return new Date(dateString).toLocaleDateString('fr-FR', options);
   };
 
-  // Function to format the time in "HH:MM" format
+  // Fonction pour formater l'heure en format "HH:MM"
   const formatTime = (timeString) => {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Date(timeString).toLocaleTimeString('fr-FR', options);

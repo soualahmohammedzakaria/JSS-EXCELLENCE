@@ -6,26 +6,30 @@ import axios from "axios";
 import { moisActuel, formatMois } from "../../utils/datesUtils";
 
 const AjouterPaiement = () => {
-    const location = useLocation();
-    const actMois = moisActuel();
-    const [formData, setFormData] = useState({
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [enCours, setEnCours] = useState(""); // État pour l'affichage des messages en cours
+    const [disabledBtn, setDisabledBtn] = useState(false); // État pour désactiver le bouton de soumission
+    const actMois = moisActuel(); // Mois actuel
+    const [formData, setFormData] = useState({ // Les données du formulaire
         id_membre: location.state.id,
         montant_paye: 0,
         montant_restant: 0,
         mois: actMois[1],
         envoi: location.state.email !== null && location.state.email !== "" ? 1 : 0,
     });
-    const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const navigate = useNavigate();  // Hook pour la navigation
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         const oldMois = formData.mois;
+        setDisabledBtn(true);
+        setEnCours("Envoi de la facture en cours...");
         try {
             formData.mois = `${actMois[0]}-${formatMois(oldMois)}`;
             const response = await axios.post("http://localhost:4000/transaction/addTransaction", formData);
@@ -39,6 +43,8 @@ const AjouterPaiement = () => {
             formData.mois = oldMois;
             setErrorMessage("Désolé, une erreur s'est produite!");
         }
+        setDisabledBtn(false);
+        setEnCours("")
     };
 
     return (
@@ -87,7 +93,8 @@ const AjouterPaiement = () => {
                                     <input min={0} type="number" name="montant_restant" value={formData.montant_restant} onChange={handleChange} required />
                                 </div>
                                 {errorMessage && <p className="danger">{errorMessage}</p>}
-                                <button type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
+                                {enCours && <p className="success">{enCours}</p>}
+                                <button disabled={disabledBtn} type="submit" className="btn add-btn pointed"><span className="link">Confirmer</span></button>
                             </form>
                         </div>
                     </div>

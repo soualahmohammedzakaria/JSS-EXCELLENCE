@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from '../../../hooks/authContext/authContext';
 
 const Sidebar = ({ currPage }) => {
-    const { authData } = useAuthContext();
+    const { authData } = useAuthContext(); // Récupérer les données de l'utilisateur connecté
 
+    // Les pages de l'application
     const pages = [
         {page: "Accueil", icon: "dashboard", to: "/dashboard"},
         {page: "Membres", icon: "person", to: "/membres"},
@@ -20,14 +21,16 @@ const Sidebar = ({ currPage }) => {
         {page: "Paramètres", icon: "settings", to: "/params"}
     ];
 
+    // Filtrer les pages en fonction du rôle de l'utilisateur
     const filteredPages = pages.filter(page => {
         if (authData.role === 'Administrateur') {
             return true;
         } else {
-            return !['Personnel', 'Dépenses', 'Coachs', 'Sports', 'Salles'].includes(page.page);
+            return !['Personnel', 'Dépenses'].includes(page.page);
         }
     });
 
+    // Générer les liens des pages
     const Lienspages = filteredPages.map((element) => (
         <Link key={element.to} to={element.to} className={`link ${element.to === currPage ? "active" : ""}`}>
             <span className="material-icons-sharp">{element.icon}</span>
@@ -43,7 +46,7 @@ const Sidebar = ({ currPage }) => {
             <div className="logout">
                 <Link to="/" className="link">
                     <span className="material-icons-sharp">logout</span>
-                    <h4>Deconnexion</h4>
+                    <h4>Déconnexion</h4>
                 </Link>
             </div>
         </aside>

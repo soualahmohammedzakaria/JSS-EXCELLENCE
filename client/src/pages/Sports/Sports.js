@@ -5,9 +5,13 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
+import { useAuthContext } from '../../hooks/authContext/authContext';
 
 const Sports = () => {
-    const { paramsData } = useParamsContext();
+    const { authData } = useAuthContext(); // Obtenir les données de l'utilisateur connecté
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+
+    //Variables d'état
     const [searchQuery, setSearchQuery] = useState("");
     const [sports, setSports] = useState([]);
     const [filteredSports, setFilteredSports] = useState([]);
@@ -18,13 +22,13 @@ const Sports = () => {
     const [selectedSport, setSelectedSport] = useState(null);
     const [selectedNom, setSelectedNom] = useState("Pas de filtre");
    
-    const [currInd, setCurrInd] = useState(1);
+    const [currInd, setCurrInd] = useState(1); // Index de la page actuelle
 
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les sports et groupes lors du chargement du composant
         fetchSportsGroupes();
     }, []);
 
-    const fetchSportsGroupes = () => {
+    const fetchSportsGroupes = () => { // Fonction pour obtenir les sports et groupes
         axios.get("http://localhost:4000/sport/getAllSportsGroupes")
             .then(response => {
                 if (response.data.success) {
@@ -37,21 +41,21 @@ const Sports = () => {
             });
     };
 
-    const nbItems = paramsData.grandes_tables || 7;
-    const nbPages = Math.ceil(filteredSports.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(filteredSports.length / nbItems); // Nombre de pages
 
     // Ensure indices are within valid bounds
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, filteredSports.length); // End index
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, filteredSports.length); // Index de fin
 
-    const sportsParPage = filteredSports.slice(debInd, finInd);
+    const sportsParPage = filteredSports.slice(debInd, finInd); // Sports par page
 
-    const handleDeleteSport = (id) => {
+    const handleDeleteSport = (id) => { // Fonction pour gérer la suppression d'un sport
         setSportIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteSport = async () => {
+    const confirmDeleteSport = async () => { // Fonction pour confirmer la suppression d'un sport
         try {
             await axios.delete(`http://localhost:4000/sport/deleteSport/${sportIdToDelete}`);
             setShowDeleteModal(false);
@@ -62,30 +66,34 @@ const Sports = () => {
         }
     };
 
-    const handlePageChange = (newInd) => {
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }
     };
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        filterSports();
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
     };
+    
+    useEffect(() => { // Filtrer les sports lors de la recherche
+        setCurrInd(1);
+        filterSports();
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher le modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedNom("Pas de filtre");
     
     };
 
-    const filterSports = () => {
+    const filterSports = () => { // Fonction pour filtrer les sports
         let filtered = sports;
-    
-        // Filter by search query
+
         if (searchQuery.trim() !== "") {
             filtered = filtered.filter((sport) => {
                 const name = sport.nom.toLowerCase();
@@ -93,7 +101,6 @@ const Sports = () => {
             });
         }
     
-        // Filter by selected criteria
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
@@ -104,12 +111,13 @@ const Sports = () => {
                 return 0;
             });
         }
-        setFilteredSports(filtered);
+        setFilteredSports(filtered); // Mettre à jour les sports filtrés
     };    
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour appliquer les filtres
         setShowFilterModal(false);
         filterSports();
+        setCurrInd(1);
     };
 
     return (
@@ -136,7 +144,7 @@ const Sports = () => {
                                 <tr>
                                     <th>Nom</th>
                                     <th>Liste des groupes</th>
-                                    <th>Actions</th>
+                                    {authData.role === 'Administrateur' && <th>Actions</th>}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -145,8 +153,12 @@ const Sports = () => {
                                             <th>{sport.nom}</th>                                      
                                             <th><button className="link" onClick={() => { setShowGroupesModal(true); setSelectedSport(sport) }}><span className="material-icons-outlined pointed">group</span></button></th>     
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id_sport: sport.id_sport, nom: sport.nom}}><span className="material-icons-outlined pointed">edit</span></Link>
-                                                <button className="link" onClick={() => handleDeleteSport(sport.id_sport)}><span className="material-icons-outlined pointed">delete</span></button>
+                                            {authData.role === 'Administrateur' &&
+                                                <>
+                                                    <Link className="link" to="./modifier" state={{id_sport: sport.id_sport, nom: sport.nom}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                    <button className="link" onClick={() => handleDeleteSport(sport.id_sport)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                </>
+                                            }
                                             </th>
                                         </tr>
                                     ))}

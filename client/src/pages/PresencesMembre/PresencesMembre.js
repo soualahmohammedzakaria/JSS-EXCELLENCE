@@ -7,18 +7,18 @@ import { formatDateHeure } from "../../utils/datesUtils";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Presences = () => {
-    const { paramsData } = useParamsContext();
-    const location = useLocation();
-    const [presences, setPresences] = useState([]);
-    const [supprimerModal, setSupprimerModal] = useState(false);
-    const [idASupprime, setIdASupprime] = useState(null);
-    const [currInd, setCurrInd] = useState(1);
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [presences, setPresences] = useState([]); // État pour les présences
+    const [supprimerModal, setSupprimerModal] = useState(false); // État pour la modal de suppression
+    const [idASupprime, setIdASupprime] = useState(null); // État pour l'id de la présence à supprimer
+    const [currInd, setCurrInd] = useState(1); // Index de la page actuelle
 
-    useEffect(() => {
-        fetchPresences();
+    useEffect(() => { // Pour obtenir les présences lors du chargement du composant
+        fetchPresences(); 
     }, []);
 
-    const fetchPresences = () => {
+    const fetchPresences = () => { // Fonction pour obtenir les présences
         axios
             .get(`http://localhost:4000/attendance/getPresencesMember/${location.state.id}`)
             .then((response) => {
@@ -33,20 +33,20 @@ const Presences = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(presences.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(presences.length / nbItems); // Nombre de pages
 
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, presences.length); // End index
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, presences.length); // Index de fin
 
-    const presencesParPage = presences.slice(debInd, finInd);
+    const presencesParPage = presences.slice(debInd, finInd); // Présences par page
 
-    const handleSupprimerPresence = (id) => {
+    const handleSupprimerPresence = (id) => { // Fonction pour gérer la suppression d'une présence
         setIdASupprime(id);
         setSupprimerModal(true);
     };
 
-    const confirmerSupprimerPresence = async () => {
+    const confirmerSupprimerPresence = async () => { // Fonction pour confirmer la suppression d'une présence
         try {
             await axios.delete(`http://localhost:4000/attendance/deletePresenceMember/${idASupprime}`);
             setSupprimerModal(false);
@@ -57,7 +57,7 @@ const Presences = () => {
         }
     };
 
-    const handlePageChange = (newInd) => {
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }

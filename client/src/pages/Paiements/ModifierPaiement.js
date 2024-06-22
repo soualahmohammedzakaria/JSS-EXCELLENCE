@@ -6,23 +6,23 @@ import axios from "axios";
 import { extraireAnnee, extraireMois, formatMois } from "../../utils/datesUtils";
 
 const ModifierPaiement = () => {
-    const location = useLocation();
-    const [formData, setFormData] = useState({
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [formData, setFormData] = useState({ // Les données du formulaire
         id_membre: location.state.id_membre,
         montant_paye: location.state.montant_paye,
         montant_restant: location.state.montant_restant,
         date_paiement: location.state.date_abonnement,
         mois: parseInt(extraireMois(location.state.mois))
     });
-    const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const navigate = useNavigate(); // Hook pour la navigation
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         const oldMois = formData.mois;
         try {

@@ -6,12 +6,10 @@ import { useNavigate , useLocation } from 'react-router-dom';
 import axios from "axios";
 
 const ModifierSport = () => {
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
     // États pour les données du formulaire
-    const location = useLocation();
     const [formData, setFormData] = useState({
         nom: location.state.nom,
-        
-        
     });
     // État pour les messages d'erreur
     const [errorMessage, setErrorMessage] = useState("");

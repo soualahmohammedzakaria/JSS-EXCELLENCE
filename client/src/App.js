@@ -3,45 +3,54 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from './hooks/authContext/authContext';
 import { ParamsProvider } from './hooks/paramsContext/ParamsContext';
 
+// Imports de la page Dashboard
 import Dashboard from './pages/Dashboard/Dashboard';
 
+// Imports des pages d'authentification
 import Authentification from './pages/Authentification/Authentification';
 
+// Imports des pages de l'application
 import Assiduite from './pages/Assiduite/Assiduite';
-import DetailsAssiduite from './pages/Assiduite/DetailsAssiduite';
 import ResultatSignalement from './pages/Assiduite/ResultatSignalement';
 
+// Imports des pages de l'application
 import Depenses from './pages/Depenses/Depenses';
 import AjouterDepense from './pages/Depenses/AjouterDepense';
 import ModifierDepense from './pages/Depenses/ModifierDepense';
 
+// Imports des pages de l'application
 import Paiements from './pages/Paiements/Paiements';
 import AjouterPaiement from './pages/Paiements/AjouterPaiement';
 import ModifierPaiement from './pages/Paiements/ModifierPaiement';
 
+// Imports des pages de l'application
 import Accomplissements from './pages/Accomplissements/Accomplissements';
 import AjouterAccomplissement from './pages/Accomplissements/AjouterAccomplissement';
 import ModifierAccomplissement from './pages/Accomplissements/ModifierAccomplissement';
 
+// Imports des pages de l'application
 import Coachs from './pages/Coachs/Coachs';
 import AjouterCoach from './pages/Coachs/AjouterCoach';
 import ModifierCoach from './pages/Coachs/ModifierCoach';
 
+// Imports des pages de l'application
 import Membres from './pages/Membres/Membres';
 import AjouterMembre from './pages/Membres/AjouterMembre';
 import ModifierMembre from './pages/Membres/ModifierMembre';
 import DetailsMembre from './pages/DetailsMembre/DetailsMembre';
 import MembresSupprimes from './pages/Membres/MembresSupprimes';
 
-
+// Imports des pages de l'application
 import PresencesMembre from './pages/PresencesMembre/PresencesMembre';
 import AjouterPresence from './pages/PresencesMembre/AjouterPresence';
 import ModifierPresence from './pages/PresencesMembre/ModifierPresence';
 
+// Imports des pages de l'application
 import AbsencesMembre from './pages/AbsencesMembre/AbsencesMembre';
 import AjouterAbsence from './pages/AbsencesMembre/AjouterAbsence';
 import ModifierAbsence from './pages/AbsencesMembre/ModifierAbsence';
 
+// Imports des pages de l'application
 import Salles from './pages/Salles/Salles';
 import AjouterSalle from './pages/Salles/AjouterSalle';
 import ModifierSalle from './pages/Salles/ModifierSalle';
@@ -49,25 +58,30 @@ import Equipements from './pages/Salles/Equipements';
 import AjouterEquipement from './pages/Salles/AjouterEquipement';
 import ModifierEquipement from './pages/Salles/ModifierEquipement';
 
+// Imports des pages de l'application
 import Sports from './pages/Sports/Sports';
 import AjouterSport from './pages/Sports/AjouterSport';
 import ModifierSport from './pages/Sports/ModifierSport';
 
+// Imports des pages de l'application
 import Groupes from './pages/Groupes/Groupes';
 import AjouterGroupe from './pages/Groupes/AjouterGroupe';
 import ModifierGroupe from './pages/Groupes/ModifierGroupe';
 
+// Imports des pages de l'application
 import Planning from './pages/Planning/Planning';
 import AjouterCreneaux from './pages/Planning/AjouterCreneau';
 import ModifierCreneau from './pages/Planning/ModifierCreneau';
 
+// Imports des pages de l'application
 import Personnel from './pages/Personnel/Personnel';
 import AjouterUser from './pages/Personnel/AjouterAdmin';
 import ModifierUser from './pages/Personnel/ModifierAdmin';
 
+// Imports des pages de l'application
 import Parametres from './pages/Parametres/Parametres';
 
-function App() {
+function App() { // Composant principal de l'application
   return (
     <AuthProvider>
       <ParamsProvider>
@@ -79,7 +93,6 @@ function App() {
               <Route path='/dashboard' element={<Dashboard/>}></Route>
 
               <Route path='/assiduite' element={<Assiduite/>}></Route>
-              <Route path='/assiduite/details' element={<DetailsAssiduite/>}></Route>
               <Route path='/assiduite/resultat' element={<ResultatSignalement/>}></Route>
 
               <Route path='/depenses' element={<Depenses/>}></Route>

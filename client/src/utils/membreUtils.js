@@ -1,4 +1,4 @@
-export const extraireIdMembre = (ScanCodeQR) => {
+export const extraireIdMembre = (ScanCodeQR) => { // Fonction pour extraire l'id du membre
     const parts = ScanCodeQR.split("_");
     if (parts.length !== 3) {
         return false;

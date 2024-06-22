@@ -4,8 +4,10 @@ import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { isImage } from "../../utils/imagesUtils";
 
 const AjouterCoach = () => {
+    const [file, setFile] = useState(null); // État pour la photo du coach
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
         nom: '',
@@ -13,12 +15,11 @@ const AjouterCoach = () => {
         dateNaissance: '',
         email: '',
         sexe: 'Homme',
-        telephone: '',
-        
+        telephone: '',      
     });
     // État pour les messages d'erreur
     const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Hook pour la navigation
 
     // Gérer les changements dans le formulaire
     const handleChange = (e) => {
@@ -26,18 +27,42 @@ const AjouterCoach = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    // Gérer les changements dans la photo
+    const handleFile = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    // Ajouter la photo du coach
+    const ajouterPhoto = async (id) => {
+        const photoFormData = new FormData();
+        photoFormData.append('image', file); // Ajouter la photo
+        if(file){
+            try {
+                await axios.post(`http://localhost:4000/coach/addPhoto/${id}`, photoFormData); // Ajouter la photo
+            } catch (error) {
+                console.log(error); // Gérer les erreurs
+                setErrorMessage("Désolé, une erreur s'est produite lors de l'ajout de la photo!"); // Afficher un message d'erreur
+            }
+        }
+    }
+
     // Soumettre le formulaire
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Empêcher le rechargement de la page
+        if(file && !isImage(file)){
+            setErrorMessage("Veuillez insérer une photo. Les extensions valides sont: .jpeg, .jpg, .png");
+            return;
+        }
         try {
-            const response = await axios.post("http://localhost:4000/coach/addCoach", formData);
+            const response = await axios.post("http://localhost:4000/coach/addCoach", formData); // Ajouter le coach
             if(response.data.success){
-                navigate('/coachs');
+                ajouterPhoto(response.data.IdCoach); // Ajouter la photo
+                navigate('/coachs'); // Naviguer vers la liste des coachs
             }else{
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         }catch (error) {
-            setErrorMessage("Désolé, une erreur s'est produite!");
+            setErrorMessage("Désolé, une erreur s'est produite!"); // Afficher un message d'erreur
         }
     };
 
@@ -57,8 +82,7 @@ const AjouterCoach = () => {
                     </div>
                     <div className="add-form-group">
                         <div className="top-container">
-                            <form className="add-form" onSubmit={handleSubmit}>
-                                
+                            <form className="add-form" onSubmit={handleSubmit} encType="multipart/form-data">                          
                                 <div className="add-input">
                                     <span className="material-icons-outlined">person</span> 
                                     <input type="text" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required/>
@@ -71,6 +95,10 @@ const AjouterCoach = () => {
                                     <span className="material-icons-outlined">calendar_today</span>
                                     <label>Naissance</label>
                                     <input type="date" name="dateNaissance" placeholder="Date de naissance" value={formData.dateNaissance} onChange={handleChange} required/>
+                                </div>
+                                <div className="add-input">
+                                    <span className="material-icons-outlined">photo</span> 
+                                    <input type="file" onChange={handleFile}/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">email</span>

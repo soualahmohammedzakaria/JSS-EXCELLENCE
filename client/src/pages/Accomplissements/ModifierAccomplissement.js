@@ -5,10 +5,10 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 
 const ModifierAccomplissement = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+    const location = useLocation(); // Hook pour obtenir les données de l'URL
+    const navigate = useNavigate(); // Hook pour la navigation
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({ // Les données du formulaire
         nom_evenement: location.state.nom_evenement,
         discipline: location.state.discipline,
         date_evenement: location.state.date_evenement,
@@ -16,44 +16,45 @@ const ModifierAccomplissement = () => {
         id_membre: location.state.id
     });
 
-    const [errorMessage, setErrorMessage] = useState("");
-    const [sports, setSports] = useState([]);
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const [sports, setSports] = useState([]); // Les sports
 
     useEffect(() => {
-        fetchSports();
+        fetchSports(); // Récupérer les sports
     }, []);
 
-    const fetchSports = async () => {
+    const fetchSports = async () => { // Fonction pour récupérer les sports
         try {
-            const response = await axios.get("http://localhost:4000/sport/getAllSports");
+            const response = await axios.get("http://localhost:4000/sport/getAllSports"); // Récupérer les sports
             if (response.data.success) {
-                setSports(response.data.sports);
+                setSports(response.data.sports); // Mettre à jour les sports
             } else {
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         } catch (error) {
-            console.error('Erreur de récupération des sports:', error);
-            setErrorMessage("Désolé, une erreur s'est produite lors de la récupération des sports.");
+            console.error('Erreur de récupération des sports:', error); // Gérer les erreurs
+            setErrorMessage("Désolé, une erreur s'est produite lors de la récupération des sports."); // Afficher un message d'erreur
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         try {
             const response = await axios.put(`http://localhost:4000/achievement/updateAchievement/${location.state.id_accomplissement}`, formData);
             if(response.data.success){
+                // Naviguer vers la liste des accomplissements
                 navigate('/membres/details/accomplissements', { state: { id: location.state.id, path: location.state.path }});
             } else {
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         } catch (error) {
-            console.error('Erreur lors de la soumission du formulaire:', error);
-            setErrorMessage("Désolé, une erreur s'est produite!");
+            console.error('Erreur lors de la soumission du formulaire:', error); // Gérer les erreurs
+            setErrorMessage("Désolé, une erreur s'est produite!"); // Afficher un message d'erreur
         }
     };
 

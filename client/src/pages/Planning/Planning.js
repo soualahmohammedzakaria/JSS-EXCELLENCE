@@ -11,28 +11,28 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from 'axios';
 import { useAuthContext } from '../../hooks/authContext/authContext';
 
-const Planning = () => {
-    const { authData } = useAuthContext();
-    const [timeslots, setTimeslots] = useState([]);
-    const [selectedEvent, setSelectedEvent] = useState(null);
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [salles, setSalles] = useState([]);
-    const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState({
+const Planning = () => { // Page pour afficher le planning
+    const { authData } = useAuthContext(); // Obtenir les données de l'utilisateur authentifié
+    const [timeslots, setTimeslots] = useState([]); // État pour les créneaux horaires
+    const [selectedEvent, setSelectedEvent] = useState(null); // État pour l'événement sélectionné
+    const [sportsGroupes, setSportsGroupes] = useState([]); // État pour les groupes de sports
+    const [salles, setSalles] = useState([]); // État pour les salles
+    const [filteredTimeSlots, setFilteredTimeSlots] = useState([]); // État pour les créneaux horaires filtrés
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // État pour l'affichage du modal de suppression
+    const [showFilterModal, setShowFilterModal] = useState(false); // État pour l'affichage du modal de filtre
+    const [selectedFilters, setSelectedFilters] = useState({ // État pour les filtres sélectionnés
         salle: "Tous",
         sport: "Tous",
         groupe: "Tous"
     });
 
-    useEffect(() => {
+    useEffect(() => { // Fonction pour obtenir les créneaux horaires, les groupes de sports et les salles
         fetchTimeslots();
         fetchSportsGroupes();
         fetchSalles();
     }, []);
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedFilters({
             salle: "Tous",
             sport: "Tous",
@@ -40,8 +40,8 @@ const Planning = () => {
         });
     };
 
-    const fetchSalles = async () => {
-        axios.get('http://localhost:4000/salle/getAllSalles')
+    const fetchSalles = async () => { // Fonction pour obtenir les salles
+        axios.get('http://localhost:4000/salle/getAllSalles') 
             .then(response => {
                 if(response.data.success){
                     setSalles(response.data.salles);
@@ -52,7 +52,7 @@ const Planning = () => {
             });
     };
 
-    const fetchSportsGroupes = () => {
+    const fetchSportsGroupes = () => { // Fonction pour obtenir les groupes de sports
         axios.get('http://localhost:4000/sport/getAllSportsGroupes')
             .then(response => {
                 if(response.data.success){
@@ -64,12 +64,12 @@ const Planning = () => {
             });
     };
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour filtrer les créneaux horaires
         setShowFilterModal(false);
         filterTimeSlots();
     };   
 
-    const filterTimeSlots = () => {
+    const filterTimeSlots = () => { // Fonction pour filtrer les créneaux horaires
         let filtered = [...timeslots];
     
         if (selectedFilters.salle !== "Tous") {
@@ -84,7 +84,7 @@ const Planning = () => {
                         const group = sport.groupes.find(groupe => groupe.nom_groupe === selectedFilters.groupe);
                         return group && (creneau.id_groupe === group.id_groupe);
                     }
-                    return sport.groupes.some(group => creneau.groupes.some(m => m.id_groupe === group.id_groupe));
+                    return sport.groupes.some(groupe => groupe.id_groupe === creneau.id_groupe);
                 });
             }
         }
@@ -92,7 +92,7 @@ const Planning = () => {
         setFilteredTimeSlots(filtered);
     };        
     
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const selectedSport = e.target.value;
         setSelectedFilters(prevFilters => ({
             ...prevFilters,
@@ -101,7 +101,7 @@ const Planning = () => {
         }));
     };
 
-    const fetchTimeslots = async () => {
+    const fetchTimeslots = async () => { // Fonction pour obtenir les créneaux horaires
         try {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
             if(response.data.success) {
@@ -113,7 +113,7 @@ const Planning = () => {
         }
     };
 
-    const handleEventClick = (eventClickInfo) => {
+    const handleEventClick = (eventClickInfo) => { // Fonction pour gérer le clic sur un événement
         const clickedEvent = timeslots.find(event => 
             new Date(event.start).getTime() === new Date(eventClickInfo.event.start).getTime() &&
             new Date(event.end).getTime() === new Date(eventClickInfo.event.end).getTime() &&
@@ -122,7 +122,7 @@ const Planning = () => {
         setSelectedEvent(clickedEvent);
     };
 
-    const closeModal = () => {
+    const closeModal = () => { // Fonction pour fermer le modal
         setSelectedEvent(null);
     };
 
@@ -249,13 +249,6 @@ const Planning = () => {
                                     <label>Groupe</label>
                                     <select name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
                                         <option value="Tous">Tous</option>
-                                        {selectedFilters.sport === "Tous" &&
-                                            sportsGroupes.map(sport => (
-                                                sport.groupes.map(groupe => (
-                                                    <option key={groupe.id_groupe} value={groupe.nom_groupe}>{groupe.nom_groupe}</option>
-                                                ))
-                                            ))
-                                        }
                                         {selectedFilters.sport !== "Tous" &&
                                             sportsGroupes.find(sport => sport.nom === selectedFilters.sport).groupes.map(groupe => (
                                                 <option key={groupe.id_groupe} value={groupe.nom_groupe}>{groupe.nom_groupe}</option>

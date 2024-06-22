@@ -7,16 +7,18 @@ import axios from 'axios';
 import Searchbar from "../../components/general/Searchbar/Searchbar";
 import PhotoStandard from '../../assets/images/photoprofilestandard.png';
 import { formatDate, calculerAge } from "../../utils/datesUtils";
+import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const MembresSupprimes = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [membres, setMembres] = useState([]);
-    const [filteredMembres, setFilteredMembres] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [membreIdToDelete, setMembreIdToDelete] = useState(null);
-    const [selectedFilters, setSelectedFilters] = useState({
+    const { paramsData } = useParamsContext(); // Pour obtenir les paramètres de l'application
+    const [searchQuery, setSearchQuery] = useState(""); // État pour la recherche
+    const [membres, setMembres] = useState([]); // État pour les membres
+    const [filteredMembres, setFilteredMembres] = useState([]); // État pour les membres filtrés
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // État pour l'affichage du modal de suppression
+    const [showDeleteAllModal, setShowDeleteAllModal] = useState(false); // État pour l'affichage du modal de suppression de tous les membres
+    const [showFilterModal, setShowFilterModal] = useState(false); // État pour l'affichage du modal de filtre
+    const [membreIdToDelete, setMembreIdToDelete] = useState(null); // État pour l'id du membre à supprimer
+    const [selectedFilters, setSelectedFilters] = useState({ // État pour les filtres sélectionnés
         nom: "Pas de filtre",
         prenom: "Pas de filtre",
         email: "Pas de filtre",
@@ -29,12 +31,12 @@ const MembresSupprimes = () => {
     });
     const [sportsGroupes, setSportsGroupes] = useState([]);
 
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les membres et les groupes de sports lors du chargement du composant
         fetchMembres(); 
         fetchSportsGroupes();
     }, []);
 
-    const fetchMembres = () => {
+    const fetchMembres = () => { // Fonction pour obtenir les membres
         axios.get('http://localhost:4000/member/getAllDeletedMembers')
             .then(response => {
                 if(response.data.success){
@@ -47,7 +49,7 @@ const MembresSupprimes = () => {
             });
     };
 
-    const fetchSportsGroupes = () => {
+    const fetchSportsGroupes = () => { // Fonction pour obtenir les groupes de sports
         axios.get('http://localhost:4000/sport/getAllSportsGroupes')
             .then(response => {
                 if(response.data.success){
@@ -59,22 +61,22 @@ const MembresSupprimes = () => {
             });
     };
 
-    const nbItems = 5;
-    const [currInd, setCurrInd] = useState(1);
+    const nbItems = paramsData.grandes_tables || 5; // Nombre d'éléments par page
+    const [currInd, setCurrInd] = useState(1); // Index de la page actuelle
 
-    const nbPages = Math.ceil(filteredMembres.length / nbItems);
+    const nbPages = Math.ceil(filteredMembres.length / nbItems); // Nombre de pages
 
-    const debInd = (currInd - 1) * nbItems;
-    const finInd = debInd + nbItems;
+    const debInd = (currInd - 1) * nbItems; // Index de début
+    const finInd = debInd + nbItems; // Index de fin
 
-    const membresParPage = filteredMembres.slice(debInd, finInd);
+    const membresParPage = filteredMembres.slice(debInd, finInd); // Membres par page
 
-    const handleDeleteMembre = async (id) => {
+    const handleDeleteMembre = async (id) => { // Fonction pour gérer la suppression d'un membre
         setMembreIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const handleRestoreMembre = async (id) => {
+    const handleRestoreMembre = async (id) => { // Fonction pour gérer la restauration d'un membre
         try {
             await axios.patch(`http://localhost:4000/member/restoreMember/${id}`);
             fetchMembres();
@@ -84,7 +86,7 @@ const MembresSupprimes = () => {
         }
     };
 
-    const confirmDeleteMembre = async () => {
+    const confirmDeleteMembre = async () => { // Fonction pour confirmer la suppression d'un membre
         try {
             await axios.delete(`http://localhost:4000/member/DefinitivelyDeleteMember/${membreIdToDelete}`);
             setShowDeleteModal(false);
@@ -95,7 +97,7 @@ const MembresSupprimes = () => {
         }
     };
 
-    const handlePageChange = (ind) => {
+    const handlePageChange = (ind) => { // Fonction pour gérer le changement de page
         if (ind === 1) {
             if (currInd > 1) setCurrInd(ind);
         } else if (ind === nbPages) {
@@ -105,17 +107,21 @@ const MembresSupprimes = () => {
         }
     }
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
+    };
+    
+    useEffect(() => { // Pour filtrer les membres lors de la recherche
         setCurrInd(1);
         filterMembres();
-    };
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher le modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedFilters({
             nom: "Pas de filtre",
             prenom: "Pas de filtre",
@@ -129,24 +135,24 @@ const MembresSupprimes = () => {
         });
     };
 
-    const filterMembres = () => {
+    const filterMembres = () => { // Fonction pour filtrer les membres
         let filtered = [...membres];
     
-        filtered = filtered.filter(membre => {
+        filtered = filtered.filter(membre => { // Filtrer par nom et email
             const fullName = `${membre.nom} ${membre.prenom}`.toLowerCase();
             const email = membre.email.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
         });
     
-        if (selectedFilters.sexe !== "Tous") {
+        if (selectedFilters.sexe !== "Tous") { // Filtrer par sexe
             filtered = filtered.filter(membre => membre.sexe === selectedFilters.sexe);
         }
     
-        if (selectedFilters.groupeSanguin !== "Tous") {
+        if (selectedFilters.groupeSanguin !== "Tous") { // Filtrer par groupe sanguin
             filtered = filtered.filter(membre => membre.groupe_sanguin === selectedFilters.groupeSanguin);
         }
     
-        if (selectedFilters.etat !== "Tous") {
+        if (selectedFilters.etat !== "Tous") { // Filtrer par état
             if (selectedFilters.etat === "Payé") {
                 filtered = filtered.filter(membre => membre.etat_abonnement === "Payé");
             } else if (selectedFilters.etat === "Non payé") {
@@ -154,7 +160,7 @@ const MembresSupprimes = () => {
             }
         }
     
-        if (selectedFilters.categorie !== "Tous") {
+        if (selectedFilters.categorie !== "Tous") { // Filtrer par catégorie d'âge
             filtered = filtered.filter(membre => {
                 const age = calculerAge(membre.date_naissance);
                 if (selectedFilters.categorie === "Enfants") {
@@ -168,7 +174,7 @@ const MembresSupprimes = () => {
             });
         }
     
-        if (selectedFilters.sport !== "Tous") {
+        if (selectedFilters.sport !== "Tous") { // Filtrer par sport et groupe
             const sport = sportsGroupes.find(sport => sport.nom === selectedFilters.sport);
             if (sport) {
                 filtered = filtered.filter(membre => {
@@ -181,7 +187,7 @@ const MembresSupprimes = () => {
             }
         }
     
-        if (selectedFilters.nom !== "Pas de filtre") {
+        if (selectedFilters.nom !== "Pas de filtre") { // Filtrer par nom, prénom et email
             filtered.sort((a, b) => {
                 if (selectedFilters.nom === "Ascendant") {
                     return a.nom.localeCompare(b.nom);
@@ -190,7 +196,7 @@ const MembresSupprimes = () => {
                 }
                 return 0;
             });
-        } else if (selectedFilters.email !== "Pas de filtre") {
+        } else if (selectedFilters.email !== "Pas de filtre") { // Filtrer par email
             filtered.sort((a, b) => {
                 if (selectedFilters.email === "Ascendant") {
                     return a.email.localeCompare(b.email);
@@ -199,7 +205,7 @@ const MembresSupprimes = () => {
                 }
                 return 0;
             });
-        } else if (selectedFilters.prenom !== "Pas de filtre") {
+        } else if (selectedFilters.prenom !== "Pas de filtre") { // Filtrer par prénom
             filtered.sort((a, b) => {
                 if (selectedFilters.prenom === "Ascendant") {
                     return a.prenom.localeCompare(b.prenom);
@@ -210,15 +216,16 @@ const MembresSupprimes = () => {
             });
         }
     
-        setFilteredMembres(filtered);
+        setFilteredMembres(filtered); // Mettre à jour les membres filtrés
     };      
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour gérer le filtre
         setShowFilterModal(false);
         filterMembres();
+        setCurrInd(1);
     };   
     
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const selectedSport = e.target.value;
         setSelectedFilters(prevFilters => ({
             ...prevFilters,
@@ -227,7 +234,7 @@ const MembresSupprimes = () => {
         }));
     };
 
-    const confirmDeleteAllMembres = async () => {
+    const confirmDeleteAllMembres = async () => { // Fonction pour confirmer la suppression de tous les membres
         try {
             await axios.delete('http://localhost:4000/member/DefinitivelyDeleteAllMembers');
             setShowDeleteAllModal(false);
@@ -278,10 +285,10 @@ const MembresSupprimes = () => {
                                 <tbody>
                                     {membresParPage.map((membre) => (
                                         <tr key={membre.id_membre}>
-                                            <th><img src={PhotoStandard} alt=""/></th>
+                                            <th><img src={membre.photo !== null ? `http://localhost:4000/images/membres/${membre.photo}.jpeg` : PhotoStandard} alt=""/></th>
                                             <th>{membre.nom} {membre.prenom}</th>
                                             <th>{membre.telephone}</th>
-                                            <th>{membre.email}</th>
+                                            <th>{membre.email !== null && membre.email !== "" ? membre.email : "Pas d'email"}</th>
                                             <th>{formatDate(membre.date_naissance)}</th>
                                             <th>{membre.sexe}</th>
                                             <th>{formatDate(membre.date_inscription)}</th>
@@ -423,7 +430,7 @@ const MembresSupprimes = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Groupe</label>
-                                        <select name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
+                                        <select disabled={selectedFilters.sport === "Tous" ? true : false} name="groupe" value={selectedFilters.groupe} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, groupe: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             {selectedFilters.sport === "Tous" &&
                                                 sportsGroupes.map(sport => (

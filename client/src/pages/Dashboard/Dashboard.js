@@ -13,36 +13,38 @@ import Creneaux from "../../components/Dashboard/Creneaux/Creneaux";
 import Chiffres from "../../components/Dashboard/Statistiques/Chiffres";
 
 const Dashboard = () => {
-    const { authData } = useAuthContext();
-    const [doughnut, setDoughnut] = useState([]);
-    const [doughnut2, setDoughnut2] = useState([]);
-    const [barschart, setBarschart] = useState([]);
-    const [creneaux, setCreneaux] = useState([]);
-    const [depensesMois, setDepensesMois] = useState({
+    const { authData } = useAuthContext(); // Utiliser le contexte d'authentification
+    const [doughnut, setDoughnut] = useState([]); // Pour stocker les données du graphique en anneau
+    const [doughnut2, setDoughnut2] = useState([]); // Pour stocker les données du graphique en anneau
+    const [barschart, setBarschart] = useState([]); // Pour stocker les données du graphique en barres
+    const [creneaux, setCreneaux] = useState([]); // Pour stocker les créneaux
+    const [actifs, setActifs] = useState([{}]); // Pour stocker les membres actifs
+    const [depensesMois, setDepensesMois] = useState({ // Pour stocker les dépenses du mois
         actuel: 0,
         precedent: 0
     });
-    const [revenuesMois, setRevenuesMois] = useState({
+    const [revenuesMois, setRevenuesMois] = useState({ // Pour stocker les revenus du mois
         actuel: 0,
         precedent: 0
     });
-    const [nouvMembresMois, setNouvMembresMois] = useState({
+    const [nouvMembresMois, setNouvMembresMois] = useState({ // Pour stocker les nouveaux membres du mois
         actuel: 0,
         precedent: 0
     });
-    const [abonnementsMois, setAbonnementsMois] = useState({
+    const [abonnementsMois, setAbonnementsMois] = useState({ // Pour stocker les abonnements du mois
         actuel: 0,
         precedent: 0
     });   
-    const [chiffres, setChiffres] = useState({
+    const [chiffres, setChiffres] = useState({ // Pour stocker les chiffres
         totalMembres: 0,
         totalCoachs: 0,
         totalEquipements: 0,
         totalAbonnements: 0
     });
 
-    const fetchStatistiques = async () => {
+    const fetchStatistiques = async () => { // Fonction pour récupérer les statistiques
         try {
+            // Récupérer les statistiques
             const statisticsResponse = await axios.get('http://localhost:4000/statistic/getDistribution');
             const distributionResponse = await axios.get('http://localhost:4000/statistic/getDistributionBySport');
             const creneauxResponse = await axios.get('http://localhost:4000/statistic/getNextCreneaux');
@@ -50,7 +52,10 @@ const Dashboard = () => {
             const incomeResponse = await axios.get('http://localhost:4000/statistic/getMonthIncome');
             const newMembersResponse = await axios.get('http://localhost:4000/statistic/getMonthNewMembers');
             const subscriptionsResponse = await axios.get('http://localhost:4000/statistic/getMonthSubscriptions');
+            const membershipStatusPerMonthResponse = await axios.get('http://localhost:4000/statistic/getMembershipStatusByMonth');
 
+            // Mettre à jour les données
+            setActifs(membershipStatusPerMonthResponse.data.membershipStatus.reverse());
             setDoughnut([
                 { sexe: "Homme", nb: statisticsResponse.data.Statistics.totalHommes },
                 { sexe: "Femme", nb: statisticsResponse.data.Statistics.totalFemmes }
@@ -91,7 +96,7 @@ const Dashboard = () => {
     };    
 
     useEffect(() => {
-        fetchStatistiques();
+        fetchStatistiques(); // Récupérer les statistiques
     }, []);
 
     return (
@@ -106,7 +111,7 @@ const Dashboard = () => {
                     <div className="content top-container">
                         <section>
                             <Chiffres chiffres={chiffres} />
-                            <LineChart/>                     
+                            <LineChart nbMembres={actifs}/>                     
                             {authData.role === 'Administrateur' && (  
                                 <Satistiques depensesMois={depensesMois} revenuesMois={revenuesMois} nouvMembresMois={nouvMembresMois} abonnementsMois={abonnementsMois}/>
                             )}

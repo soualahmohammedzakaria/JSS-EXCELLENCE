@@ -7,13 +7,13 @@ import { formatDateHeure } from "../../utils/datesUtils";
 import axios from "axios";
 
 const AjouterAbsence = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [creneaux, setCreneaux] = useState([]);
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [selectedGroupe, setSelectedGroupe] = useState(null);
-    const [selectedCreneau, setSelectedCreneau] = useState(null);
-    const [formData, setFormData] = useState({
+    const navigate = useNavigate(); // Hook pour la navigation
+    const location = useLocation(); // Hook pour obtenir les données de l'URL
+    const [creneaux, setCreneaux] = useState([]); // Les créneaux
+    const [sportsGroupes, setSportsGroupes] = useState([]); // Les groupes de sport
+    const [selectedGroupe, setSelectedGroupe] = useState(null); // Le groupe sélectionné
+    const [selectedCreneau, setSelectedCreneau] = useState(null); // Le créneau sélectionné
+    const [formData, setFormData] = useState({ // Les données du formulaire
         id_membre: location.state.id,
         date: '',
         justifiee: 0,
@@ -21,14 +21,17 @@ const AjouterAbsence = () => {
         id_groupe: null,
         id_creneau: null
     });
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
     
     useEffect(() => {
+        // Récupérer les groupes de sport et les créneaux
         fetchSportsGroupes();
+        // Récupérer les créneaux
         fetchCreneaux();
     }, []);
 
     const fetchCreneaux = async () => {
+        // Récupérer les créneaux
         try {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
             if (response.data.success) setCreneaux(response.data.creneaux);
@@ -37,7 +40,7 @@ const AjouterAbsence = () => {
         }
     };
 
-    const fetchSportsGroupes = async () => {
+    const fetchSportsGroupes = async () => { // Fonction pour récupérer les groupes de sport
         try {
             const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
             setSportsGroupes(response.data.sportsGroupes);
@@ -54,7 +57,7 @@ const AjouterAbsence = () => {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (name === "justifiee" && value === "0") {
@@ -66,7 +69,7 @@ const AjouterAbsence = () => {
     };
     
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         try {
             const response = await axios.post("http://localhost:4000/attendance/addAbsenceMember", formData);
@@ -80,37 +83,37 @@ const AjouterAbsence = () => {
         }
     };
 
-    const handleGroupChange = (e) => {
+    const handleGroupChange = (e) => { // Fonction pour gérer le changement de groupe
         const groupId = parseInt(e.target.value);
         const selectedGroupe = sportsGroupes
             .flatMap(sport => sport.groupes)
             .find(group => group.id_groupe === groupId);
 
         setSelectedGroupe(selectedGroupe);
-        setSelectedCreneau(null); // Reset selected creneau when group changes
+        setSelectedCreneau(null); // Reinitialiser le créneau sélectionné
     
         // Find the first creneau of the newly selected group
         const firstCreneau = creneaux.find(creneau => creneau.id_groupe === groupId);
     
         if (firstCreneau) {
-            // If the selected group has at least one creneau
+            // Si le groupe sélectionné a des créneaux
             setSelectedCreneau(firstCreneau.id_creneau);
             setFormData(prevFormData => ({
                 ...prevFormData,
                 id_groupe: groupId,
-                id_creneau: firstCreneau.id_creneau // Set id_creneau to the ID of the first creneau
+                id_creneau: firstCreneau.id_creneau // Set id_creneau a celui du premier creneau
             }));
         } else {
-            // If the selected group has no creneaux
+            // Si le groupe sélectionné n'a pas de créneaux
             setFormData(prevFormData => ({
                 ...prevFormData,
                 id_groupe: groupId,
-                id_creneau: null // Set id_creneau to null
+                id_creneau: null // Set id_creneau a null
             }));
         }
     };    
 
-    const handleCreneauChange = (e) => {
+    const handleCreneauChange = (e) => { // Fonction pour gérer le changement de créneau
         const creneauId = parseInt(e.target.value);
         setSelectedCreneau(creneauId);
         setFormData(prevFormData => ({
@@ -119,7 +122,7 @@ const AjouterAbsence = () => {
         }));
     };
 
-    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe);
+    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe); // Filtrer les créneaux par groupe
 
     return (
         <>

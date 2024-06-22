@@ -7,28 +7,30 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from 'axios';
 import {QRCodeCanvas} from 'qrcode.react';
 import html2canvas from 'html2canvas';
-import PhotoStandard from '../../assets/images/photoprofile.png';
+import PhotoStandard from '../../assets/images/photoprofilestandard.png';
 import JSSLogo from '../../assets/images/logo.png';
 import { formatDate, formatAnMois } from "../../utils/datesUtils";
 
 const DetailsMembre = () => {
     const location = useLocation();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [membre, setMembre] = useState([]);
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [selectedSport, setSelectedSport] = useState(null);
-    const [selectedGroup, setSelectedGroup] = useState(null);
-    const [groupToDelete, setGroupToDelete] = useState(null);
-    const [showCodeQRModal, setShowCodeQRModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showAssignerModal, setShowAssignerModal] = useState(false);
+    const [disabledBtn, setDisabledBtn] = useState(false); // État pour le bouton désactivé
+    const [errorMessage, setErrorMessage] = useState(""); // État pour le message d'erreur
+    const [qrErrorMessage, setQRErrorMessage] = useState(""); // État pour le message d'erreur du code QR
+    const [membre, setMembre] = useState([]); // État pour les informations du membre
+    const [sportsGroupes, setSportsGroupes] = useState([]); // État pour les sports et groupes
+    const [selectedSport, setSelectedSport] = useState(null); // État pour le sport sélectionné
+    const [selectedGroup, setSelectedGroup] = useState(null); // État pour le groupe sélectionné
+    const [groupToDelete, setGroupToDelete] = useState(null); // État pour le groupe à supprimer
+    const [showCodeQRModal, setShowCodeQRModal] = useState(false); // État pour le modal du code QR
+    const [showDeleteModal, setShowDeleteModal] = useState(false);  // État pour le modal de suppression
+    const [showAssignerModal, setShowAssignerModal] = useState(false); // État pour le modal d'assignation
 
-    useEffect(() => {
+    useEffect(() => { // Fonction pour obtenir les informations du membre et les sports et groupes
         fetchMembre();
         fetchSportsGroupes();
     }, []);
 
-    const fetchMembre = () => {
+    const fetchMembre = () => { // Fonction pour obtenir les informations du membre
         axios.get(`http://localhost:4000/member/getMember/${location.state.id}`)
             .then(response => {
                 if(response.data.success){
@@ -40,7 +42,7 @@ const DetailsMembre = () => {
             });
     };
 
-    const fetchSportsGroupes = () => {
+    const fetchSportsGroupes = () => { // Fonction pour obtenir les sports et groupes
         axios.get("http://localhost:4000/sport/getAllSportsGroupes")
             .then(response => {
                 if (response.data.success) {
@@ -56,20 +58,20 @@ const DetailsMembre = () => {
             });
     };
 
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const sportId = parseInt(e.target.value);
         const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
         setSelectedSport(selectedSport);
         setSelectedGroup(selectedSport.groupes[0]);
     };
 
-    const handleGroupChange = (e) => {
+    const handleGroupChange = (e) => { // Fonction pour gérer le changement de groupe
         const groupId = parseInt(e.target.value);
         const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId);
         setSelectedGroup(selectedGroup);
     };
 
-    const handleAssignerGroupe = async () => {
+    const handleAssignerGroupe = async () => { // Fonction pour assigner un membre à un groupe
         try {
             const response = await axios.post(`http://localhost:4000/member/assignMemberToGroup/${location.state.id}`, { groupId: selectedGroup.id_groupe });
             if(response.data.success){
@@ -83,7 +85,7 @@ const DetailsMembre = () => {
         }
     };
 
-    const handleTelechagerQR = async () => {
+    const handleTelechagerQR = async () => { // Fonction pour télécharger le code QR
         const canvas = await (
             await html2canvas(document.getElementById('canvas'))
         ).toDataURL();
@@ -97,12 +99,12 @@ const DetailsMembre = () => {
         }
     };
 
-    const handleDeleteMembreGroup = async (id) => {
+    const handleDeleteMembreGroup = async (id) => { // Fonction pour supprimer un membre du groupe
         setGroupToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteMembre = async () => {
+    const confirmDeleteMembre = async () => { // Fonction pour confirmer la suppression du membre du groupe
         try {
             await axios.delete(`http://localhost:4000/member/deleteGroupMember/${location.state.id}`, { data: { groupId: groupToDelete } });
             setShowDeleteModal(false);
@@ -112,20 +114,25 @@ const DetailsMembre = () => {
         }
     };
 
-    const handleSendQR = async () => {
-        if(membre.email === "" && membre.email === null){
+    const handleSendQR = async () => { // Fonction pour envoyer le code QR par email
+        setDisabledBtn(true);
+        if(membre.email === "" || membre.email === null || !(membre.email.length > 2 && membre.email.includes('@') && membre.email.includes('.')) ){
             setShowCodeQRModal(false);
+            setDisabledBtn(false);
             return;
         }else{
             try {
                 const response = await axios.post(`http://localhost:4000/member/sendQrCodeByEmail/${location.state.id}`);
                 if(response.data.success){
                     setShowCodeQRModal(false);
+                }else{
+                    setQRErrorMessage(response.data.message);
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du code QR:', error);
             }
         }
+        setDisabledBtn(false); // Réactiver le bouton de l'envoi
     }
 
     return (
@@ -145,7 +152,7 @@ const DetailsMembre = () => {
                     <div className="details-membre">
                         <div className="infos-membre">
                             <div className="infos-bouttons">
-                                <img src={PhotoStandard} alt=""/>
+                                <img src={membre.photo !== null ? `http://localhost:4000/images/membres/${membre.photo}.jpeg` : PhotoStandard} alt=""/>
                                 <button className="membre-btn pointed">
                                     <Link to="./accomplissements" state={{id: membre.id_membre, path: "/membres/details"}} className="link"><span className="material-icons-outlined">military_tech</span><span>Accomplissements</span></Link>
                                 </button>
@@ -230,21 +237,21 @@ const DetailsMembre = () => {
                                     </div>
                                     <div className="info-membre">
                                         <h2>Date d'abonnement</h2>
-                                        {membre.transaction && membre.transaction.date_abonnement && (
+                                        {membre.transaction && membre.transaction.date_abonnement ? (
                                             <p className="info-membre-val">{membre.id_paiement ? formatDate(membre.transaction.date_abonnement) : "-"}</p>
-                                        )}
+                                        ) : "-"}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Mois d'abonnement</h2>
-                                        {membre.transaction && membre.transaction.mois_abonnement && (
+                                        {membre.transaction && membre.transaction.mois_abonnement ? (
                                             <p className="info-membre-val">{membre.id_paiement ? formatAnMois(membre.transaction.mois_abonnement) : "-"}</p>
-                                        )}
+                                        ) : "-"}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Montant Payé</h2>
-                                        {membre.transaction && membre.transaction.montant_paye && (
+                                        {membre.transaction && membre.transaction.montant_paye ? (
                                             <p className="info-membre-val">{membre.id_paiement ? membre.transaction.montant_paye : "-"} DZD</p>
-                                        )}
+                                        ) : "-"}
                                     </div>
                                     <div className="info-membre">
                                         <h2>Montant Restant</h2>
@@ -353,9 +360,10 @@ const DetailsMembre = () => {
                             }}
                         />
                         </div>
+                        {qrErrorMessage && <p style={{ marginTop: "1rem", textAlign: "center" }} className="danger">{qrErrorMessage}</p>}
                         <div className="modal-buttons">
                             <button onClick={() => handleTelechagerQR()} className="btn pointed"><span className="link"><span className="material-icons-sharp">download</span></span></button>
-                            <button onClick={() => handleSendQR()} className="btn pointed"><span className="link"><span className="material-icons-outlined">email</span></span></button>
+                            <button onClick={() => handleSendQR()} className="btn pointed" disabled={disabledBtn}><span className="link"><span className="material-icons-outlined">email</span></span></button>
                             <button onClick={() => setShowCodeQRModal(false)} className="btn pointed"><span className="link"><span className="material-icons-outlined">undo</span></span></button>
                         </div>
                     </div>

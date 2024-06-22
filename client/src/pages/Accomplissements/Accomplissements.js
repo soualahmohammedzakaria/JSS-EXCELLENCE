@@ -7,23 +7,23 @@ import { formatDate } from "../../utils/datesUtils";
 import axios from 'axios';
 
 function Accomplissements() {
-    const location = useLocation();
-    const [accomplissements, setAccomplissements] = useState([]);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [accomplissementIdToDelete, setAccomplissementIdToDelete] = useState(null);
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [accomplissements, setAccomplissements] = useState([]); // Pour stocker les accomplissements
+    const [errorMessage, setErrorMessage] = useState(""); // Pour afficher un message d'erreur
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // Pour afficher le modal de suppression
+    const [accomplissementIdToDelete, setAccomplissementIdToDelete] = useState(null);   // Pour stocker l'id de l'accomplissement à supprimer
 
     useEffect(() => {
-        fetchAccomplissements();
+        fetchAccomplissements(); // Récupérer les accomplissements du membre
     }, []);
 
-    const fetchAccomplissements = async () => {
+    const fetchAccomplissements = async () => { // Fonction pour récupérer les accomplissements du membre
         try {
             const response = await axios.get(`http://localhost:4000/achievement/getAchievements/${location.state.id}`);
             if (response.data.success) {
-                setAccomplissements(response.data.achievements);
+                setAccomplissements(response.data.achievements); // Mettre à jour les accomplissements
             } else {
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         } catch (error) {
             console.error('Erreur de récupération des accomplissements:', error);
@@ -31,21 +31,21 @@ function Accomplissements() {
         }
     };
 
-    const handleDeleteAccomplissement = (id) => {
-        setAccomplissementIdToDelete(id);
-        setShowDeleteModal(true);
+    const handleDeleteAccomplissement = (id) => { // Fonction pour gérer la suppression d'un accomplissement
+        setAccomplissementIdToDelete(id); // Stocker l'id de l'accomplissement à supprimer
+        setShowDeleteModal(true); // Afficher le modal de suppression
     };
 
-    const confirmDeleteAccomplissement = async () => {
+    const confirmDeleteAccomplissement = async () => { // Fonction pour confirmer la suppression de l'accomplissement
         try {
             const response = await axios.delete(`http://localhost:4000/achievement/deleteAchievement/${accomplissementIdToDelete}`);
             if (response.data.success) {
-                setShowDeleteModal(false);
-                fetchAccomplissements();
+                setShowDeleteModal(false); // Cacher le modal
+                fetchAccomplissements(); // Récupérer les accomplissements mis à jour
             } else {
                 setErrorMessage(response.data.message);
             }
-        } catch (error) {
+        } catch (error) { // Gérer les erreurs
             console.error('Erreur lors de la suppression de l\'accomplissement:', error);
             setErrorMessage("Désolé, une erreur s'est produite lors de la suppression de l'accomplissement.");
         }

@@ -1,11 +1,10 @@
 import React from "react";
 import './Navbar.css';
-import PhotoStandard from '../../../assets/images/photoprofilestandard.png';
 import Logo from '../../../assets/images/logo.png';
 import { useAuthContext } from '../../../hooks/authContext/authContext';
 
 const Navbar = () => {
-    const { authData } = useAuthContext();
+    const { authData } = useAuthContext(); // Récupérer les données de l'utilisateur connecté
     return (
         <nav>
             <div className="container">
@@ -18,8 +17,6 @@ const Navbar = () => {
                         <div className="infos">
                             <h4>{authData.nom}</h4>
                             <h5>{authData.role}</h5>
-                        </div>
-                        <div className="profile-photo">
                         </div>
                     </div>
                 </div>

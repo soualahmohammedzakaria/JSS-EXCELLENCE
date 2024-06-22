@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const ModifierGroupe = () => {
-    const location = useLocation();
-    const [sports, setSports] = useState([]);
-    const [selectedSport, setSelectedSport] = useState(null);
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [sports, setSports] = useState([]); // État pour les sports
+    const [selectedSport, setSelectedSport] = useState(null); // État pour le sport sélectionné
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
         nom_groupe:location.state.nom_groupe,
@@ -19,13 +19,13 @@ const ModifierGroupe = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les sports lors du chargement du composant
         fetchSports();
     }, []);
 
     const fetchSports = () => {
         axios
-            .get("http://localhost:4000/sport/getAllSports")
+            .get("http://localhost:4000/sport/getAllSports") // URL pour obtenir les sports
             .then((response) => {
                 if (response.data.success) {
                     const fetchedSports = response.data.sports || [];
@@ -42,7 +42,7 @@ const ModifierGroupe = () => {
             });
     };
 
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const sportId = parseInt(e.target.value);
         const selectedSport = sports.find(sport => sport.id_sport === sportId);
         setSelectedSport(selectedSport);

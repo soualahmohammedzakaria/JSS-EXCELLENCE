@@ -10,15 +10,15 @@ import { formatDate, calculerAge } from "../../utils/datesUtils";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Membres = () => {
-    const location = useLocation();
-    const { paramsData } = useParamsContext();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [membres, setMembres] = useState([]);
-    const [filteredMembres, setFilteredMembres] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [membreIdToDelete, setMembreIdToDelete] = useState(null);
-    const [selectedFilters, setSelectedFilters] = useState({
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const { paramsData } = useParamsContext(); // Pour obtenir les paramètres de l'application
+    const [searchQuery, setSearchQuery] = useState(""); // État pour la recherche
+    const [membres, setMembres] = useState([]); // État pour les membres
+    const [filteredMembres, setFilteredMembres] = useState([]); // État pour les membres filtrés
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // État pour afficher le modal de suppression
+    const [showFilterModal, setShowFilterModal] = useState(false); // État pour afficher le modal de filtre
+    const [membreIdToDelete, setMembreIdToDelete] = useState(null); // État pour l'id du membre à supprimer
+    const [selectedFilters, setSelectedFilters] = useState({ // État pour les filtres sélectionnés
         nom: "Pas de filtre",
         prenom: "Pas de filtre",
         email: "Pas de filtre",
@@ -30,21 +30,21 @@ const Membres = () => {
         groupe: location.state?.groupe || "Tous"
     });
     
-    const [sportsGroupes, setSportsGroupes] = useState([]);
+    const [sportsGroupes, setSportsGroupes] = useState([]); // État pour les groupes de sports
 
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les membres et les groupes de sports lors du chargement du composant
         fetchMembres(); 
         fetchSportsGroupes();
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { // Pour filtrer les membres lors du changement des groupes de sports
         if (sportsGroupes.length > 0 && membres.length > 0 && selectedFilters.groupe !== "Tous" && selectedFilters.sport !== "Tous" && !showFilterModal) {
             filterMembres();
         }
     }, [sportsGroupes, membres, selectedFilters.groupe, selectedFilters.sport]);
 
-    const fetchMembres = () => {
-        axios.get('http://localhost:4000/member/getAllMembers')
+    const fetchMembres = () => { // Fonction pour obtenir les membres
+        axios.get('http://localhost:4000/member/getAllMembers') // URL pour obtenir les membres
             .then(response => {
                 if(response.data.success){
                     setMembres(response.data.members);
@@ -56,7 +56,7 @@ const Membres = () => {
             });
     };
 
-    const fetchSportsGroupes = () => {
+    const fetchSportsGroupes = () => { // Fonction pour obtenir les groupes de sports
         axios.get('http://localhost:4000/sport/getAllSportsGroupes')
             .then(response => {
                 if(response.data.success){
@@ -68,22 +68,22 @@ const Membres = () => {
             });
     };
 
-    const nbItems = paramsData.grandes_tables || 5;
-    const [currInd, setCurrInd] = useState(1);
+    const nbItems = paramsData.grandes_tables || 5; // Nombre d'éléments par page
+    const [currInd, setCurrInd] = useState(1); // Index de la page courante
 
-    const nbPages = Math.ceil(filteredMembres.length / nbItems);
+    const nbPages = Math.ceil(filteredMembres.length / nbItems); // Nombre de pages
 
-    const debInd = (currInd - 1) * nbItems;
-    const finInd = debInd + nbItems;
+    const debInd = (currInd - 1) * nbItems; // Index de début
+    const finInd = debInd + nbItems;     // Index de fin
 
-    const membresParPage = filteredMembres.slice(debInd, finInd);
+    const membresParPage = filteredMembres.slice(debInd, finInd); // Membres par page
 
-    const handleDeleteMembre = async (id) => {
-        setMembreIdToDelete(id);
-        setShowDeleteModal(true);
+    const handleDeleteMembre = async (id) => { // Fonction pour gérer la suppression d'un membre
+        setMembreIdToDelete(id); // Mettre à jour l'id du membre à supprimer
+        setShowDeleteModal(true); // Afficher le modal de suppression
     };
 
-    const confirmDeleteMembre = async () => {
+    const confirmDeleteMembre = async () => { // Fonction pour confirmer la suppression d'un membre
         try {
             await axios.delete(`http://localhost:4000/member/deleteMember/${membreIdToDelete}`);
             setShowDeleteModal(false);
@@ -94,7 +94,7 @@ const Membres = () => {
         }
     };
 
-    const handlePageChange = (ind) => {
+    const handlePageChange = (ind) => { // Fonction pour gérer le changement de page
         if (ind === 1) {
             if (currInd > 1) setCurrInd(ind);
         } else if (ind === nbPages) {
@@ -104,17 +104,21 @@ const Membres = () => {
         }
     }
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
+    };
+    
+    useEffect(() => { // Pour filtrer les membres lors de la recherche
         setCurrInd(1);
         filterMembres();
-    };
-
-    const handleFilterModal = () => {
+    }, [searchQuery]);
+    
+    const handleFilterModal = () => {   // Fonction pour afficher le modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedFilters({
             nom: "Pas de filtre",
             prenom: "Pas de filtre",
@@ -128,10 +132,10 @@ const Membres = () => {
         });
     };
 
-    const filterMembres = () => {
+    const filterMembres = () => { // Fonction pour filtrer les membres
         let filtered = [...membres];
         
-        if (searchQuery.trim() !== ""){
+        if (searchQuery.trim() !== ""){ // Filtrer les membres par nom ou email
             filtered = filtered.filter(membre => {
                 const fullName = `${membre.nom} ${membre.prenom}`.toLowerCase();
                 const email = membre.email.toLowerCase();
@@ -139,23 +143,23 @@ const Membres = () => {
             });
         }
     
-        if (selectedFilters.sexe !== "Tous") {
+        if (selectedFilters.sexe !== "Tous") { // Filtrer les membres par sexe
             filtered = filtered.filter(membre => membre.sexe === selectedFilters.sexe);
         }
     
-        if (selectedFilters.groupeSanguin !== "Tous") {
+        if (selectedFilters.groupeSanguin !== "Tous") { // Filtrer les membres par groupe sanguin
             filtered = filtered.filter(membre => membre.groupe_sanguin === selectedFilters.groupeSanguin);
         }
     
-        if (selectedFilters.etat !== "Tous") {
-            if (selectedFilters.etat === "Payé") {
+        if (selectedFilters.etat !== "Tous") { // Filtrer les membres par état
+            if (selectedFilters.etat === "Payé") { 
                 filtered = filtered.filter(membre => membre.etat_abonnement === "Payé");
             } else if (selectedFilters.etat === "Non payé") {
                 filtered = filtered.filter(membre => membre.etat_abonnement === "Non payé");
             }
         }
     
-        if (selectedFilters.categorie !== "Tous") {
+        if (selectedFilters.categorie !== "Tous") { // Filtrer les membres par catégorie d'âge
             filtered = filtered.filter(membre => {
                 const age = calculerAge(membre.date_naissance);
                 if (selectedFilters.categorie === "Enfants") {
@@ -169,7 +173,7 @@ const Membres = () => {
             });
         }
     
-        if (selectedFilters.sport !== "Tous") {
+        if (selectedFilters.sport !== "Tous") { // Filtrer les membres par sport et groupe
             const sport = sportsGroupes.find(sport => sport.nom === selectedFilters.sport);
             if (sport) {
                 filtered = filtered.filter(membre => {
@@ -182,7 +186,7 @@ const Membres = () => {
             }
         }
     
-        if (selectedFilters.nom !== "Pas de filtre") {
+        if (selectedFilters.nom !== "Pas de filtre") { // Trier les membres par nom, prénom ou email
             filtered.sort((a, b) => {
                 if (selectedFilters.nom === "Ascendant") {
                     return a.nom.localeCompare(b.nom);
@@ -191,7 +195,7 @@ const Membres = () => {
                 }
                 return 0;
             });
-        } else if (selectedFilters.email !== "Pas de filtre") {
+        } else if (selectedFilters.email !== "Pas de filtre") { // Trier les membres par email
             filtered.sort((a, b) => {
                 if (selectedFilters.email === "Ascendant") {
                     return a.email.localeCompare(b.email);
@@ -200,7 +204,7 @@ const Membres = () => {
                 }
                 return 0;
             });
-        } else if (selectedFilters.prenom !== "Pas de filtre") {
+        } else if (selectedFilters.prenom !== "Pas de filtre") { // Trier les membres par prénom
             filtered.sort((a, b) => {
                 if (selectedFilters.prenom === "Ascendant") {
                     return a.prenom.localeCompare(b.prenom);
@@ -211,15 +215,16 @@ const Membres = () => {
             });
         }
     
-        setFilteredMembres(filtered);
+        setFilteredMembres(filtered); // Mettre à jour les membres filtrés
     };      
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour appliquer les filtres
         setShowFilterModal(false);
         filterMembres();
+        setCurrInd(1);
     };   
     
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const selectedSport = e.target.value;
         setSelectedFilters(prevFilters => ({
             ...prevFilters,
@@ -271,17 +276,17 @@ const Membres = () => {
                                 <tbody>
                                     {membresParPage.map((membre) => (
                                         <tr key={membre.id_membre}>
-                                            <th><img src={PhotoStandard} alt=""/></th>
+                                            <th><img src={membre.photo !== null ? `http://localhost:4000/images/membres/${membre.photo}.jpeg` : PhotoStandard} alt=""/></th>
                                             <th>{membre.nom} {membre.prenom}</th>
                                             <th>{membre.telephone}</th>
-                                            <th>{membre.email}</th>
+                                            <th>{membre.email !== null && membre.email !== "" ? membre.email : "Pas d'email"}</th>
                                             <th>{formatDate(membre.date_naissance)}</th>
                                             <th>{membre.sexe}</th>
                                             <th>{formatDate(membre.date_inscription)}</th>
                                             <th><span className={membre.etat_abonnement === "Payé" ? "success" : "danger"}>{membre.etat_abonnement}</span></th>
                                             <th>
                                                 <Link className="link" to="./details" state={{id: membre.id_membre}}><span className="material-icons-outlined pointed">info</span></Link>
-                                                <Link className="link" to="./modifier" state={{id: membre.id_membre, nom: membre.nom, prenom: membre.prenom, email: membre.email, date_naissance: membre.date_naissance, sexe: membre.sexe, telephone: membre.telephone, taille: membre.taille, poids: membre.poids, groupe_sanguin: membre.groupe_sanguin, maladies: membre.maladies, date_inscription: membre.date_inscription, montant_paye: membre.montant_paye, montant_restant: membre.montant_restant}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                <Link className="link" to="./modifier" state={{id: membre.id_membre, photo: membre.photo, nom: membre.nom, prenom: membre.prenom, email: membre.email, date_naissance: membre.date_naissance, sexe: membre.sexe, telephone: membre.telephone, taille: membre.taille, poids: membre.poids, groupe_sanguin: membre.groupe_sanguin, maladies: membre.maladies, date_inscription: membre.date_inscription, montant_paye: membre.montant_paye, montant_restant: membre.montant_restant}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                 <button className="link" onClick={() => handleDeleteMembre(membre.id_membre)}><span className="material-icons-outlined pointed">delete</span></button>
                                             </th>
                                         </tr>

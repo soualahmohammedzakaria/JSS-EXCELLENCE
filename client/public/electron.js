@@ -3,7 +3,7 @@ const path = require("path");
 const url = require("url");
  
 // Create the native browser window.
-function createWindow() {
+function createWindow() { // Fonction pour créer la fenêtre principale
   const mainWindow = new BrowserWindow({
     icon: __dirname + '/appicon.png',
     show: false,
@@ -11,12 +11,12 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  mainWindow.maximize();
-  mainWindow.show();
-  // Remove menu bar.
+  mainWindow.maximize(); // Maximiser la fenêtre
+  mainWindow.show(); // Afficher la fenêtre
+  // Enlever la barre de menu
   mainWindow.menuBarVisible = false;
 
-  const appURL = app.isPackaged
+  const appURL = app.isPackaged // Si l'application est packagée
     ? url.format({
         pathname: path.join(__dirname, "index.html"),
         protocol: "file:",
@@ -26,7 +26,7 @@ function createWindow() {
   mainWindow.loadURL(appURL);
 }
  
-function setupLocalFilesNormalizerProxy() {
+function setupLocalFilesNormalizerProxy() { // Fonction pour normaliser les fichiers locaux
   protocol.registerHttpProtocol(
     "file",
     (request, callback) => {
@@ -39,31 +39,29 @@ function setupLocalFilesNormalizerProxy() {
   );
 }
  
-// This method will be called when Electron has finished its initialization and
-// is ready to create the browser windows.
+// Attendre que l'application soit prête avant de créer la fenêtre
 app.whenReady().then(() => {
   createWindow();
   setupLocalFilesNormalizerProxy();
  
   app.on("activate", function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
+    // Sur macOS, recréer une fenêtre dans l'application lorsqu'il n'y a pas de fenêtres ouvertes.
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
   });
 });
  
-// Quit when all windows are closed, except on macOS.
-// There, it's common for applications and their menu bar to stay active until
-// the user quits  explicitly with Cmd + Q.
+// Quitter lorsque toutes les fenêtres sont fermées, sauf sur macOS.
+// Il y a des applications spécifiques à macOS qui restent actives jusqu'à ce que l'utilisateur quitte explicitement.
 app.on("window-all-closed", function () {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
  
-const allowedNavigationDestinations = "https://my-electron-app.com";
+
+const allowedNavigationDestinations = "https://my-electron-app.com"; // Destination de navigation autorisée
 app.on("web-contents-created", (event, contents) => {
   contents.on("will-navigate", (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);

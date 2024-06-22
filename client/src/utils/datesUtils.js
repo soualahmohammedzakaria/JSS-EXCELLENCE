@@ -1,12 +1,12 @@
-export const formatDate = (date) => {
+export const formatDate = (date) => { // Fonction pour formater la date
     return date.split("-").reverse().join("/");
 }
 
-export const formatDateHeure = (date) => {
+export const formatDateHeure = (date) => {  // Fonction pour formater la date et l'heure
     return new Date(date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
 }
 
-export const formatAnMois = (date) => {
+export const formatAnMois = (date) => { // Fonction pour formater l'année et le mois
     const [an, month] = date.split("-");
     const mois = [
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -16,11 +16,11 @@ export const formatAnMois = (date) => {
     return `${nomMois} ${an}`;
 }
 
-export const formatMois = (date) => {
+export const formatMois = (date) => { // Fonction pour formater le mois
     return date < 10 ? `0${date}` : date
 }
 
-export const extraireMois = (date) => {
+export const extraireMois = (date) => { // Fonction pour extraire le mois
     return date.split("-")[1];
 }
 

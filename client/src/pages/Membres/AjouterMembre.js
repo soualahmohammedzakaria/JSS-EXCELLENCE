@@ -4,8 +4,10 @@ import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { isImage } from "../../utils/imagesUtils";
 
 const AjouterMembre = () => {
+    const [file, setFile] = useState(null); // État pour la photo du membre
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
         nom: '',
@@ -22,7 +24,8 @@ const AjouterMembre = () => {
     });
     // État pour les messages d'erreur
     const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
+    
+    const navigate = useNavigate(); // Hook pour la navigation
 
     // Gérer les changements dans le formulaire
     const handleChange = (e) => {
@@ -30,21 +33,45 @@ const AjouterMembre = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    // Gérer les changements dans la photo
+    const handleFile = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    // Ajouter la photo du membre
+    const ajouterPhoto = async (id) => {
+        const photoFormData = new FormData();
+        photoFormData.append('image', file);
+        if(file){
+            try {
+                await axios.post(`http://localhost:4000/member/addPhoto/${id}`, photoFormData);
+            } catch (error) {
+                console.log(error);
+                setErrorMessage("Désolé, une erreur s'est produite lors de l'ajout de la photo!");
+            }
+        }
+    }
+
     // Soumettre le formulaire
     const handleSubmit = async (event) => {
-        console.log(formData);
         event.preventDefault();
+        if(file && !isImage(file)){
+            setErrorMessage("Veuillez insérer une photo. Les extensions valides sont: .jpeg, .jpg, .png");
+            return;
+        }
         try {
             const response = await axios.post("http://localhost:4000/member/addMember", formData);
             if(response.data.success){
+                ajouterPhoto(response.data.IdMember);
                 navigate('/membres');
             }else{
                 setErrorMessage(response.data.message);
             }
-        }catch (error) {
+        } catch (error) {
+            console.log(error);
             setErrorMessage("Désolé, une erreur s'est produite!");
         }
-    };
+    };   
 
     return (
         <>
@@ -62,7 +89,7 @@ const AjouterMembre = () => {
                     </div>
                     <div className="add-form-group">
                         <div className="top-container">
-                            <form className="add-form scroll-form" onSubmit={handleSubmit}>
+                            <form className="add-form scroll-form" onSubmit={handleSubmit} encType="multipart/form-data">
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem"}}>Informations Personelles</h2>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">person</span> 
@@ -73,6 +100,10 @@ const AjouterMembre = () => {
                                     <input type="text" name="prenom" placeholder="Prénom" value={formData.prenom} onChange={handleChange} required/>
                                 </div>
                                 <div className="add-input">
+                                    <span className="material-icons-outlined">photo</span> 
+                                    <input type="file" onChange={handleFile}/>
+                                </div>
+                                <div className="add-input">
                                     <span className="material-icons-outlined">calendar_today</span>
                                     <label>Naissance</label>
                                     <input type="date" name="date_naissance" placeholder="Date de naissance" value={formData.date_naissance} onChange={handleChange} required/>
@@ -80,7 +111,7 @@ const AjouterMembre = () => {
                                 <h2 style={{alignSelf: "start", marginLeft: "1.5rem"}}>Informations de Contact</h2>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">email</span>
-                                    <input type="email" name="email" placeholder="Adresse email" value={formData.email} onChange={handleChange} required/>
+                                    <input type="email" name="email" placeholder="Adresse email" value={formData.email} onChange={handleChange}/>
                                 </div>
                                 <div className="add-input">
                                     <span className="material-icons-outlined">phone</span>

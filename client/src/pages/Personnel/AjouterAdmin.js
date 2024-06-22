@@ -6,30 +6,30 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const AjouterAdmin = () => {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({ // Les données du formulaire
         nom: '',
         prenom: '',
         role: 'Gestionnaire',
         username: '',
         password: ''
     });
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate();
+    const [confirmPassword, setConfirmPassword] = useState(""); // État pour la confirmation du mot de passe
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const navigate = useNavigate(); // Hook pour la navigation
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         if (formData.password !== confirmPassword || !formData.password) {
             setErrorMessage("Le mot de passe et le mot de passe de confirmation ne sont pas les mêmes!");
             return;
         }
         try {
-            const response = await axios.post("http://localhost:4000/user/addUser", formData);
+            const response = await axios.post("http://localhost:4000/user/addUser", formData); // Ajouter un utilisateur
             if (response.data.success) {
                 setFormData({
                     password: ''

@@ -7,18 +7,18 @@ import { formatDate, formatAnMois } from "../../utils/datesUtils";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Paiements = () => {
-    const { paramsData } = useParamsContext();
-    const location = useLocation();
-    const [paiements, setPaiements] = useState([]);
-    const [afficherSupprimerPaiement, setSupprimerModal] = useState(false);
-    const [idPaiementSupprimer, setIdASupprime] = useState(null);
-    const [currInd, setCurrInd] = useState(1);
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [paiements, setPaiements] = useState([]); // État pour les paiements
+    const [afficherSupprimerPaiement, setSupprimerModal] = useState(false); // État pour l'affichage de la modal de suppression
+    const [idPaiementSupprimer, setIdASupprime] = useState(null); // État pour l'ID du paiement à supprimer
+    const [currInd, setCurrInd] = useState(1); // État pour l'indice de la page courante
 
     useEffect(() => {
-        fetchPaiements();
+        fetchPaiements(); // Pour obtenir les paiements lors du chargement du composant
     }, []);
 
-    const fetchPaiements = () => {
+    const fetchPaiements = () => { // Fonction pour obtenir les paiements
         axios
             .get(`http://localhost:4000/transaction/getTransactions/${location.state.id}`)
             .then((response) => {
@@ -33,21 +33,21 @@ const Paiements = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(paiements.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(paiements.length / nbItems); // Nombre de pages
 
-    // Ensure indices are within valid bounds
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, paiements.length); // End index
+    // Indice de début et de fin
+    const debInd = Math.max((currInd - 1) * nbItems, 0);
+    const finInd = Math.min(debInd + nbItems, paiements.length);
 
-    const paiementsParPage = paiements.slice(debInd, finInd);
+    const paiementsParPage = paiements.slice(debInd, finInd); // Les paiements à afficher
 
-    const handleSupprimerPaiement = (id) => {
+    const handleSupprimerPaiement = (id) => { // Fonction pour gérer la suppression d'un paiement
         setIdASupprime(id);
         setSupprimerModal(true);
     };
 
-    const confirmerSupprimerPaiement = async () => {
+    const confirmerSupprimerPaiement = async () => { // Fonction pour confirmer la suppression d'un paiement
         try {
             await axios.delete(`http://localhost:4000/transaction/deleteTransaction/${idPaiementSupprimer}`);
             setSupprimerModal(false);
@@ -58,7 +58,7 @@ const Paiements = () => {
         }
     };
 
-    const handlePageChange = (newInd) => {
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }

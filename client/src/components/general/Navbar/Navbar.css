@@ -1,8 +1,11 @@
+/* Style de la barre de navigation */
 nav{
     width: 100%;
     background: var(--color-white);
     padding: 1rem 0;
     height: 10vh;
+    display: flex;
+    justify-content: center;
 }
   
 nav .container{
@@ -41,12 +44,5 @@ nav .profile-area .profile .infos{
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-  
-nav .profile-area .profile-photo{
-    display: block;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    overflow: hidden;
+    margin-right: 1.5rem;
 }

@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 const AjouterEquipement = () => {
-    const location = useLocation();
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    
     // États pour les données du formulaire
     const [formData, setFormData] = useState({
         nom: '',

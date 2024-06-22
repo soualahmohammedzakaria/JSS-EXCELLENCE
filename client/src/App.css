@@ -76,7 +76,7 @@
   --border-radius-2: 6px;
 }
 
-/* Global styles */
+/* Styles Globaux */
 
 .noselect {
   -webkit-touch-callout: none;
@@ -222,6 +222,7 @@ main .header{
 .top-container{
   height: 85dvh;
 }
+
 /* Style des bouttons */
 
 .btn{

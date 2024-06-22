@@ -9,31 +9,31 @@ import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 import { formatDateHeure } from "../../utils/datesUtils";
 
 const Groupes = () => {
-    const { paramsData } = useParamsContext();
-    const { authData } = useAuthContext();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [groupes, setGroupes] = useState([]);
-    const [filteredGroupes, setFilteredGroupes] = useState([]);
-    const [creneaux, setCreneaux] = useState([]);
-    const [reportedGroup, setReportedGroup] = useState(null);
-    const [selectedCreneau, setSelectedCreneau] = useState(null);
-    const [filteredCreneaux, setFilteredCreneaux] = useState([]);
+    const { paramsData } = useParamsContext(); // Utiliser le contexte des paramètres
+    const { authData } = useAuthContext(); // Utiliser le contexte d'authentification
+    const [searchQuery, setSearchQuery] = useState(""); // Pour stocker la recherche
+    const [groupes, setGroupes] = useState([]); // Pour stocker les groupes
+    const [filteredGroupes, setFilteredGroupes] = useState([]); // Pour stocker les groupes filtrés
+    const [creneaux, setCreneaux] = useState([]); // Pour stocker les créneaux
+    const [reportedGroup, setReportedGroup] = useState(null); // Pour stocker le groupe signalé
+    const [selectedCreneau, setSelectedCreneau] = useState(null); // Pour stocker le créneau sélectionné
+    const [filteredCreneaux, setFilteredCreneaux] = useState([]); // Pour stocker les créneaux filtrés
     const [showSignalerAbsences, setShowSignalerAbsences] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [groupeIdToDelete, setGroupeIdToDelete] = useState(null);
-    const [selectedNom, setSelectedNom] = useState("Pas de filtre");
-    const [selectedSport, setSelectedSport] = useState("Tous");
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [currInd, setCurrInd] = useState(1);
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // Pour afficher le modal de suppression
+    const [showFilterModal, setShowFilterModal] = useState(false);  // Pour afficher le modal de filtre
+    const [groupeIdToDelete, setGroupeIdToDelete] = useState(null); // Pour stocker l'id du groupe à supprimer
+    const [selectedNom, setSelectedNom] = useState("Pas de filtre"); // Pour stocker le filtre de nom
+    const [selectedSport, setSelectedSport] = useState("Tous"); // Pour stocker le filtre de sport
+    const [sportsGroupes, setSportsGroupes] = useState([]); // Pour stocker les groupes de sports
+    const [currInd, setCurrInd] = useState(1); // Pour stocker l'indice de la page actuelle
 
-    useEffect(() => {
+    useEffect(() => { // Récupérer les groupes et les créneaux lors du chargement du composant
         fetchGroupes();
         fetchSportsGroupes();
         fetchCreneaux();
     }, []);
 
-    const fetchCreneaux = async () => {
+    const fetchCreneaux = async () => { // Fonction pour récupérer les créneaux
         try {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
             if (response.data.success) setCreneaux(response.data.creneaux);
@@ -42,7 +42,7 @@ const Groupes = () => {
         }
     };
 
-    const fetchSportsGroupes = () => {
+    const fetchSportsGroupes = () => { // Fonction pour récupérer les groupes de sports
         axios.get('http://localhost:4000/sport/getAllSportsGroupes')
             .then(response => {
                 if(response.data.success){
@@ -54,7 +54,7 @@ const Groupes = () => {
             });
     };
 
-    const fetchGroupes = () => {
+    const fetchGroupes = () => { // Fonction pour récupérer les groupes
         axios
             .get("http://localhost:4000/group/getAllGroups")
             .then((response) => {
@@ -69,23 +69,23 @@ const Groupes = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(filteredGroupes.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(filteredGroupes.length / nbItems); // Nombre de pages
 
     // Ensure indices are within valid bounds
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, filteredGroupes.length); // End index
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, filteredGroupes.length); // Index de fin
 
-    const groupesParPage = filteredGroupes.slice(debInd, finInd);
+    const groupesParPage = filteredGroupes.slice(debInd, finInd); // Groupes par page
 
-    const handleDeleteGroupe = (id) => {
+    const handleDeleteGroupe = (id) => { // Fonction pour gérer la suppression d'un groupe
         setGroupeIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteGroupe = async () => {
+    const confirmDeleteGroupe = async () => { // Fonction pour confirmer la suppression d'un groupe
         try {
-            await axios.delete(`http://localhost:4000/group/deleteGroup/${groupeIdToDelete}`);
+            await axios.delete(`http://localhost:4000/group/deleteGroup/${groupeIdToDelete}`); // Supprimer le groupe
             setShowDeleteModal(false);
             fetchGroupes();
             setCurrInd(1);
@@ -94,32 +94,37 @@ const Groupes = () => {
         }
     };
 
-    const handlePageChange = (newInd) => {
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }
     };
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        filterGroupes();
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
     };
+    
+    useEffect(() => { // Filtrer les groupes lors de la recherche
+        setCurrInd(1);
+        filterGroupes();
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher le modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedNom("Pas de filtre");
         setSelectedSport("Tous");
     };
 
-    const handleCreneauChange = (e) => {
+    const handleCreneauChange = (e) => { // Fonction pour gérer le changement de créneau
         const creneauId = parseInt(e.target.value);
         setSelectedCreneau(creneauId);
     };
 
-    const handleSignalerAbsences = (id) => {
+    const handleSignalerAbsences = (id) => { // Fonction pour signaler les absences
         setReportedGroup(id);
         const filtered = creneaux.filter(creneau => creneau.id_groupe === id);
         setFilteredCreneaux(filtered);
@@ -127,9 +132,8 @@ const Groupes = () => {
         setShowSignalerAbsences(true);
     };
 
-    const confirmSignalerAbsences = () => async () => {
+    const confirmSignalerAbsences = () => async () => { // Fonction pour confirmer le signalement des absences
         setShowSignalerAbsences(false);
-        console.log(selectedCreneau, reportedGroup);
         try {
             await axios.post('http://localhost:4000/attendance/reportAbsentsGroupe', {
                 id_creneau: selectedCreneau,
@@ -140,10 +144,10 @@ const Groupes = () => {
         }
     };
 
-    const filterGroupes = () => {
+    const filterGroupes = () => { // Fonction pour filtrer les groupes
         let filtered = groupes;
     
-        if (searchQuery.trim() !== "") {
+        if (searchQuery.trim() !== "") { // Filtrer par recherche
             filtered = filtered.filter((groupe) => {
                 const name = groupe.nom_groupe.toLowerCase();
                 const sport = groupe.nom_sport.toLowerCase();
@@ -151,11 +155,11 @@ const Groupes = () => {
             });
         }
     
-        if (selectedSport !== "Tous") {
+        if (selectedSport !== "Tous") { // Filtrer par sport
             filtered = filtered.filter((groupe) => groupe.nom_sport === selectedSport);
         }
     
-        if (selectedNom !== "Pas de filtre") {
+        if (selectedNom !== "Pas de filtre") { // Filtrer par nom
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
                     return a.nom_groupe.localeCompare(b.nom_groupe);
@@ -165,13 +169,14 @@ const Groupes = () => {
                 return 0;
             });
         }
-    
-        setFilteredGroupes(filtered);
+     
+        setFilteredGroupes(filtered); // Mettre à jour les groupes filtrés
     };    
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour gérer le filtre
         setShowFilterModal(false);
         filterGroupes();
+        setCurrInd(1);
     };
     return (
         <>
@@ -192,7 +197,7 @@ const Groupes = () => {
                     <Searchbar handleSearch={handleSearch} handleFilterModal={handleFilterModal}/>
                     <div>
                         {groupesParPage.length === 0 ? (
-                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de dépenses!</h1>
+                                <h1 style={{ textAlign: 'center', marginTop: '3%' }}>Pas de groupes!</h1>
                             ) : (
                             <table className="table-profiles">
                                 <thead>
@@ -202,9 +207,7 @@ const Groupes = () => {
                                         <th>Liste des membres</th>
                                         <th>Liste des coachs</th>
                                         <th>Signalement des absences</th>
-                                        {authData.role === 'Administrateur' && (
-                                            <th>Actions</th>
-                                        )}
+                                        {authData.role === 'Administrateur' && <th>Actions</th> }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -216,12 +219,12 @@ const Groupes = () => {
                                             <th><Link className="link" to="/coachs" state={{sport: groupe.nom_sport, groupe: groupe.nom_groupe}}><span className="material-icons-outlined pointed">sports</span></Link></th>
                                             <th><button className="link" onClick={() => { handleSignalerAbsences(groupe.id_groupe) }}><span className="material-icons-outlined pointed">person_off</span></button></th>
                                             <th>
-                                                {authData.role === 'Administrateur' && (
+                                                {authData.role === 'Administrateur' &&
                                                     <>
                                                         <Link className="link" to="./modifier" state={{id_groupe: groupe.id_groupe, id_sport: groupe.id_sport, nom_groupe: groupe.nom_groupe}}><span className="material-icons-outlined pointed">edit</span></Link>
                                                         <button className="link" onClick={() => handleDeleteGroupe(groupe.id_groupe)}><span className="material-icons-outlined pointed">delete</span></button>
                                                     </>
-                                                )}
+                                                }
                                             </th>
                                         </tr>
                                     ))}

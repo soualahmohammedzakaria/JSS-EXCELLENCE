@@ -2,8 +2,8 @@
   "name": "code_source",
   "version": "0.1.0",
   "private": true,
-  "author": "E32",
-  "description": "Systeme de gestion du club sportif",
+  "author": "Equipe32-2024",
+  "description": "Système de gestion du club sportif JSS EXCELLENCE",
   "homepage": "./",
   "main": "./public/electron.js",
   "dependencies": {
@@ -67,7 +67,7 @@
   },
   "build": {
     "appId": "com.gestionclub.e32",
-    "productName": "Systeme de gestion du club sportif",
+    "productName": "JSS EXCELLENCE",
     "files": [
       "build/**/**/*",
       "src/**/**/**/*",
@@ -77,13 +77,16 @@
       "buildResources": "public"
     },
     "mac": {
-      "target": "dmg"
+      "target": "dmg",
+      "icon": "public/appicon.png"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "public/appicon.png"
     },
     "linux": {
-      "target": "deb"
+      "target": "deb",
+      "icon": "public/appicon.png"
     }
   }
 }

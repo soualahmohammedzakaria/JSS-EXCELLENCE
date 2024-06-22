@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "../../components/general/Navbar/Navbar";
 import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
@@ -7,20 +7,21 @@ import { formatDate } from "../../utils/datesUtils";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Absences = () => {
-    const { paramsData } = useParamsContext();
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [absences, setAbsences] = useState([]);
-    const [supprimerModal, setSupprimerModal] = useState(false);
-    const [justificationModal, setJustificationModal] = useState(false);
-    const [justification, setJustification] = useState("");
-    const [idASupprime, setIdASupprime] = useState(null);
-    const [currInd, setCurrInd] = useState(1);
+    const { paramsData } = useParamsContext(); // Récupérer les paramètres de l'application
+    const location = useLocation(); // Récupérer les données de la page précédente
+    const [absences, setAbsences] = useState([]); // Les absences du membre
+    const [supprimerModal, setSupprimerModal] = useState(false); // Modal pour la suppression
+    const [justificationModal, setJustificationModal] = useState(false); // Modal pour la justification
+    const [justification, setJustification] = useState(""); // La justification de l'absence
+    const [idASupprime, setIdASupprime] = useState(null); // L'id de l'absence à supprimer
+    const [currInd, setCurrInd] = useState(1); // L'indice de la page courante
 
     useEffect(() => {
+        // Récupérer les absences du membre
         fetchAbsences();
     }, []);
 
+    // Récupérer les absences du membre
     const fetchAbsences = () => {
         axios
             .get(`http://localhost:4000/attendance/getAbsencesMember/${location.state.id}`)
@@ -36,19 +37,22 @@ const Absences = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(absences.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(absences.length / nbItems); // Nombre de pages
 
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, absences.length); // End index
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, absences.length); // Index de fin
 
-    const absencesParPage = absences.slice(debInd, finInd);
+    const absencesParPage = absences.slice(debInd, finInd); // Les absences de la page courante
 
     const handleSupprimerAbsence = (id) => {
+        // Mettre à jour l'id de l'absence à supprimer
         setIdASupprime(id);
+        // Afficher la modal de suppression
         setSupprimerModal(true);
     };
 
+    // Confirmer la suppression de l'absence
     const confirmerSupprimerAbsence = async () => {
         try {
             await axios.delete(`http://localhost:4000/attendance/deleteAbsenceMember/${idASupprime}`);
@@ -60,12 +64,14 @@ const Absences = () => {
         }
     };
 
+    // Changer la page courante
     const handlePageChange = (newInd) => {
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }
     };
 
+    // Afficher la justification de l'absence
     const handleJustification = (justification) => {
         setJustificationModal(true);
         setJustification(justification);

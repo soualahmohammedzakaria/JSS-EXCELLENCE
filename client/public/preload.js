@@ -1,9 +1,8 @@
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
+// Tous les scripts de préchargement sont exécutés dans un environnement isolé,
+//ce qui signifie qu'ils ne partagent pas le même contexte que la page web.
 const { contextBridge } = require("electron");
  
-// Here we use the exposeInMainWorld API to expose the browsers
-// and node versions to the main window.
+// Ici on expose les versions de Node.js et Chromium à la page web
 process.once("loaded", () => {
   contextBridge.exposeInMainWorld("versions", process.versions);
 });

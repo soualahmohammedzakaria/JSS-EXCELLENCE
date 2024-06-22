@@ -5,10 +5,10 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const AjouterCreneau = () => {
-    const [salles, setSalles] = useState([]);
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [formDataMultiple, setFormDataMultiple] = useState({
+const AjouterCreneau = () => { 
+    const [salles, setSalles] = useState([]); // État pour les salles
+    const [sportsGroupes, setSportsGroupes] = useState([]); // État pour les sports avec les groupes
+    const [formDataMultiple, setFormDataMultiple] = useState({ // Les données du formulaire pour l'ajout de plusieurs créneaux
         id_groupe: null,
         numero_salle: null,
         titre: '',
@@ -20,7 +20,7 @@ const AjouterCreneau = () => {
         type: 'Séance',
         description: null
     });
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({ // Les données du formulaire pour l'ajout d'un seul créneau
         id_groupe: null,
         numero_salle: null,
         titre: '',
@@ -29,18 +29,18 @@ const AjouterCreneau = () => {
         type: 'Séance',
         description: null
     });
-    const [selectedSport, setSelectedSport] = useState(null);
-    const [selectedGroup, setSelectedGroup] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [errorMessageMultiple, setErrorMessageMultiple] = useState("");
-    const navigate = useNavigate();
+    const [selectedSport, setSelectedSport] = useState(null); // État pour le sport sélectionné
+    const [selectedGroup, setSelectedGroup] = useState(null); // État pour le groupe sélectionné
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur pour l'ajout d'un seul créneau
+    const [errorMessageMultiple, setErrorMessageMultiple] = useState(""); // Message d'erreur pour l'ajout de plusieurs créneaux
+    const navigate = useNavigate(); // Hook pour la navigation
 
-    useEffect(() => {
-        fetchSalles();
-        fetchSportsGroupes();
+    useEffect(() => { 
+        fetchSalles(); // Pour obtenir les salles lors du chargement du composant
+        fetchSportsGroupes(); // Pour obtenir les sports avec les groupes lors du chargement du composant
     }, []);
 
-    const fetchSalles = async () => {
+    const fetchSalles = async () => { // Fonction pour obtenir les salles
         try {
             const response = await axios.get("http://localhost:4000/salle/getNomIdSalles");
             setSalles(response.data.salles);
@@ -59,7 +59,7 @@ const AjouterCreneau = () => {
         }
     };
 
-    const fetchSportsGroupes = async () => {
+    const fetchSportsGroupes = async () => { // Fonction pour obtenir les sports avec les groupes
         try {
             const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
             setSportsGroupes(response.data.sportsGroupes);
@@ -83,7 +83,7 @@ const AjouterCreneau = () => {
         }
     };
 
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const sportId = parseInt(e.target.value);
         const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
         setSelectedSport(selectedSport);
@@ -99,7 +99,7 @@ const AjouterCreneau = () => {
         }));
     };
 
-    const handleGroupChange = (e) => {
+    const handleGroupChange = (e) => { // Fonction pour gérer le changement de groupe
         const groupId = parseInt(e.target.value);
         const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId);
         setSelectedGroup(selectedGroup);
@@ -108,21 +108,21 @@ const AjouterCreneau = () => {
             id_groupe: groupId
         }));
 
-        setFormDataMultiple(prevFormDataMultiple => ({
+        setFormDataMultiple(prevFormDataMultiple => ({ // Mettre à jour l'état pour l'ajout de plusieurs créneaux
             ...prevFormDataMultiple,
             id_groupe: groupId
         }));
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire pour l'ajout d'un seul créneau
         const { name, value } = e.target;
-        setFormData(prevFormData => ({
+        setFormData(prevFormData => ({ 
             ...prevFormData,
             [name]: value
         }));
     };
     
-    const handleMultipleChange = (e) => {
+    const handleMultipleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire pour l'ajout de plusieurs créneaux
         const { name, value } = e.target;
         setFormDataMultiple(prevFormDataMultiple => ({
             ...prevFormDataMultiple,
@@ -130,7 +130,7 @@ const AjouterCreneau = () => {
         }));
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire pour l'ajout d'un seul créneau
         event.preventDefault();
         try {
             const response = await axios.post("http://localhost:4000/planning/addCreneau", formData);
@@ -144,7 +144,7 @@ const AjouterCreneau = () => {
         }
     };
 
-    const handleSubmitMultiple = async (event) => {
+    const handleSubmitMultiple = async (event) => { // Fonction pour gérer la soumission du formulaire pour l'ajout de plusieurs créneaux
         event.preventDefault();
         try {
             const response = await axios.post("http://localhost:4000/planning/addCreneaux", formDataMultiple);

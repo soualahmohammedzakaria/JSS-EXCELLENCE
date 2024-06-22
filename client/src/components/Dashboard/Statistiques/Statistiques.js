@@ -1,10 +1,12 @@
 const Statistiques = ({ depensesMois, revenuesMois, nouvMembresMois, abonnementsMois }) => {
 
+    // Fonction pour calculer le pourcentage de changement
     const calculatePercentageChange = (currentValue, previousValue) => {
         if (previousValue === 0) return 100;
         return Math.round(((currentValue - previousValue) / previousValue) * 100);
     };
 
+    // Fonction pour obtenir la classe CSS en fonction du pourcentage
     const getClassName = (percentage, isDepenses) => {
         if (isDepenses) {
             return percentage >= 0 ? 'danger' : 'success';
@@ -15,14 +17,14 @@ const Statistiques = ({ depensesMois, revenuesMois, nouvMembresMois, abonnements
     return (
         <div className="stats">
             <div>
-                <h3>Nouveaux membres</h3> 
+                <h3>Nouveaux membres</h3>
                 <div>
                     <h2>{nouvMembresMois.actuel}</h2>
                     <h4 className={getClassName(calculatePercentageChange(nouvMembresMois.actuel, nouvMembresMois.precedent))}>
                         {calculatePercentageChange(nouvMembresMois.actuel, nouvMembresMois.precedent)}%
                     </h4>
                     <p>
-                        Compare avec {nouvMembresMois.precedent} le dernier mois
+                        Comparé à {nouvMembresMois.precedent} le dernier mois
                     </p>
                 </div>
             </div>    
@@ -34,19 +36,19 @@ const Statistiques = ({ depensesMois, revenuesMois, nouvMembresMois, abonnements
                         {calculatePercentageChange(abonnementsMois.actuel, abonnementsMois.precedent)}%
                     </h4>
                     <p>
-                        Compare avec {abonnementsMois.precedent} le dernier mois
+                        Comparé à {abonnementsMois.precedent} le dernier mois
                     </p>
                 </div>
             </div>
             <div>
-                <h3>Revenu des abonnements</h3> 
+                <h3>Revenus des abonnements</h3> 
                 <div>
                     <h2>{revenuesMois.actuel} DZD</h2>
                     <h4 className={getClassName(calculatePercentageChange(revenuesMois.actuel, revenuesMois.precedent))}>
                         {calculatePercentageChange(revenuesMois.actuel, revenuesMois.precedent)}%
                     </h4>
                     <p>
-                        Compare avec {revenuesMois.precedent} DA le dernier mois
+                        Comparé à {revenuesMois.precedent} DA le dernier mois
                     </p>
                 </div>
             </div>   
@@ -58,7 +60,7 @@ const Statistiques = ({ depensesMois, revenuesMois, nouvMembresMois, abonnements
                         {calculatePercentageChange(depensesMois.actuel, depensesMois.precedent)}%
                     </h4>
                     <p>
-                        Compare avec {depensesMois.precedent} DA le dernier mois
+                        Comparé à {depensesMois.precedent} DA le dernier mois
                     </p>
                 </div>
             </div>

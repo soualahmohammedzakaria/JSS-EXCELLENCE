@@ -8,27 +8,28 @@ import Searchbar from "../../components/general/Searchbar/Searchbar";
 import PhotoStandard from '../../assets/images/photoprofilestandard.png';
 import { formatDate } from "../../utils/datesUtils";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
-
+import { useAuthContext } from '../../hooks/authContext/authContext';
 
 const Coachs = () => {
-    const location = useLocation();
-    const { paramsData } = useParamsContext();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [coachs, setCoachs] = useState([]);
-    const [filteredCoachs, setFilteredCoachs] = useState([]);
-    const [showDeleteCoach, setShowDeleteCoach] = useState(false);
-    const [showDeleteCoachGroupe, setShowDeleteCoachGroupe] = useState(false);
-    const [showAssignerModal, setShowAssignerModal] = useState(false);
-    const [selectedSport, setSelectedSport] = useState(null);
-    const [selectedGroup, setSelectedGroup] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [groupToDelete, setGroupToDelete] = useState(null);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [showGroupesModal, setShowGroupesModal] = useState(false);
-    const [coachIdToDelete, setCoachIdToDelete] = useState(null);
-    const [selectedCoach, setSelectedCoach] = useState(null);
-    const [selectedFilters, setSelectedFilters] = useState({
+    const { authData } = useAuthContext(); // Les données de l'utilisateur
+    const location = useLocation(); // Hook pour obtenir les données de l'URL
+    const { paramsData } = useParamsContext(); // Les paramètres
+    const [searchQuery, setSearchQuery] = useState(""); // La recherche
+    const [coachs, setCoachs] = useState([]); // Les coachs
+    const [filteredCoachs, setFilteredCoachs] = useState([]); // Les coachs filtrés
+    const [showDeleteCoach, setShowDeleteCoach] = useState(false); // Afficher la modal de suppression
+    const [showDeleteCoachGroupe, setShowDeleteCoachGroupe] = useState(false); // Afficher la modal de suppression du groupe
+    const [showAssignerModal, setShowAssignerModal] = useState(false); // Afficher la modal d'assignation
+    const [selectedSport, setSelectedSport] = useState(null); // Le sport sélectionné
+    const [selectedGroup, setSelectedGroup] = useState(null); // Le groupe sélectionné
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const [sportsGroupes, setSportsGroupes] = useState([]); // Les sports et groupes
+    const [groupToDelete, setGroupToDelete] = useState(null); // Le groupe à supprimer
+    const [showFilterModal, setShowFilterModal] = useState(false); // Afficher la modal de filtre
+    const [showGroupesModal, setShowGroupesModal] = useState(false); // Afficher la modal des groupes
+    const [coachIdToDelete, setCoachIdToDelete] = useState(null); // L'id du coach à supprimer
+    const [selectedCoach, setSelectedCoach] = useState(null); // Le coach sélectionné
+    const [selectedFilters, setSelectedFilters] = useState({ // Les filtres sélectionnés
         nom: "Pas de filtre",
         prenom: "Pas de filtre",
         email: "Pas de filtre",
@@ -37,20 +38,20 @@ const Coachs = () => {
         groupe: location.state?.groupe || "Tous"
     });
 
-    useEffect(() => {
+    useEffect(() => { // Récupérer les coachs et les sports et groupes
         fetchCoachs();
         fetchSportsGroupes();
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { // Filtrer les coachs
         if (sportsGroupes.length > 0 && coachs.length > 0 && selectedFilters.groupe !== "Tous" && selectedFilters.sport !== "Tous" && !showFilterModal) {
             filterCoachs();
         }
     }, [sportsGroupes, coachs, selectedFilters.groupe, selectedFilters.sport]);
 
-    const fetchSportsGroupes = () => {
-        axios.get("http://localhost:4000/sport/getAllSportsGroupes")
-            .then(response => {
+    const fetchSportsGroupes = () => { // Fonction pour récupérer les sports et groupes
+        axios.get("http://localhost:4000/sport/getAllSportsGroupes") // Récupérer les sports et groupes
+            .then(response => { // Gérer la réponse
                 if (response.data.success) {
                     const defaultSport = response.data.sportsGroupes[0];
                     const defaultGroup = defaultSport.groupes[0];
@@ -59,59 +60,51 @@ const Coachs = () => {
                     setSportsGroupes(response.data.sportsGroupes);
                 }
             })
-            .catch(error => {
+            .catch(error => { // Gérer les erreurs
                 console.error('Erreur de l\'obtention des sports et groupes:', error);
             });
     };
   
-    const fetchCoachs = () => {
-        axios.get('http://localhost:4000/coach/getAllCoachs')
+    const fetchCoachs = () => { // Fonction pour récupérer les coachs
+        axios.get('http://localhost:4000/coach/getAllCoachs') // Récupérer les coachs
             .then(response => {
-                if(response.data.success){
+                if(response.data.success){ // Si la récupération a réussi
                     setCoachs(response.data.coachs);
                     setFilteredCoachs(response.data.coachs);
                 }
             })
             .catch(error => {
-                console.error('Erreur de l\'obtention des coachs:', error);
+                console.error('Erreur de l\'obtention des coachs:', error); // Gérer les erreurs
             });
     };
 
-    const nbItems = paramsData.grandes_tables || 5;
-    const [currInd, setCurrInd] = useState(1);
+    const nbItems = paramsData.grandes_tables || 5; // Nombre d'éléments par page
+    const [currInd, setCurrInd] = useState(1); // L'indice courant
 
-    const nbPages = Math.ceil(filteredCoachs.length / nbItems);
+    const nbPages = Math.ceil(filteredCoachs.length / nbItems); // Nombre de pages
 
-    const debInd = (currInd - 1) * nbItems;
-    const finInd = debInd + nbItems;
+    const debInd = (currInd - 1) * nbItems; // Indice de début
+    const finInd = debInd + nbItems; // Indice de fin
 
-    const coachsParPage = filteredCoachs.slice(debInd, finInd);
+    const coachsParPage = filteredCoachs.slice(debInd, finInd); // Les coachs par page
 
-    const handleSportChange = (e) => {
+    const handleSportChange = (e) => { // Fonction pour gérer le changement de sport
         const sportId = parseInt(e.target.value);
         const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
-        setSelectedSport(selectedSport);
-        setSelectedGroup(selectedSport.groupes[0]);
-    };
+        setSelectedSport(selectedSport); // Mettre à jour le sport sélectionné
+        setSelectedGroup(selectedSport.groupes[0]); // Mettre à jour le groupe sélectionné
+    }; 
 
-    const handleGroupChange = (e) => {
-        const groupId = parseInt(e.target.value);
-        const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId);
-        setSelectedGroup(selectedGroup);
-    };
-
-    const handleSportChangeFilters = (e) => {
-        const sportId = parseInt(e.target.value);
-        const selectedSport = sportsGroupes.find(sport => sport.id_sport === sportId);
-        if (selectedSport) {
-            setSelectedSport(selectedSport);
-            setSelectedGroup(selectedSport.groupes[0]);
-        }
+    const handleGroupChange = (e) => { // Fonction pour gérer le changement de groupe
+        const groupId = parseInt(e.target.value); // L'id du groupe
+        const selectedGroup = selectedSport.groupes.find(group => group.id_groupe === groupId); // Le groupe sélectionné
+        setSelectedGroup(selectedGroup); // Mettre à jour le groupe sélectionné
     };
     
 
-    const handleAssignerGroupe = async () => {
+    const handleAssignerGroupe = async () => { // Fonction pour assigner un coach à un groupe
         try {
+            // Assigner le coach au groupe
             const response = await axios.post(`http://localhost:4000/coach/assignCoachToGroup/${selectedCoach.id_coach}`, { groupId: selectedGroup.id_groupe });
             if(response.data.success){
                 setShowAssignerModal(false);
@@ -126,24 +119,24 @@ const Coachs = () => {
         }
     };
 
-    const handleDeleteCoach = async (id) => {
+    const handleDeleteCoach = async (id) => { // Fonction pour gérer la suppression d'un coach
         setCoachIdToDelete(id);
         setShowDeleteCoach(true);
     };
     
-    const confirmDeleteCoach = async () => {
+    const confirmDeleteCoach = async () => { // Fonction pour confirmer la suppression d'un coach
         try {
-            await axios.delete(`http://localhost:4000/Coach/deleteCoach/${coachIdToDelete}`);
-            setShowDeleteCoach(false);
-            fetchCoachs();
-            setCurrInd(1);
+            await axios.delete(`http://localhost:4000/Coach/deleteCoach/${coachIdToDelete}`); // Supprimer le coach
+            setShowDeleteCoach(false); // Cacher la modal
+            fetchCoachs(); // Récupérer les coachs
+            setCurrInd(1); // Mettre à jour l'indice courant
         } catch (error) {
             console.error('Erreur lors de la suppression du coach:', error);
         }
     };
     
 
-    const handlePageChange = (ind) => {
+    const handlePageChange = (ind) => { // Fonction pour gérer le changement de page
         if (ind === 1) {
             if (currInd > 1) setCurrInd(ind);
         } else if (ind === nbPages) {
@@ -153,54 +146,60 @@ const Coachs = () => {
         }
     }
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
+    };
+    
+    useEffect(() => { // Filtrer les coachs
         setCurrInd(1);
         filterCoachs();
-    };
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher la modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedFilters({
             nom: "Pas de filtre",
             prenom: "Pas de filtre",
             email: "Pas de filtre",
             sexe: "Tous",
-            
+            sport: "Tous",
+            groupe: "Tous"
         });
     };
 
-    const filterCoachs = () => {
+    const filterCoachs = () => { // Fonction pour filtrer les coachs
         let filtered = [...coachs];
     
-        filtered = filtered.filter(coach => {
-            const fullName = `${coach.nom} ${coach.prenom}`.toLowerCase();
-            const email = coach.email.toLowerCase();
-            return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
-        });
+        if (searchQuery.trim() !== ""){ // Filtrer par recherche
+            filtered = filtered.filter(coach => {
+                const fullName = `${coach.nom} ${coach.prenom}`.toLowerCase();
+                const email = coach.email.toLowerCase();
+                return fullName.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
+            });
+        }
 
-        if (selectedFilters.sport !== "Tous") {
+        if (selectedFilters.sport !== "Tous") { // Filtrer par sport et groupe
             const sport = sportsGroupes.find(sport => sport.nom === selectedFilters.sport);
             if (sport) {
-                filtered = filtered.filter(membre => {
+                filtered = filtered.filter(coach => {
                     if (selectedFilters.groupe !== "Tous") {
                         const group = sport.groupes.find(groupe => groupe.nom_groupe === selectedFilters.groupe);
-                        return group && membre.groupes.some(m => m.id_groupe === group.id_groupe);
+                        return group && coach.groupes.some(m => m.id_groupe === group.id_groupe);
                     }
-                    return sport.groupes.some(group => membre.groupes.some(m => m.id_groupe === group.id_groupe));
+                    return sport.groupes.some(group => coach.groupes.some(m => m.id_groupe === group.id_groupe));
                 });
             }
         }
     
-        // Apply selected filters
-        if (selectedFilters.sexe !== "Tous") {
+        if (selectedFilters.sexe !== "Tous") { // Filtrer par sexe
             filtered = filtered.filter(coach => coach.sexe === selectedFilters.sexe);
         }
  
-        if (selectedFilters.nom !== "Pas de filtre") {
+        if (selectedFilters.nom !== "Pas de filtre") { // Filtrer par nom, prénom et email
             filtered.sort((a, b) => {
                 if (selectedFilters.nom === "Ascendant") {
                     return a.nom.localeCompare(b.nom);
@@ -209,7 +208,7 @@ const Coachs = () => {
                 }
                 return 0;
             });
-        } else if (selectedFilters.email !== "Pas de filtre") {
+        } else if (selectedFilters.email !== "Pas de filtre") { // Filtrer par email
             filtered.sort((a, b) => {
                 if (selectedFilters.email === "Ascendant") {
                     return a.email.localeCompare(b.email);
@@ -218,21 +217,21 @@ const Coachs = () => {
                 }
                 return 0;
             });
-        } else if (selectedFilters.prenom !== "Pas de filtre") {
+        } else if (selectedFilters.prenom !== "Pas de filtre") { // Filtrer par prénom
             filtered.sort((a, b) => {
                 if (selectedFilters.prenom === "Ascendant") {
                     return a.prenom.localeCompare(b.prenom);
-                } else if (selectedFilters.prenom === "Descendant") {
+                } else if (selectedFilters.prenom === "Descendant") { 
                     return b.prenom.localeCompare(a.prenom);
                 }
                 return 0;
             });
         }
     
-        setFilteredCoachs(filtered);
+        setFilteredCoachs(filtered); // Mettre à jour les coachs filtrés
     };   
     
-    const getNomSport = (groupId) => {
+    const getNomSport = (groupId) => { // Fonction pour obtenir le nom du sport
         for (const sport of sportsGroupes) {
             const group = sport.groupes.find(g => g.id_groupe === groupId);
             if (group) {
@@ -243,20 +242,22 @@ const Coachs = () => {
     };
     
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour gérer le filtre
         setShowFilterModal(false);
         filterCoachs();
+        setCurrInd(1);
     };   
     
-    const handleDeleteCoachGroup = async (id) => {
+    const handleDeleteCoachGroup = async (id) => { // Fonction pour gérer la suppression d'un coach du groupe
         setGroupToDelete(id);
         setShowDeleteCoachGroupe(true);
     };
 
-    const confirmDeleteCoachGroupe = async () => {
+    const confirmDeleteCoachGroupe = async () => { // Fonction pour confirmer la suppression d'un coach du groupe
         try {
+            // Supprimer le coach du groupe
             await axios.delete(`http://localhost:4000/coach/deleteGroupCoach/${selectedCoach.id_coach}`, { data: { groupId: groupToDelete } });
-            fetchCoachs();
+            fetchCoachs(); // Récupérer les coachs
             setShowGroupesModal(false);
             setShowDeleteCoachGroupe(false);
         } catch (error) {
@@ -293,13 +294,13 @@ const Coachs = () => {
                                     <th>Date de naissance</th>
                                     <th>Sexe</th>
                                     <th>Groupes</th>
-                                    <th>Actions</th>
+                                    {authData.role === 'Administrateur' && <th>Actions</th> }
                                 </tr>
                                 </thead>
                                 <tbody>
                                     {coachsParPage.map((coach) => (
                                         <tr key={coach.id_coach}>
-                                            <th><img src={PhotoStandard} alt=""/></th>
+                                            <th><img src={coach.photo !== null ? `http://localhost:4000/images/coachs/${coach.photo}.jpeg` : PhotoStandard} alt=""/></th>
                                             <th>{coach.nom} {coach.prenom}</th>
                                             <th>{coach.telephone}</th>
                                             <th>{coach.email === "" ? "Pas d'adresse" : coach.email}</th>
@@ -307,8 +308,12 @@ const Coachs = () => {
                                             <th>{coach.sexe}</th>
                                             <th><button className="link" onClick={() => { setShowGroupesModal(true); setSelectedCoach(coach) }}><span className="material-icons-outlined pointed">group</span></button></th>
                                             <th>
-                                                <Link className="link" to="./modifier" state={{id: coach.id_coach, nom: coach.nom, prenom: coach.prenom, email: coach.email, dateNaissance: coach.date_naissance, sexe: coach.sexe, telephone: coach.telephone, age: coach.age, taille: coach.taille, poids: coach.poids, sang: coach.sang, maladies: coach.maladies, date_inscription: coach.date_inscription, montantPaye: coach.montantPaye, montantRestant: coach.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>
-                                                <button className="link" onClick={() => handleDeleteCoach(coach.id_coach)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                {authData.role === 'Administrateur' &&
+                                                    <>
+                                                        <Link className="link" to="./modifier" state={{id: coach.id_coach, photo: coach.photo, nom: coach.nom, prenom: coach.prenom, email: coach.email, dateNaissance: coach.date_naissance, sexe: coach.sexe, telephone: coach.telephone, age: coach.age, taille: coach.taille, poids: coach.poids, sang: coach.sang, maladies: coach.maladies, date_inscription: coach.date_inscription, montantPaye: coach.montantPaye, montantRestant: coach.montantRestant}}><span className="material-icons-outlined pointed">edit</span></Link>
+                                                        <button className="link" onClick={() => handleDeleteCoach(coach.id_coach)}><span className="material-icons-outlined pointed">delete</span></button>
+                                                    </>
+                                                }
                                             </th>
                                         </tr>
                                     ))}
@@ -421,7 +426,7 @@ const Coachs = () => {
                                     </div>
                                     <div className="filter-option">
                                         <label>Sport</label>
-                                        <select name="sport" value={selectedFilters.sport} onChange={handleSportChange}>
+                                        <select name="sport" value={selectedFilters.sport} onChange={(e) => setSelectedFilters(prevFilters => ({...prevFilters, sport: e.target.value}))}>
                                             <option value="Tous">Tous</option>
                                             {sportsGroupes.map(sport => (
                                                 <option key={sport.id_sport} value={sport.nom}>{sport.nom}</option>

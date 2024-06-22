@@ -8,30 +8,30 @@ import { formatDate } from "../../utils/datesUtils";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Depenses = () => {
-    const { paramsData } = useParamsContext();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [depenses, setDepenses] = useState([]);
-    const [filteredDepenses, setFilteredDepenses] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [depenseIdToDelete, setDepenseIdToDelete] = useState(null);
-    const [selectedNom, setSelectedNom] = useState("Pas de filtre");
-    const [selectedMontant, setSelectedMontant] = useState("Tous");
-    const [selectedDate, setSelectedDate] = useState("Tous");
-    const [currInd, setCurrInd] = useState(1);
+    const { paramsData } = useParamsContext(); // Les paramètres de l'application
+    const [searchQuery, setSearchQuery] = useState(""); // La recherche
+    const [depenses, setDepenses] = useState([]); // Les dépenses
+    const [filteredDepenses, setFilteredDepenses] = useState([]); // Les dépenses filtrées
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // Afficher le modal de suppression
+    const [showFilterModal, setShowFilterModal] = useState(false); // Afficher le modal de filtre
+    const [depenseIdToDelete, setDepenseIdToDelete] = useState(null); // L'identifiant de la dépense à supprimer
+    const [selectedNom, setSelectedNom] = useState("Pas de filtre"); // Le filtre par nom
+    const [selectedMontant, setSelectedMontant] = useState("Tous"); // Le filtre par montant
+    const [selectedDate, setSelectedDate] = useState("Tous"); // Le filtre par date
+    const [currInd, setCurrInd] = useState(1); // L'indice de la page actuelle
 
     useEffect(() => {
-        fetchDepense();
+        fetchDepense(); // Récupérer les dépenses
     }, []);
 
     const fetchDepense = () => {
         axios
-            .get("http://localhost:4000/expense/getAllExpenses")
-            .then((response) => {
-                if (response.data.success) {
+            .get("http://localhost:4000/expense/getAllExpenses") // Récupérer les dépenses
+            .then((response) => { // Gérer la réponse
+                if (response.data.success) { // Si la requête s'est bien déroulée
                     const depenses = response.data.depenses || [];
-                    setDepenses(depenses);
-                    setFilteredDepenses(depenses);
+                    setDepenses(depenses); // Mettre à jour les dépenses
+                    setFilteredDepenses(depenses); // Mettre à jour les dépenses filtrées
                 }
             })
             .catch((error) => {
@@ -39,47 +39,52 @@ const Depenses = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(filteredDepenses.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(filteredDepenses.length / nbItems); // Nombre de pages
 
-    // Ensure indices are within valid bounds
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, filteredDepenses.length); // End index
+    // Pagination
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, filteredDepenses.length); // Index de fin
 
-    const depensesParPage = filteredDepenses.slice(debInd, finInd);
+    const depensesParPage = filteredDepenses.slice(debInd, finInd); // Les dépenses par page
 
-    const handleDeleteDepense = (id) => {
+    const handleDeleteDepense = (id) => { // Fonction pour gérer la suppression d'une dépense
         setDepenseIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteDepense = async () => {
+    const confirmDeleteDepense = async () => { // Fonction pour confirmer la suppression d'une dépense
         try {
-            await axios.delete(`http://localhost:4000/expense/deleteExpense/${depenseIdToDelete}`);
-            setShowDeleteModal(false);
-            fetchDepense();
-            setCurrInd(1);
+            await axios.delete(`http://localhost:4000/expense/deleteExpense/${depenseIdToDelete}`); // Supprimer la dépense
+            setShowDeleteModal(false); // Cacher le modal
+            fetchDepense(); // Récupérer les dépenses
+            setCurrInd(1); // Mettre à jour l'indice de la page actuelle
         } catch (error) {
             console.error("Erreur lors de la suppression de la dépense:", error);
         }
     };
-
-    const handlePageChange = (newInd) => {
+ 
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }
     };
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        filterDepenses();
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
     };
+    
+    useEffect(() => { // Filtrer les dépenses
+        setCurrInd(1);
+        filterDepenses();
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher le modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedNom("Pas de filtre");
         setSelectedDate("Tous");
         setSelectedMontant("Tous");
@@ -88,7 +93,7 @@ const Depenses = () => {
     const filterDepenses = () => {
         let filtered = depenses;
     
-        // Case insensitive search by name
+        // Filtrer par recherche
         if (searchQuery.trim() !== "") {
             filtered = filtered.filter((depense) => {
                 const name = depense.nom.toLowerCase();
@@ -97,6 +102,7 @@ const Depenses = () => {
             });
         }
     
+        // Filtrer par montant
         if (selectedMontant !== "Tous") {
             const montantThreshold = parseInt(selectedMontant.substring(1), 10); // Convert selectedMontant to integer
             const isNegative = selectedMontant.includes("-");
@@ -109,7 +115,7 @@ const Depenses = () => {
             });
         }        
     
-        // Filter by date
+        // Filtrer par date
         if (selectedDate !== "Tous") {
             const currentDate = new Date();
             filtered = filtered.filter((depense) => {
@@ -133,7 +139,7 @@ const Depenses = () => {
             });
         }
     
-        // Sort by nom
+        // Filtrer par nom
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
@@ -145,12 +151,13 @@ const Depenses = () => {
             });
         }
     
-        setFilteredDepenses(filtered);
+        setFilteredDepenses(filtered); // Mettre à jour les dépenses filtrées
     };    
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour gérer le filtre
         setShowFilterModal(false);
         filterDepenses();
+        setCurrInd(1);
     };
     return (
         <>

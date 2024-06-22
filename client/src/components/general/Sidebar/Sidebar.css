@@ -1,3 +1,4 @@
+/* La barra lateral */
 aside{
     display: flex;
     flex-direction: column;

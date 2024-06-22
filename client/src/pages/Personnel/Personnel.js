@@ -9,24 +9,24 @@ import { useAuthContext } from '../../hooks/authContext/authContext';
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Admins = () => {
-    const { paramsData } = useParamsContext();
-    const { authData } = useAuthContext();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [admins, setAdmins] = useState([]);
-    const [filteredAdmins, setFilteredAdmins] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [adminIdToDelete, setAdminIdToDelete] = useState(null);
-    const [selectedRole, setSelectedRole] = useState("Tous");
-    const [selectedNom, setSelectedNom] = useState("Pas de filtre");
-    const [selectedPrenom, setSelectedPrenom] = useState("Pas de filtre");
-    const [selectedUsername, setSelectedUsername] = useState("Pas de filtre");
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+    const { authData } = useAuthContext();  // Obtenir les données de l'utilisateur authentifié
+    const [searchQuery, setSearchQuery] = useState(""); // Recherche
+    const [admins, setAdmins] = useState([]); // État pour les administrateurs
+    const [filteredAdmins, setFilteredAdmins] = useState([]); // État pour les administrateurs filtrés
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // État pour l'affichage de la modal de suppression
+    const [showFilterModal, setShowFilterModal] = useState(false); // État pour l'affichage de la modal de filtre
+    const [adminIdToDelete, setAdminIdToDelete] = useState(null); // État pour l'ID de l'administrateur à supprimer
+    const [selectedRole, setSelectedRole] = useState("Tous"); // État pour le rôle sélectionné
+    const [selectedNom, setSelectedNom] = useState("Pas de filtre"); // État pour le nom sélectionné
+    const [selectedPrenom, setSelectedPrenom] = useState("Pas de filtre"); // État pour le prénom sélectionné
+    const [selectedUsername, setSelectedUsername] = useState("Pas de filtre"); // État pour le nom d'utilisateur sélectionné
 
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les administrateurs lors du chargement du composant
         fetchAdmins();
     }, []);
 
-    const fetchAdmins = () => {
+    const fetchAdmins = () => { // Fonction pour obtenir les administrateurs
         axios.get('http://localhost:4000/user/getAllUsers')
             .then(response => {
                 setAdmins(response.data.users);
@@ -37,22 +37,22 @@ const Admins = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 5;
-    const [currInd, setCurrInd] = useState(1);
+    const nbItems = paramsData.petites_tables || 5; // Nombre d'éléments par page
+    const [currInd, setCurrInd] = useState(1); // État pour l'indice de la page courante
 
-    const nbPages = Math.ceil(filteredAdmins.length / nbItems);
+    const nbPages = Math.ceil(filteredAdmins.length / nbItems); // Nombre de pages
 
-    const debInd = (currInd - 1) * nbItems;
-    const finInd = debInd + nbItems;
+    const debInd = (currInd - 1) * nbItems; // Indice de début
+    const finInd = debInd + nbItems; // Indice de fin
 
-    const adminsParPage = filteredAdmins.slice(debInd, finInd);
+    const adminsParPage = filteredAdmins.slice(debInd, finInd); // Les administrateurs à afficher
 
-    const handleDeleteAdmin = async (id) => {
+    const handleDeleteAdmin = async (id) => { // Fonction pour gérer la suppression d'un administrateur
         setAdminIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteAdmin = async () => {
+    const confirmDeleteAdmin = async () => { // Fonction pour confirmer la suppression d'un administrateur
         try {
             await axios.delete(`http://localhost:4000/user/deleteUser/${adminIdToDelete}`);
             setShowDeleteModal(false);
@@ -63,7 +63,7 @@ const Admins = () => {
         }
     };
 
-    const handlePageChange = (ind) => {
+    const handlePageChange = (ind) => { // Fonction pour gérer le changement de page
         if (ind === 1) {
             if (currInd > 1) setCurrInd(ind);
         } else if (ind === nbPages) {
@@ -73,24 +73,28 @@ const Admins = () => {
         }
     }
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
+    };
+     
+    useEffect(() => { // Pour filtrer les administrateurs lors de la recherche
         setCurrInd(1);
         filterAdmins();
-    };
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher la modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedNom("Pas de filtre");
         setSelectedPrenom("Pas de filtre");
         setSelectedUsername("Pas de filtre");
         setSelectedRole("Tous");
     };
 
-    const filterAdmins = () => {
+    const filterAdmins = () => { // Fonction pour filtrer les administrateurs
         let filtered = [...admins];
         
         if (searchQuery.trim() !== ""){
@@ -140,6 +144,7 @@ const Admins = () => {
     const handleFilter = () => {
         setShowFilterModal(false);
         filterAdmins();
+        setCurrInd(1);
     };    
 
     return (

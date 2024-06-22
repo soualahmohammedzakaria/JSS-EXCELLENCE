@@ -6,53 +6,54 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 
 const AjouterAccomplissement = () => {
-    const location = useLocation();
-    const [formData, setFormData] = useState({
+    const location = useLocation(); // Hook pour obtenir les données de l'URL
+    const [formData, setFormData] = useState({ // Les données du formulaire
         nom_evenement: '',
         discipline: '',
         date_evenement: '',
         palmares: '',
         id_membre: location.state.id
     });
-    const [errorMessage, setErrorMessage] = useState("");
-    const [sports, setSports] = useState([]);
-    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
+    const [sports, setSports] = useState([]); // Les sports
+    const navigate = useNavigate(); // Hook pour la navigation
 
     useEffect(() => {
-        fetchSports();
+        fetchSports(); // Récupérer les sports
     }, []);
 
-    const fetchSports = async () => {
+    const fetchSports = async () => { // Fonction pour récupérer les sports
         try {
-            const response = await axios.get("http://localhost:4000/sport/getAllSports");
-            if (response.data.success) {
-                setSports(response.data.sports);
-                setFormData({ ...formData, discipline: response.data.sports[0].nom });
+            const response = await axios.get("http://localhost:4000/sport/getAllSports"); // Récupérer les sports
+            if (response.data.success) { // Si la requête s'est bien passée
+                setSports(response.data.sports); // Mettre à jour les sports
+                setFormData({ ...formData, discipline: response.data.sports[0].nom }); // Mettre à jour la discipline
             } else {
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         } catch (error) {
-            console.error('Erreur de récupération des sports:', error);
-            setErrorMessage("Désolé, une erreur s'est produite lors de la récupération des sports.");
+            console.error('Erreur de récupération des sports:', error); // Gérer les erreurs
+            setErrorMessage("Désolé, une erreur s'est produite lors de la récupération des sports."); // Afficher un message d'erreur
         }
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
+        const { name, value } = e.target; // Extraire le nom et la valeur du champ
+        setFormData({ ...formData, [name]: value }); // Mettre à jour les données du formulaire
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
+        event.preventDefault(); // Empêcher le rechargement de la page
         try {
-            const response = await axios.post("http://localhost:4000/achievement/addAchievement", formData);
-            if(response.data.success){
+            const response = await axios.post("http://localhost:4000/achievement/addAchievement", formData); // Ajouter l'accomplissement
+            if(response.data.success){ // Si la requête s'est bien passée
+                // Naviguer vers la liste des accomplissements
                 navigate('/membres/details/accomplissements', {state: {id: location.state.id, path: location.state.path}});
             }else{
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message); // Afficher un message d'erreur
             }
         }catch (error) {
-            setErrorMessage("Désolé, une erreur s'est produite!");
+            setErrorMessage("Désolé, une erreur s'est produite!"); // Afficher un message d'erreur
         }
     };
 

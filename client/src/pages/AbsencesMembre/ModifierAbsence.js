@@ -7,11 +7,11 @@ import { formatDateHeure } from "../../utils/datesUtils";
 import axios from "axios";
 
 const ModifierPresence = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [creneaux, setCreneaux] = useState([]);
-    const [sportsGroupes, setSportsGroupes] = useState([]);
-    const [formData, setFormData] = useState({
+    const navigate = useNavigate(); // Hook pour la navigation
+    const location = useLocation(); // Hook pour obtenir les données de l'URL
+    const [creneaux, setCreneaux] = useState([]); // Les créneaux
+    const [sportsGroupes, setSportsGroupes] = useState([]); // Les groupes de sport
+    const [formData, setFormData] = useState({ // Les données du formulaire
         id_membre: location.state.id,
         date: location.state.date,
         justifiee: parseInt(location.state.justifiee),
@@ -19,20 +19,20 @@ const ModifierPresence = () => {
         id_groupe: location.state.id_groupe,
         id_creneau: location.state.id_creneau
     });
-    const [selectedGroupe, setSelectedGroupe] = useState(null);
-    const [selectedCreneau, setSelectedCreneau] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [selectedGroupe, setSelectedGroupe] = useState(null); // Le groupe sélectionné
+    const [selectedCreneau, setSelectedCreneau] = useState(null); // Le créneau sélectionné
+    const [errorMessage, setErrorMessage] = useState(""); // Message d'erreur
     
-    useEffect(() => {
+    useEffect(() => { // Récupérer les groupes de sport et les créneaux
         fetchSportsGroupes();
         fetchCreneaux();
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { // Initialiser les valeurs sélectionnées
         initializeSelectedValues();
     }, [sportsGroupes, creneaux]);
 
-    const fetchCreneaux = async () => {
+    const fetchCreneaux = async () => { // Fonction pour récupérer les créneaux
         try {
             const response = await axios.get('http://localhost:4000/planning/getAllCreneaux');
             if (response.data.success) setCreneaux(response.data.creneaux);
@@ -41,7 +41,7 @@ const ModifierPresence = () => {
         }
     };
 
-    const fetchSportsGroupes = async () => {
+    const fetchSportsGroupes = async () => { // Fonction pour récupérer les groupes de sport
         try {
             const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
             setSportsGroupes(response.data.sportsGroupes);
@@ -50,7 +50,7 @@ const ModifierPresence = () => {
         }
     };
 
-    const initializeSelectedValues = () => {
+    const initializeSelectedValues = () => { // Initialiser les valeurs sélectionnées
         const groupWithId = sportsGroupes
             .flatMap(sport => sport.groupes)
             .find(group => group.id_groupe === location.state.id_groupe);
@@ -65,7 +65,7 @@ const ModifierPresence = () => {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // Fonction pour gérer les changements des champs du formulaire
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (name === "justifiee" && value === "0") {
@@ -76,7 +76,7 @@ const ModifierPresence = () => {
         }
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => { // Fonction pour gérer la soumission du formulaire
         event.preventDefault();
         try {
             const response = await axios.put(`http://localhost:4000/attendance/updateAbsenceMember/${location.state.id_absence}`, formData);
@@ -90,10 +90,10 @@ const ModifierPresence = () => {
         }
     };
 
-    const handleGroupChange = (e) => {
+    const handleGroupChange = (e) => { // Fonction pour gérer le changement de groupe
         const groupId = parseInt(e.target.value);
         
-        // Find the selected group directly from the sportsGroupes state
+        // Trouver le groupe sélectionné
         const selectedGroupe = sportsGroupes
             .flatMap(sport => sport.groupes)
             .find(group => group.id_groupe === groupId);
@@ -101,33 +101,33 @@ const ModifierPresence = () => {
         if (selectedGroupe) {
             setSelectedGroupe(selectedGroupe);
             
-            // Reset selected creneau when group changes
+            // Réinitialiser le créneau sélectionné
             setSelectedCreneau(null);
             
-            // Find the first creneau of the newly selected group
+            // Trouver le premier créneau du groupe sélectionné
             const firstCreneau = creneaux.find(creneau => creneau.id_groupe === groupId);
         
-            // Update formData based on whether the group has creneaux or not
+            // Mettre à jour les données du formulaire
             if (firstCreneau) {
-                // If the selected group has at least one creneau
+                // Si le groupe sélectionné a des créneaux
                 setSelectedCreneau(firstCreneau.id_creneau);
                 setFormData(prevFormData => ({
                     ...prevFormData,
                     id_groupe: groupId,
-                    id_creneau: firstCreneau.id_creneau // Set id_creneau to the ID of the first creneau
+                    id_creneau: firstCreneau.id_creneau // Set id_creneau a celui du premier creneau
                 }));
             } else {
-                // If the selected group has no creneaux
+                // Si le groupe sélectionné n'a pas de créneaux
                 setFormData(prevFormData => ({
                     ...prevFormData,
                     id_groupe: groupId,
-                    id_creneau: null // Set id_creneau to null
+                    id_creneau: null // Set id_creneau a null
                 }));
             }
         }
     };
 
-    const handleCreneauChange = (e) => {
+    const handleCreneauChange = (e) => { // Fonction pour gérer le changement de créneau
         const creneauId = parseInt(e.target.value);
         setSelectedCreneau(creneauId);
         setFormData(prevFormData => ({
@@ -136,7 +136,7 @@ const ModifierPresence = () => {
         }));
     };
 
-    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe);
+    const filteredCreneaux = creneaux.filter(creneau => creneau.id_groupe === selectedGroupe?.id_groupe); // Filtrer les créneaux par groupe
 
     return (
         <>

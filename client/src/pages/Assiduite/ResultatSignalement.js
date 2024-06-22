@@ -7,7 +7,7 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import { Link, useLocation } from 'react-router-dom';
 
 function ResultatSignalement() {
-    const location = useLocation();
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
 
     return (
         <>
@@ -19,25 +19,14 @@ function ResultatSignalement() {
                         <h1>Assiduité</h1>
                     </div>
                     <div className="resultat-container">
-                        {location.state.reponse.success ? (
-                            <div className="resultat-assiduite">
+                        <div className="resultat-assiduite">
+                            {location.state.reponse.success ? (
                                 <Animator animationData={Check} loop/>
-                                {location.state.type === `Entrée` ? (
-                                    <h2>Le signalement de l'entrée a été effectué avec succès</h2>
-                                ) : (
-                                    <h2>Le signalement de la sortie a été effectué avec succès</h2>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="resultat-assiduite">
+                            ) : (
                                 <Animator animationData={Cross} loop/>
-                                {location.state.type === `Entrée` ? (
-                                    <h2>Pas de creneau pour le groupe sélectionné!</h2>
-                                ) : (
-                                    <h2>Pas de creneau pour le groupe sélectionné!</h2>
-                                )}
-                            </div>
-                        )}
+                            )}
+                            <h2>{location.state.reponse.message}</h2>
+                        </div>
                         <div className="revenir-boutton">    
                             <button className="revenir-btn btn pointed">
                                 <Link to="/assiduite" className="link">

@@ -7,24 +7,24 @@ import Searchbar from "../../components/general/Searchbar/Searchbar";
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Equipements = () => {
-    const { paramsData } = useParamsContext();
-    const location = useLocation();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [equipements, setEquipements] = useState([]);
-    const [filteredEquipements, setFilteredEquipements] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFilterModal, setShowFilterModal] = useState(false);
-    const [equipementIdToDelete, setEquipementIdToDelete] = useState(null);
-    const [selectedNom, setSelectedNom] = useState("Pas de filtre");
-    const [selectedQuantite, setSelectedQuantite] = useState("Tous");
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const [searchQuery, setSearchQuery] = useState(""); // Recherche
+    const [equipements, setEquipements] = useState([]); // État pour les equipements
+    const [filteredEquipements, setFilteredEquipements] = useState([]); // État pour les equipements filtrés
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // État pour la modal de suppression
+    const [showFilterModal, setShowFilterModal] = useState(false); // État pour la modal de filtre
+    const [equipementIdToDelete, setEquipementIdToDelete] = useState(null); // État pour l'id de l'equipement à supprimer
+    const [selectedNom, setSelectedNom] = useState("Pas de filtre"); // État pour le nom sélectionné
+    const [selectedQuantite, setSelectedQuantite] = useState("Tous"); // État pour la quantité sélectionnée
    
-    const [currInd, setCurrInd] = useState(1);
+    const [currInd, setCurrInd] = useState(1); // Index de la page actuelle
 
-    useEffect(() => {
+    useEffect(() => { // Pour obtenir les equipements lors du chargement du composant
         fetchEquipements();
     }, []);
 
-    const fetchEquipements = () => {
+    const fetchEquipements = () => { // Fonction pour obtenir les equipements
         axios
             .get(`http://localhost:4000/equipment/getEquipmentsSalle/${location.state.numero_salle}`)
             .then((response) => {
@@ -39,21 +39,20 @@ const Equipements = () => {
             });
     };
 
-    const nbItems = paramsData.petites_tables || 7;
-    const nbPages = Math.ceil(filteredEquipements.length / nbItems);
+    const nbItems = paramsData.petites_tables || 7; // Nombre d'éléments par page
+    const nbPages = Math.ceil(filteredEquipements.length / nbItems); // Nombre de pages
 
-    // Ensure indices are within valid bounds
-    const debInd = Math.max((currInd - 1) * nbItems, 0); // Start index
-    const finInd = Math.min(debInd + nbItems, filteredEquipements.length); // End index
+    const debInd = Math.max((currInd - 1) * nbItems, 0); // Index de début
+    const finInd = Math.min(debInd + nbItems, filteredEquipements.length); // Index de fin
 
-    const equipementsParPage = filteredEquipements.slice(debInd, finInd);
+    const equipementsParPage = filteredEquipements.slice(debInd, finInd); // Equipements par page
 
-    const handleDeleteEquipement = (id) => {
+    const handleDeleteEquipement = (id) => { // Fonction pour gérer la suppression d'un equipement
         setEquipementIdToDelete(id);
         setShowDeleteModal(true);
     };
 
-    const confirmDeleteEquipement = async () => {
+    const confirmDeleteEquipement = async () => { // Fonction pour confirmer la suppression d'un equipement
         try {
             await axios.delete(`http://localhost:4000/equipment/deleteEquipment/${equipementIdToDelete}`);
             setShowDeleteModal(false);
@@ -64,30 +63,35 @@ const Equipements = () => {
         }
     };
 
-    const handlePageChange = (newInd) => {
+    const handlePageChange = (newInd) => { // Fonction pour gérer le changement de page
         if (newInd >= 1 && newInd <= nbPages) {
             setCurrInd(newInd);
         }
     };
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        filterEquipements();
+    const handleSearch = (event) => { // Fonction pour gérer la recherche
+        const value = event.target.value;
+        setSearchQuery(value);
     };
+    
+    useEffect(() => { // Pour filtrer les salles lors de la recherche
+        setCurrInd(1);
+        filterEquipements();
+    }, [searchQuery]);
 
-    const handleFilterModal = () => {
+    const handleFilterModal = () => { // Fonction pour afficher la modal de filtre
         setShowFilterModal(true);
     };
 
-    const HandleClearFilters = () => {
+    const HandleClearFilters = () => { // Fonction pour réinitialiser les filtres
         setSelectedNom("Pas de filtre");
         setSelectedQuantite("Tous");
     };
 
-    const filterEquipements = () => {
+    const filterEquipements = () => { // Fonction pour filtrer les equipements
         let filtered = equipements;
     
-        // Filter by search query
+        // Filtrer par recherche
         if (searchQuery.trim() !== "") {
             filtered = filtered.filter((equipement) => {
                 const name = equipement.nom.toLowerCase();
@@ -95,7 +99,7 @@ const Equipements = () => {
             });
         }
     
-        // Filter by selected criteria
+        // Filter par nom
         if (selectedNom !== "Pas de filtre") {
             filtered.sort((a, b) => {
                 if (selectedNom === "Ascendant") {
@@ -107,7 +111,7 @@ const Equipements = () => {
             });
         }
     
-        if (selectedQuantite !== "Tous") {
+        if (selectedQuantite !== "Tous") { // Filtrer par quantité
             filtered = filtered.filter((equipement) => {
                 if (selectedQuantite === "-5 unités") {
                     return equipement.quantite <= 5;
@@ -120,12 +124,13 @@ const Equipements = () => {
             });
         }
     
-        setFilteredEquipements(filtered);
+        setFilteredEquipements(filtered); // Mettre à jour les equipements filtrés
     };    
 
-    const handleFilter = () => {
+    const handleFilter = () => { // Fonction pour gérer le filtre
         setShowFilterModal(false);
         filterEquipements();
+        setCurrInd(1);
     };
 
     return (

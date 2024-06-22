@@ -10,9 +10,10 @@ import { useAuthContext } from '../../hooks/authContext/authContext';
 import { useParamsContext } from '../../hooks/paramsContext/ParamsContext';
 
 const Parametres = () => {
-    const { authData } = useAuthContext();
-    const { paramsData } = useParamsContext();
-    const { updateParamsData } = useParamsContext();
+    const { authData } = useAuthContext(); // Obtenir les données de l'utilisateur connecté
+    const { paramsData } = useParamsContext(); // Obtenir les paramètres globaux
+    const { updateParamsData } = useParamsContext(); // Fonction pour mettre à jour les paramètres globaux
+    
     // États pour les données du formulaire
     const [formData, setFormData] = useState(paramsData);
     const [successModal, setSuccessModal] = useState(false);
@@ -59,12 +60,12 @@ const Parametres = () => {
                                         <div className="add-input">
                                             <span className="material-icons-outlined">email</span>
                                             <label className="params-label">Adresse email</label>
-                                            <input type="email" name="email" placeholder="Votre adresse" value={formData.email} onChange={handleChange} required/>
+                                            <input type="email" name="email" placeholder="Votre adresse" value={formData.email} onChange={handleChange}/>
                                         </div>                      
                                         <div className="add-input">
                                             <span className="material-icons-outlined">password</span>
                                             <label className="params-label">Code confidentiel</label>
-                                            <input type="password" name="password" placeholder="Votre mot secret" value={formData.password} onChange={handleChange} required/>
+                                            <input type="password" name="password" placeholder="Votre mot secret" value={formData.password} onChange={handleChange}/>
                                         </div>
                                     </>
                                 }
@@ -85,10 +86,6 @@ const Parametres = () => {
                         </div>
                     </div>
                 </div>
-                <Link to="/erreur" className="link">
-                    <span className="material-icons-sharp">undo</span>
-                    <span>Se déconnecter</span>
-                </Link>
             </main>
             {successModal && (
                 <div className="modal-overlay">
@@ -98,7 +95,7 @@ const Parametres = () => {
                             <h2>Paramètres modifiées avec success!</h2>
                             <div className="revenir-boutton">    
                                 <button className="revenir-btn btn pointed">
-                                    <Link to="/dashboard" className="link">
+                                    <Link to="/" className="link">
                                         <span className="material-icons-sharp">undo</span>
                                         <span>Retour</span>
                                     </Link>

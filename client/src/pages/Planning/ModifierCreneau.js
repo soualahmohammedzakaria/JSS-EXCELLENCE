@@ -5,9 +5,9 @@ import Sidebar from "../../components/general/Sidebar/Sidebar";
 import axios from "axios";
 
 const ModifierCreneau = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-
+    const location = useLocation(); // Pour récupérer les données passées en paramètres lors de la navigation
+    const navigate = useNavigate(); // Hook pour la navigation
+ 
     // États pour les données des formulaires
     const [formData, setFormData] = useState({
         id_groupe: location.state.groupe,
@@ -28,12 +28,12 @@ const ModifierCreneau = () => {
     const [selectedSport, setSelectedSport] = useState(null);
     const [selectedGroup, setSelectedGroup] = useState(null);
 
-    useEffect(() => {
+    useEffect(() => { // Récupérer les salles et les groupes de sports
         fetchSalles();
         fetchSportsGroupes();
     }, []);
 
-    const fetchSalles = async () => {
+    const fetchSalles = async () => { // Fonction pour récupérer les salles
         try {
             const response = await axios.get("http://localhost:4000/salle/getNomIdSalles");
             setSalles(response.data.salles);
@@ -48,7 +48,7 @@ const ModifierCreneau = () => {
         }
     };
 
-    const fetchSportsGroupes = async () => {
+    const fetchSportsGroupes = async () => { // Fonction pour récupérer les sports avec les groupes
         try {
             const response = await axios.get("http://localhost:4000/sport/getAllSportsGroupes");
             setSportsGroupes(response.data.sportsGroupes);
