@@ -1,111 +1,75 @@
-English Version
-Project Overview
-Welcome to the repository of our Integrated Management System for a Sports Club, developed as part of a multidisciplinary project in the second year of preparatory classes (2CP). This project aims to streamline and automate the various administrative, tracking, and communication tasks involved in managing a sports club.
+## English Version
 
-Features
-Authentication Page: Secure login for users.
-Dashboard Pages: Comprehensive overview of club activities and performance.
-Members Page: Manage member information and profiles.
-Profile Page: Detailed view of individual member profiles.
-Schedule Page: Organize and view schedules and events.
-Technologies Used
-Express JS: A web application framework for Node.js, used for building our server-side application.
-MySQL: A relational database management system for storing and managing our data.
-Visual Studio Code: A source-code editor used for development.
-HTML/CSS: For structuring and styling the web pages.
-React JS: A JavaScript library for building user interfaces.
-Installation
-Clone the repository:
-sh
-Copy code
-git clone https://github.com/yourusername/sports-club-management.git
-Install dependencies:
-sh
-Copy code
-cd sports-club-management
-npm install
-Set up the database:
-sh
-Copy code
-// Instructions for setting up the MySQL database
-Start the application:
-sh
-Copy code
-npm start
-Usage
-After setting up and starting the application, navigate to http://localhost:3000 in your web browser to access the system. Use the authentication page to log in and start managing your sports club effectively.
+### Project Overview
 
-Strengths and Weaknesses
-Strengths:
+Welcome to the repository of our Integrated Management System for the Sports Club JSS EXCELLENCE Saoula, developed as part of a multidisciplinary project in the second year of preparatory classes (2CP). This project aims to streamline and automate the various administrative, tracking, and communication tasks involved in managing a sports club.
 
-User-friendly and intuitive interface.
-Comprehensive feature set catering to various needs.
-Optimized performance for fast and responsive user experience.
-Weaknesses:
+### Features
 
-High resource consumption.
-Contributors
-Mohammed Zakaria Soualah (Team Leader)
-Rayan Boukakiou
-Adriane Anis Khaled
-Abderrahmane Koutchouk
-Sarah Farah Sebbah
-Zayd Aymen Zeghimi
-Acknowledgments
-We express our gratitude to our supervisors, Hachemi Dellys and Siham Aitdaoud, for their guidance and support throughout the project.
+### Features
 
-Version Française
-Présentation du Projet
-Bienvenue dans le dépôt de notre Système Intégré de Gestion pour un Club Sportif, développé dans le cadre d'un projet pluridisciplinaire en deuxième année de classes préparatoires (2CP). Ce projet vise à simplifier et automatiser les diverses tâches administratives, de suivi et de communication impliquées dans la gestion d'un club sportif.
+- **Authentication Page**: Secure login for users.
+- **Dashboard Pages**: Comprehensive overview of club activities and performance.
+- **Members Page**: Manage member information and profiles.
+- **Profile Page**: Detailed view of individual member profiles.
+- **Schedule Page**: Organize and view schedules and events.
+- **Member Absences**: Track member absences.
+- **Achievements**: Record and display member accomplishments.
+- **Attendance**: Monitor member attendance.
+- **Coaches**: Manage coach information and profiles.
+- **Expenses**: Track club expenses.
+- **Member Details**: View detailed information about members.
+- **Groups**: Manage groups within the club.
+- **Payments**: Handle member payments.
+- **Settings**: Configure system settings.
+- **Staff**: Manage club personnel.
+- **Planning**: Organize and view planning schedules.
+- **Member Presences**: Record member presences.
+- **Rooms**: Manage club rooms and facilities.
+- **Sports**: Manage different sports offered by the club.
 
-Fonctionnalités
-Page d'authentification : Connexion sécurisée pour les utilisateurs.
-Pages du tableau de bord : Vue d'ensemble des activités et performances du club.
-Page des membres : Gestion des informations et profils des membres.
-Page de profil : Vue détaillée des profils individuels des membres.
-Page des plannings : Organisation et visualisation des horaires et événements.
-Technologies Utilisées
-Express JS : Un framework d'application web pour Node.js, utilisé pour construire notre application côté serveur.
-MySQL : Un système de gestion de base de données relationnelles pour stocker et gérer nos données.
-Visual Studio Code : Un éditeur de code source utilisé pour le développement.
-HTML/CSS : Pour structurer et styliser les pages web.
-React JS : Une bibliothèque JavaScript pour construire des interfaces utilisateur.
-Installation
-Cloner le dépôt :
-sh
-Copy code
-git clone https://github.com/yourusername/sports-club-management.git
-Installer les dépendances :
-sh
-Copy code
-cd sports-club-management
-npm install
-Configurer la base de données :
-sh
-Copy code
-// Instructions pour configurer la base de données MySQL
-Démarrer l'application :
-sh
-Copy code
-npm start
-Utilisation
-Après avoir configuré et démarré l'application, accédez au système en naviguant à http://localhost:3000 dans votre navigateur web. Utilisez la page d'authentification pour vous connecter et commencer à gérer efficacement votre club sportif.
 
-Points Forts et Faibles
-Points Forts :
+### Technologies Used
 
-Interface conviviale et intuitive.
-Ensemble de fonctionnalités complet répondant à divers besoins.
-Performances optimisées pour une expérience utilisateur rapide et réactive.
-Points Faibles :
+- **Express JS**: A web application framework for Node.js, used for building our server-side application.
+- **MySQL**: A relational database management system for storing and managing our data.
+- **Visual Studio Code**: A source-code editor used for development.
+- **HTML/CSS**: For structuring and styling the web pages.
+- **React JS**: A JavaScript library for building user interfaces.
 
-Consommation élevée de ressources.
-Contributeurs
-Mohammed Zakaria Soualah (Chef d'équipe)
-Rayan Boukakiou
-Adriane Anis Khaled
-Abderrahmane Koutchouk
-Sarah Farah Sebbah
-Zayd Aymen Zeghimi
-Remerciements
-Nous exprimons notre gratitude à nos superviseurs, Hachemi Dellys et Siham Aitdaoud, pour leur encadrement et leur soutien tout au long du projet.
+
+## Version Française
+
+### Présentation du Projet
+
+Bienvenue dans le dépôt de notre Système Intégré de Gestion pour le Club Sportif JSS EXCELLENCE Saoula, développé dans le cadre d'un projet pluridisciplinaire en deuxième année de classes préparatoires (2CP). Ce projet vise à simplifier et automatiser les diverses tâches administratives, de suivi et de communication impliquées dans la gestion d'un club sportif.
+
+### Fonctionnalités
+
+- **Page d'authentification** : Connexion sécurisée pour les utilisateurs.
+- **Pages du tableau de bord** : Vue d'ensemble des activités et performances du club.
+- **Page des membres** : Gestion des informations et profils des membres.
+- **Page de profil** : Vue détaillée des profils individuels des membres.
+- **Page des plannings** : Organisation et visualisation des horaires et événements.
+- **Absences des membres** : Suivi des absences des membres.
+- **Accomplissements** : Enregistrement et affichage des accomplissements des membres.
+- **Assiduité** : Suivi de l'assiduité des membres.
+- **Coachs** : Gestion des informations et profils des entraîneurs.
+- **Dépenses** : Suivi des dépenses du club.
+- **Détails des membres** : Visualisation des informations détaillées sur les membres.
+- **Groupes** : Gestion des groupes au sein du club.
+- **Paiements** : Gestion des paiements des membres.
+- **Paramètres** : Configuration des paramètres du système.
+- **Personnel** : Gestion du personnel du club.
+- **Planification** : Organisation et visualisation des plannings.
+- **Présences des membres** : Enregistrement des présences des membres.
+- **Salles** : Gestion des salles et installations du club.
+- **Sports** : Gestion des différents sports proposés par le club.
+
+### Technologies Utilisées
+
+- **Express JS** : Un framework d'application web pour Node.js, utilisé pour construire notre application côté serveur.
+- **MySQL** : Un système de gestion de base de données relationnelles pour stocker et gérer nos données.
+- **Visual Studio Code** : Un éditeur de code source utilisé pour le développement.
+- **HTML/CSS** : Pour structurer et styliser les pages web.
+- **React JS** : Une bibliothèque JavaScript pour construire des interfaces utilisateur.
