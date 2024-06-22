@@ -6,8 +6,6 @@ Welcome to the repository of our Integrated Management System for the Sports Clu
 
 ### Features
 
-### Features
-
 - **Authentication Page**: Secure login for users.
 - **Dashboard Pages**: Comprehensive overview of club activities and performance.
 - **Members Page**: Manage member information and profiles.
