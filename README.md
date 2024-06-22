@@ -4,6 +4,10 @@
 
 Welcome to the repository of our Integrated Management System for the Sports Club JSS EXCELLENCE Saoula, developed as part of a multidisciplinary project in the second year of preparatory classes (2CP). This project aims to streamline and automate the various administrative, tracking, and communication tasks involved in managing a sports club.
 
+### Final Product
+
+Here is the link for the final product: [Final Product](https://drive.google.com/file/d/1hBCuPEtvsee5epnBB1vp5Ps0k2yUcRKe/view?usp=sharing)
+
 ### Features
 
 - **Authentication Page**: Secure login for users.
@@ -41,6 +45,10 @@ Welcome to the repository of our Integrated Management System for the Sports Clu
 ### Présentation du Projet
 
 Bienvenue dans le dépôt de notre Système Intégré de Gestion pour le Club Sportif JSS EXCELLENCE Saoula, développé dans le cadre d'un projet pluridisciplinaire en deuxième année de classes préparatoires (2CP). Ce projet vise à simplifier et automatiser les diverses tâches administratives, de suivi et de communication impliquées dans la gestion d'un club sportif.
+
+### Produit Final
+
+Voici le lien pour le produit final : [Produit Final](https://drive.google.com/file/d/1hBCuPEtvsee5epnBB1vp5Ps0k2yUcRKe/view?usp=sharing)
 
 ### Fonctionnalités
 
