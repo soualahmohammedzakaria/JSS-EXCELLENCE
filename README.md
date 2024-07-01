@@ -33,11 +33,7 @@ Here is the link for the final product: [Final Product](https://drive.google.com
 
 ### Technologies Used
 
-- **Express JS**: A web application framework for Node.js, used for building our server-side application.
-- **MySQL**: A relational database management system for storing and managing our data.
-- **Visual Studio Code**: A source-code editor used for development.
-- **HTML/CSS**: For structuring and styling the web pages.
-- **React JS**: A JavaScript library for building user interfaces.
+Express JS, MySQL, HTML/CSS, React JS and Electron JS.
 
 
 ## Version Française
@@ -74,8 +70,4 @@ Voici le lien pour le produit final : [Produit Final](https://drive.google.com/f
 
 ### Technologies Utilisées
 
-- **Express JS** : Un framework d'application web pour Node.js, utilisé pour construire notre application côté serveur.
-- **MySQL** : Un système de gestion de base de données relationnelles pour stocker et gérer nos données.
-- **Visual Studio Code** : Un éditeur de code source utilisé pour le développement.
-- **HTML/CSS** : Pour structurer et styliser les pages web.
-- **React JS** : Une bibliothèque JavaScript pour construire des interfaces utilisateur.
+Express JS, MySQL, HTML/CSS, React JS et Electron JS.
