@@ -2,13 +2,13 @@
 
 Welcome to the repository of our Integrated Management System for the Sports Club JSS EXCELLENCE Saoula, developed as part of a multidisciplinary project in the second year of preparatory classes (2CP) at the Higher National School of Computer Science. This project aims to streamline and automate the various administrative, tracking, and communication tasks involved in managing a sports club.
 
-![Dashboard](.githubutils/dashboard.png)
-![Member](.githubutils/member.png)
-![Timeslots](.githubutils/timeslots.png)
+![Dashboard](githubutils/dashboard.png)
+![Member](githubutils/member.png)
+![Timeslots](githubutils/timeslots.png)
 
 ## Final Product
 
-Here is the link for the final product: [Final Product](https://drive.google.com/file/d/1hBCuPEtvsee5epnBB1vp5Ps0k2yUcRKe/view?usp=sharing)
+Here is the link for the final product: [Link](https://drive.google.com/file/d/1hBCuPEtvsee5epnBB1vp5Ps0k2yUcRKe/view?usp=sharing)
 
 ## Features
 
